@@ -7,8 +7,7 @@ Create Conda environment
 
 ### Mac
 
-```bash conda env create --file requirements.txt
-```
+```bash conda env create --file requirements.txt```
 
 ### Linux
 
@@ -30,9 +29,7 @@ $ conda install --file requirements.txt -c conda-forge```
 
 Example execution
 
-```
-$ python design.py
-```
+```$ python design.py```
 
 ### List of Dependencies in requirements.txt
 ```
