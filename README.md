@@ -37,8 +37,10 @@ Example execution
 ### List of Dependencies in requirements.txt
 
 ```
+argparse==1.4.0
 biopython==1.81
 dwave-neal==0.6.0
+flake8==6.1.0
 pandas==2.0.3
 pip==23.2.1
 pipdeptree==2.12.0
