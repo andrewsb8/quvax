@@ -21,7 +21,7 @@ $ conda activate quvax
 Install dependencies
 
 ```
-$ python -m pip install -f requirements.txt
+$ python -m pip install -r requirements.txt
 
 OR
 
