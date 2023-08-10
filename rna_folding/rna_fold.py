@@ -53,26 +53,7 @@ class RNAFold(object):
         if self.solver.lower() == 'exact':
             sampler = dimod.ExactSolver()
             sampleset = sampler.sample(bqm)
-        elif self.solver.lower() == 'hybrid':
-            from dwave.system import LeapHybridSampler
-            sampler = LeapHybridSampler()
-            crank = 2
-            sampler.__dict__['_properties']['minimum_time_limit'][0][1] = crank*10.0
-            sampler.__dict__['_properties']['minimum_time_limit'][1][1] = crank*30.0
-            sampler.__dict__['_properties']['minimum_time_limit'][2][1] = crank*50.0
-            sampler.__dict__['_properties']['minimum_time_limit'][3][1] = crank*100.0
-            sampler.__dict__['_properties']['minimum_time_limit'][4][1] = crank*400.0
-            sampler.__dict__['_properties']['minimum_time_limit'][5][1] = crank*600.0
-            sampleset = sampler.sample(bqm)
 
-            ind = np.argmin([_[1] for _ in sampleset.record])
-            combo = list(np.where(sampleset.record[ind][0] == 1)[0])
-            score = sampleset.record[ind][1]
-            stems_used = [self.stems[_stem] for _stem in combo]
-
-            self.best_score = score
-            self.best_combo = combo
-            self.stems_used = stems_used
 
         else:
             from dwave.system import EmbeddingComposite, DWaveSampler
@@ -108,7 +89,7 @@ class RNAFold(object):
                     self.best_score = score
                     self.best_combo = combo
                     self.stems_used = stems_used
-                
+
                 with open('dwave_log.log','a') as f:
                     f.write('{},{},{},{}\n'.format(self.seq,combo,score,stems_used))
             print(self.best_score,self.stems_used,np.array(av).mean())
@@ -222,9 +203,9 @@ class RNAFold(object):
 
         self.h = h
         self.J = J
-        
+
         self._compute_model()
-        
+
     def _compute_model(self):
         arr = np.zeros((len(self.h),len(self.h)))
         for i in range(len(self.h)):

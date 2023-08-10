@@ -1,6 +1,7 @@
 from qodon.src.classical_ga import CodonOptimization
 from rna_folding.rna_fold import RNAFold
-import tensorflow as tf, numpy as np
+import tensorflow as tf
+import numpy as np
 import tensorflow_probability as tfp
 from Bio.Seq import Seq
 from Bio import SeqIO
@@ -66,8 +67,6 @@ class QuDesign(object):
         it gets the job done.
 
         '''
-
-        #print(members)
 
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_nseqs(members)

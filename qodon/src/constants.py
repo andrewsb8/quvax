@@ -1,6 +1,6 @@
 '''
 
-    mRNA Codon Optimization with Quantum Computers 
+    mRNA Codon Optimization with Quantum Computers
     Copyright (C) 2021  Dillion M. Fox, Ross C. Walker
 
     This program is free software: you can redistribute it and/or modify
