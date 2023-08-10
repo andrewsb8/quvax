@@ -155,6 +155,6 @@ class QuDesign(object):
 if __name__ == "__main__":
 
     seq = str(SeqIO.read('examples/spike_trim.fasta','fasta').seq)
-    exe = QuDesign(seq[:80])
+    exe = QuDesign(seq)
     print(exe.mfe)
     print(exe.nseq)
