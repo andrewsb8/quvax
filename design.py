@@ -1,4 +1,4 @@
-from qodon.src.classical_ga import CodonOptimization
+from qodon.src.initiate_sequences import GenerateInitialSequences
 from rna_folding.rna_fold import RNAFold
 import tensorflow as tf
 import numpy as np
@@ -14,7 +14,10 @@ class QuDesign(object):
         self.seq = seq
         self.codon_opt_it = codon_opt_it
         self.rna_fold_it = rna_fold_it
-        self.initial_members = self._get_initial_pop()
+
+        codons = GenerateInitialSequences(seq)
+        self.code_map = codons.code_map
+        self.initial_sequences = codons.initial_sequences
 
         self._validate()
         self.execute()
@@ -25,6 +28,8 @@ class QuDesign(object):
         function computes RNA structure with D-Wave's SA algorithm.
 
         '''
+
+        self.initial_members = tf.convert_to_tensor(([_[1] for _ in self.initial_sequences]),np.float32)
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.
@@ -39,24 +44,6 @@ class QuDesign(object):
         # Assign results as class attributes
         self.nseq = self._convert_to_nseqs(optim_results.final_population)[np.argmin(optim_results.final_objective_values)]
         self.mfe = np.min(optim_results.final_objective_values)
-
-    def _get_initial_pop(self):
-        '''
-        Re-use code from the qodon package to compute an initial population.
-
-        '''
-        # Run all of the preprocessing from the CodonOptimization class, but
-        # no need to run the Genetic Algorithm (GA)
-        co = CodonOptimization(seq,lazy=True)
-
-        # Store the "codon map". This contains information about Codon Usage Bias.
-        self.code_map = co.code_map
-
-        # Pull out initial population generation by previous command and
-        # convert to TF object
-        initial_members = tf.convert_to_tensor(([_[1] for _ in co.population]),np.float32)
-
-        return initial_members
 
     def _objective(self,members):
         '''
@@ -109,7 +96,7 @@ class QuDesign(object):
         # number of codons for the given position, so take the modulus. This is effectively a hashing
         # function. It's not mathematically rigorous, but it's good enough.
         # Finally, convert list of indices to the RNA sequence.
-        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(seq)])
+        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.seq)])
         n_seqs = [get_seq(se) for se in members]
         return n_seqs
 

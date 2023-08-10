@@ -155,29 +155,3 @@ class CodonOptimization(object):
         if self.seq != str(Seq(self.n_seq).transcribe().translate()):
             raise ValueError(
                 "Error: Codon sequence did not translate properly!")
-
-    def _get_initial_members(self):
-        '''
-        Initialize population with randomly assembled members.
-
-        '''
-        code_map = self.code_map
-        initial_members = []
-        for i in range(self.ntrials):
-            d_sequence = ""
-            chosen_indices = []
-            total_log_score = 0.0
-            for res in self.seq:
-                random_prob = random.uniform(0.0, 1.0)
-                reference_chances = code_map[res]['probs']
-                passing_indices = []
-                for chance in reference_chances:
-                    if chance > random_prob:
-                        passing_indices.append(reference_chances.index(chance))
-                chosen_index = passing_indices[0]
-                chosen_indices.append(chosen_index)
-                d_sequence += code_map[res]['codons'][chosen_index]
-            #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
-            member = [0, chosen_indices]
-            initial_members.append(member)
-        return initial_members
