@@ -1,3 +1,4 @@
+import sys
 from qodon.src.initiate_sequences import GenerateInitialSequences
 from rna_folding.rna_fold import RNAFold
 import tensorflow as tf
@@ -10,8 +11,8 @@ import warnings
 
 class QuDesign(object):
 
-    def __init__(self, seq, codon_opt_it=100, rna_fold_it=10000):
-        self.seq = seq
+    def __init__(self, input, codon_opt_it=100, rna_fold_it=10000):
+        self.seq = str(SeqIO.read(input,'fasta').seq)
         self.codon_opt_it = codon_opt_it
         self.rna_fold_it = rna_fold_it
 
@@ -154,7 +155,7 @@ class QuDesign(object):
 
 if __name__ == "__main__":
 
-    seq = str(SeqIO.read('examples/spike_trim.fasta','fasta').seq)
-    exe = QuDesign(seq[:80])
+    input = sys.argv[1]
+    exe = QuDesign(input)
     print(exe.mfe)
     print(exe.nseq)
