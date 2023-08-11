@@ -15,7 +15,7 @@ class QuDesign(object):
         self.codon_opt_it = codon_opt_it
         self.rna_fold_it = rna_fold_it
 
-        codons = GenerateInitialSequences(seq)
+        codons = GenerateInitialSequences(self.seq)
         self.code_map = codons.code_map
         self.initial_sequences = codons.initial_sequences
 
@@ -155,6 +155,6 @@ class QuDesign(object):
 if __name__ == "__main__":
 
     seq = str(SeqIO.read('examples/spike_trim.fasta','fasta').seq)
-    exe = QuDesign(seq)
+    exe = QuDesign(seq[:80])
     print(exe.mfe)
     print(exe.nseq)
