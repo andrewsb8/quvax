@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-from qodon.src.codon_tables import code_map
+from qodon.codon_tables import code_map
 import random
 
 class GenerateInitialSequences(object):

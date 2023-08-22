@@ -33,8 +33,10 @@ $ conda install --file requirements.txt -c conda-forge
 Example execution
 
 ```
-$ python design.py examples/spike_trim.fasta
+$ python design.py -i examples/spike_trim.fasta
 ````
+
+For help: ```$ python design.py -h```
 
 ### List of Dependencies in requirements.txt
 

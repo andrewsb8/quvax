@@ -1,5 +1,6 @@
 import sys
-from qodon.src.initiate_sequences import GenerateInitialSequences
+import argparse
+from qodon.initiate_sequences import GenerateInitialSequences
 from rna_folding.rna_fold import RNAFold
 import tensorflow as tf
 import numpy as np
@@ -11,19 +12,70 @@ import warnings
 
 class QuDesign(object):
 
-    def __init__(self, input, codon_opt_it=100, rna_fold_it=10000):
-        self.seq = str(SeqIO.read(input,'fasta').seq)
-        self.codon_opt_it = codon_opt_it
-        self.rna_fold_it = rna_fold_it
+    def __init__(self):
+        self._parse()
 
+        self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
         codons = GenerateInitialSequences(self.seq)
         self.code_map = codons.code_map
         self.initial_sequences = codons.initial_sequences
+        del codons
 
         self._validate()
-        self.execute()
+        self._execute()
 
-    def execute(self):
+    def _parse(self):
+        '''
+        Define command line arguments. Long options are used as variable names.
+        '''
+
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument("-i", "--input", required=True, type=str, help="Input sequence")
+        self.parser.add_argument("-c", "--codon_iterations", default=100, type=int, help="Number of codon optimization (outer loop) iterations")
+        self.parser.add_argument("-r", "--rna_iterations", default=10000, type=int, help="Number of RNA folding (inner loop) iterations")
+
+        self.args = self.parser.parse_args()
+
+    def _validate(self):
+        '''
+        Validate user input.
+
+        '''
+
+        if not isinstance(self.seq,str):
+
+            raise TypeError('''
+            Input protein sequence must be a string! User provided
+            input with type {}
+
+            '''.format(type(self.seq)))
+
+        self.seq = self.seq.upper()
+
+        aas = 'ACDEFGHIKLMNPQRSTVWY'
+
+        if any(_ not in aas for _ in self.seq):
+            print('Not a valid input sequence!')
+
+        if set(self.seq).issubset(set('GCAU')):
+            warnings.warn("Input protein sequence looks like an RNA sequence!")
+
+        if set(self.seq).issubset(set('GCAT')):
+            warnings.warn("Input protein sequence looks like an DNA sequence!")
+
+        if self.args.codon_iterations < 1:
+            raise ValueError('''
+            codon_opt_it must be at least 1!
+
+            ''')
+
+        if self.args.rna_iterations < 1:
+            raise ValueError('''
+            rna_fold_it must be at least 1!
+
+            ''')
+
+    def _execute(self):
         '''
         Main execution. Run tensorflow optimizer for codon optimization. Objective
         function computes RNA structure with D-Wave's SA algorithm.
@@ -37,7 +89,7 @@ class QuDesign(object):
         optim_results = tfp.optimizer.differential_evolution_minimize(
             self._objective,
             initial_population=self.initial_members,
-            max_iterations=self.codon_opt_it,
+            max_iterations=self.args.codon_iterations,
             differential_weight=0.01,
             crossover_prob=0.1,
         )
@@ -79,7 +131,7 @@ class QuDesign(object):
 
         '''
         rna_ss = RNAFold(nseq, min_stem_len=4, min_loop_len=4)
-        results = rna_ss.compute_dwave_sa(sweeps=self.rna_fold_it)
+        results = rna_ss.compute_dwave_sa(sweeps=self.args.rna_iterations)
         return results.first.energy
 
     def _convert_to_nseqs(self, members):
@@ -101,61 +153,8 @@ class QuDesign(object):
         n_seqs = [get_seq(se) for se in members]
         return n_seqs
 
-    def _validate(self):
-        '''
-        Validate user input.
-
-        '''
-
-        if not isinstance(self.seq,str):
-
-            raise TypeError('''
-            Input protein sequence must be a string! User provided
-            input with type {}
-
-            '''.format(type(self.seq)))
-
-        self.seq = self.seq.upper()
-
-        aas = 'ACDEFGHIKLMNPQRSTVWY'
-
-        if any(_ not in aas for _ in self.seq):
-            print('Not a valid input sequence!')
-
-        if set(self.seq).issubset(set('GCAU')):
-            warnings.warn("Input protein sequence looks like an RNA sequence!")
-
-        if set(self.seq).issubset(set('GCAT')):
-            warnings.warn("Input protein sequence looks like an DNA sequence!")
-
-        if not isinstance(self.codon_opt_it, int):
-            raise TypeError('''
-            codon_opt_it must be a positive integer!
-
-            ''')
-
-        if self.codon_opt_it < 1:
-            raise ValueError('''
-            codon_opt_it must be at least 1!
-
-            ''')
-
-        if not isinstance(self.rna_fold_it, int):
-            raise TypeError('''
-            rna_fold_it must be a positive integer!
-
-            ''')
-
-        if self.rna_fold_it < 1:
-            raise ValueError('''
-            rna_fold_it must be at least 1!
-
-            ''')
-
 
 if __name__ == "__main__":
-
-    input = sys.argv[1]
-    exe = QuDesign(input)
+    exe = QuDesign()
     print(exe.mfe)
     print(exe.nseq)
