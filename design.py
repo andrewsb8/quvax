@@ -16,7 +16,7 @@ class QuDesign(object):
         self._parse()
 
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
-        codons = GenerateInitialSequences(self.seq)
+        codons = GenerateInitialSequences(self.seq, self.args.n_trials)
         self.code_map = codons.code_map
         self.initial_sequences = codons.initial_sequences
         del codons
@@ -33,6 +33,7 @@ class QuDesign(object):
         self.parser.add_argument("-i", "--input", required=True, type=str, help="Input sequence")
         self.parser.add_argument("-c", "--codon_iterations", default=100, type=int, help="Number of codon optimization (outer loop) iterations")
         self.parser.add_argument("-r", "--rna_iterations", default=10000, type=int, help="Number of RNA folding (inner loop) iterations")
+        self.parser.add_argument("-n", "--n_trials", default=10, type=int, help="Number of initial sequences generated")
 
         self.args = self.parser.parse_args()
 
@@ -65,13 +66,19 @@ class QuDesign(object):
 
         if self.args.codon_iterations < 1:
             raise ValueError('''
-            codon_opt_it must be at least 1!
+            --codon_iterations must be at least 1!
 
             ''')
 
         if self.args.rna_iterations < 1:
             raise ValueError('''
-            rna_fold_it must be at least 1!
+            --rna_iterations must be at least 1!
+
+            ''')
+
+        if self.args.n_trials < 1:
+            raise ValueError('''
+            --n_trials must be at least 1!
 
             ''')
 

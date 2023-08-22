@@ -21,8 +21,8 @@ from qodon.codon_tables import code_map
 import random
 
 class GenerateInitialSequences(object):
-    def __init__(self, seq):
-        self.ntrials = 10
+    def __init__(self, seq, ntrials):
+        self.ntrials = ntrials
         self.code_map = code_map
         self.initial_sequences = self._get_initial_sequences(seq)
 
