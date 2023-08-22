@@ -1,3 +1,5 @@
-**/._*
+._*
 **/__pycache__/
-**/__pycache__/
+qodon/__pycache__
+rna_folding/__pycache__
+rna_folding/vax_code/._*
