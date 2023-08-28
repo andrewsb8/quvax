@@ -21,7 +21,7 @@ $ conda activate quvax
 Install dependencies
 
 ```
-$ python -m pip install -f requirements.txt
+$ python -m pip install -r requirements.txt
 
 OR
 
@@ -32,13 +32,19 @@ $ conda install --file requirements.txt -c conda-forge
 
 Example execution
 
-```$ python design.py```
+```
+$ python design.py -i examples/spike_trim.fasta
+````
+
+For help: ```$ python design.py -h```
 
 ### List of Dependencies in requirements.txt
 
 ```
+argparse==1.4.0
 biopython==1.81
 dwave-neal==0.6.0
+flake8==6.1.0
 pandas==2.0.3
 pip==23.2.1
 pipdeptree==2.12.0

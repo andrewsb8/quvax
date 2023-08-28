@@ -1,6 +1,6 @@
 '''
 
-    mRNA Codon Optimization with Quantum Computers 
+    mRNA Codon Optimization with Quantum Computers
     Copyright (C) 2021  Dillion M. Fox, Ross C. Walker
 
     This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,6 @@
 import python_codon_tables as pct
 import pandas as pd
 import numpy as np
-
-# Define model parameters
-gc_constant = 1
-repeat_constant = 0.1
-rarity_constant = 0.1
-combo_factor = 2.0
-combo_penalty = 40
-target_score = 0.5
-n_execs = 1
-
 
 def convert_to_p_list(a):
     '''

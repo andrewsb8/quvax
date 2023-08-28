@@ -1,6 +1,6 @@
 '''
 
-    mRNA Codon Optimization with Quantum Computers 
+    mRNA Codon Optimization with Quantum Computers
     Copyright (C) 2021  Dillion M. Fox, Ross C. Walker
 
     This program is free software: you can redistribute it and/or modify
@@ -17,10 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-from qodon.src.constants import code_map
+from qodon.src.codon_tables import code_map
 import random
 from operator import itemgetter
-from qodon.src.scoring import SeqScorer
 from Bio.Seq import Seq
 
 
@@ -56,14 +55,11 @@ class CodonOptimization(object):
         # Make sure fittest member translates to correct aa sequence
         self._verify_dna()
 
-        # Record best score
-        self.score = SeqScorer(self.n_seq).score
-
     def _propagate_generations(self):
 
         # Initialize population
         population = self._get_initial_members()
-        
+
         # Simulate evolution for 'numgens' trials
         for i in range(self.numgens):
 
@@ -73,8 +69,8 @@ class CodonOptimization(object):
             # Isolate subset of sequences with best score
             fittest_members = ranked_members[:self.elitelist]
 
-            # Randomly sample the remaining members 
-            lucky_members = random.sample(ranked_members[self.elitelist:], 
+            # Randomly sample the remaining members
+            lucky_members = random.sample(ranked_members[self.elitelist:],
                                                         self.randomlist)
 
             # Members eligible for mutation are 'best' and 'lucky'
@@ -89,7 +85,7 @@ class CodonOptimization(object):
 
     def _procreate(self, eligible_members):
         '''
-        Simulate procreation by randomly picking two genes 
+        Simulate procreation by randomly picking two genes
         and randomly recombining them with mutations.
 
         '''
@@ -138,8 +134,8 @@ class CodonOptimization(object):
             new_indices.append(chosen_index)
             total_log_score += self.code_map[res]['log_scores'][chosen_index]
             new_d_sequence += self.code_map[res]['codons'][chosen_index]
-        total_score = self._get_total_score(new_d_sequence)
-        return [total_score, new_indices]  # new member
+        #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
+        return [0, new_indices]
 
     def _reverse_translate(self):
         '''
@@ -159,36 +155,3 @@ class CodonOptimization(object):
         if self.seq != str(Seq(self.n_seq).transcribe().translate()):
             raise ValueError(
                 "Error: Codon sequence did not translate properly!")
-
-    def _get_total_score(self, strand):
-        '''
-        Use SeqScorer class to score the nucleotide sequence
-
-        '''
-        return SeqScorer(strand).score
-
-    def _get_initial_members(self):
-        '''
-        Initialize population with randomly assembled members.
-
-        '''
-        code_map = self.code_map
-        initial_members = []
-        for i in range(self.ntrials):
-            d_sequence = ""
-            chosen_indices = []
-            total_log_score = 0.0
-            for res in self.seq:
-                random_prob = random.uniform(0.0, 1.0)
-                reference_chances = code_map[res]['probs']
-                passing_indices = []
-                for chance in reference_chances:
-                    if chance > random_prob:
-                        passing_indices.append(reference_chances.index(chance))
-                chosen_index = passing_indices[0]
-                chosen_indices.append(chosen_index)
-                d_sequence += code_map[res]['codons'][chosen_index]
-            total_score = self._get_total_score(d_sequence)
-            member = [total_score, chosen_indices]
-            initial_members.append(member)
-        return initial_members
