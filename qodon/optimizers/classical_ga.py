@@ -23,7 +23,7 @@ from operator import itemgetter
 from Bio.Seq import Seq
 
 
-class CodonOptimization(object):
+class GeneticAlgorithm(object):
     def __init__(self, seq, lazy=False):
         self.seq = seq
         self.code_map = code_map
@@ -40,7 +40,7 @@ class CodonOptimization(object):
     def __repr__(self):
         return 'Classical genetic algorithm for codon optimization.'
 
-    def execute(self):
+    def _execute(self):
         '''
         Main method for codon optimization
 
