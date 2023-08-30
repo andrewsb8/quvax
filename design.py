@@ -84,7 +84,7 @@ class QuDesign(object):
 
     def _execute(self):
         #avoids circular import error
-        parse_optimizers.ParseOptimizers()
+        parse_optimizers.parse_optimizers(self.args.codon_optimizer)
 
 
 if __name__ == "__main__":
