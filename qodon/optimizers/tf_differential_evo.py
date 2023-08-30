@@ -7,7 +7,7 @@ from design import QuDesign
 
 class TfDiffEv(QuDesign):
     def __init__(self):
-        print(self.args)
+        print(self.args) #can't access parent member variables
         self._optimize()
 
     def _optimize(self):
