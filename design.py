@@ -1,4 +1,6 @@
 import sys
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #removes tensorflow warnings
 import argparse
 from qodon.initiate_sequences import GenerateInitialSequences
 from qodon import parse_optimizers #avoids circular import error
@@ -6,7 +8,6 @@ import numpy as np
 from Bio.Seq import Seq
 from Bio import SeqIO
 import warnings
-
 
 class QuDesign(object):
     def __init__(self):
@@ -84,7 +85,7 @@ class QuDesign(object):
 
     def _execute(self):
         #avoids circular import error
-        parse_optimizers.parse_optimizers(self.args.codon_optimizer)
+        parse_optimizers.parse_optimizers(self)
 
 
 if __name__ == "__main__":

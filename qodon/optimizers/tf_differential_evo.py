@@ -3,28 +3,27 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 from rna_folding.rna_fold import RNAFold
 
-from design import QuDesign
+class TfDiffEv(object):
+    def __init__(self, qudesign):
+        self.seq = qudesign.seq
+        self.code_map = qudesign.code_map
+        self._optimize(qudesign)
 
-class TfDiffEv(QuDesign):
-    def __init__(self):
-        print(self.args) #can't access parent member variables
-        self._optimize()
-
-    def _optimize(self):
+    def _optimize(self, qudesign):
         '''
         Main execution. Run tensorflow optimizer for codon optimization. Objective
         function computes RNA structure with D-Wave's SA algorithm.
 
         '''
 
-        self.initial_members = tf.convert_to_tensor(([_[1] for _ in self.initial_sequences]),np.float32)
+        self.initial_members = tf.convert_to_tensor(([_[1] for _ in qudesign.initial_sequences]),np.float32)
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.
         optim_results = tfp.optimizer.differential_evolution_minimize(
             self._objective,
             initial_population=self.initial_members,
-            max_iterations=self.args.codon_iterations,
+            max_iterations=qudesign.args.codon_iterations,
             differential_weight=0.01,
             crossover_prob=0.1,
         )
@@ -61,7 +60,7 @@ class TfDiffEv(QuDesign):
         Extract number of possible codons for each amino acid
 
         '''
-        return len(trial.code_map[res]['codons'])
+        return len(self.code_map[res]['codons'])
 
     def _tf_fold(self, nseq):
         '''
@@ -69,7 +68,7 @@ class TfDiffEv(QuDesign):
 
         '''
         rna_ss = RNAFold(nseq, min_stem_len=4, min_loop_len=4)
-        results = rna_ss.compute_dwave_sa(sweeps=self.args.rna_iterations)
+        results = rna_ss.compute_dwave_sa(sweeps=qudesign.args.rna_iterations)
         return results.first.energy
 
     def _convert_to_nseqs(self, members):
