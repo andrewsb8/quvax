@@ -14,9 +14,7 @@ class QuDesign(object):
 
     def __init__(self):
         self._parse()
-
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
-
         self._validate()
 
         codons = GenerateInitialSequences(self.seq, self.args.n_trials)
