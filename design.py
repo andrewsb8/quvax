@@ -89,4 +89,4 @@ class QuDesign(object):
 
 
 if __name__ == "__main__":
-    QuDesign()
+    exe = QuDesign()
