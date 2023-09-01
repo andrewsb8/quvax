@@ -16,12 +16,14 @@ class QuDesign(object):
         self._parse()
 
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
+
+        self._validate()
+
         codons = GenerateInitialSequences(self.seq, self.args.n_trials)
         self.code_map = codons.code_map
         self.initial_sequences = codons.initial_sequences
         del codons
 
-        self._validate()
         self._execute()
 
     def _parse(self):
@@ -57,6 +59,7 @@ class QuDesign(object):
 
         if any(_ not in aas for _ in self.seq):
             print('Not a valid input sequence!')
+            exit()
 
         if set(self.seq).issubset(set('GCAU')):
             warnings.warn("Input protein sequence looks like an RNA sequence!")
