@@ -6,18 +6,14 @@ warnings.filterwarnings("ignore")
 
 
 class RNAFold(object):
-    def __init__(self, seq, min_stem_len=3, min_loop_len=3,
-                 solver='hybrid', skip_params=False,
-                 c_B=1,c_L=10):
-        self.seq = seq
-        self.n = len(self.seq)
-        self.min_stem_len = min_stem_len
-        self.min_loop_len = min_loop_len
+    def __init__(self, nseq, config, skip_params=False):
+        self.config = config
+        self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq
+        self.n = len(self.nseq)
+
         self.stems = []
         self.h = dict()
         self.J = dict()
-        self.c_B = c_B  # coefficient for term maximizing number of bonds
-        self.c_L = c_L  # coefficient of penalty for adding short stems
         self._pairs = []
         self.interactions = [('A', 'U'), ('U', 'A'), ('G', 'C'), ('C', 'G'),
                              ('G', 'U'), ('U', 'G')]
@@ -29,7 +25,6 @@ class RNAFold(object):
 
         self.best_combo = []
         self.best_score = 0
-        self.solver = solver
 
     def execute(self):
         self._gen_stems()
@@ -50,7 +45,7 @@ class RNAFold(object):
                                          auto_scale=True)
 
         # Solve model with desired solver
-        if self.solver.lower() == 'exact':
+        if self.config.args.solver.lower() == 'exact':
             sampler = dimod.ExactSolver()
             sampleset = sampler.sample(bqm)
 
@@ -91,7 +86,7 @@ class RNAFold(object):
                     self.stems_used = stems_used
 
                 with open('dwave_log.log','a') as f:
-                    f.write('{},{},{},{}\n'.format(self.seq,combo,score,stems_used))
+                    f.write('{},{},{},{}\n'.format(self.nseq,combo,score,stems_used))
             print(self.best_score,self.stems_used,np.array(av).mean())
 
     def compute_dwave_sa(self,sweeps=10000):
@@ -113,14 +108,14 @@ class RNAFold(object):
         self._find_best_combo()
 
     def _gen_stems(self):
-        for i in range(self.n - 2 * self.min_stem_len - self.min_loop_len):
-            for j in range(i + 2 * self.min_stem_len + self.min_loop_len - 1,
+        for i in range(self.n - 2 * self.config.args.min_stem_len - self.config.args.min_loop_len):
+            for j in range(i + 2 * self.config.args.min_stem_len + self.config.args.min_loop_len - 1,
                            self.n):
                 for k in range(self.n):
                     if i + k >= self.n: break
-                    if (j-k) - (i+k) < self.min_loop_len: break
-                    if (self.seq[i + k], self.seq[j - k]) in self.interactions:
-                        if k >= self.min_stem_len - 1:  # len-1 because k starts from 0 (not 1)
+                    if (j-k) - (i+k) < self.config.args.min_loop_len: break
+                    if (self.nseq[i + k], self.nseq[j - k]) in self.interactions:
+                        if k >= self.config.args.min_stem_len - 1:  # len-1 because k starts from 0 (not 1)
                             self._pairs.append((i + 1, j + 1, k + 1))
                     else:
                         break
@@ -173,10 +168,10 @@ class RNAFold(object):
 
         # Compute all local fields and couplings
         h = {
-            ind: self.c_L * (ki**2 - 2 * mu * ki + mu**2) - self.c_B * ki**2
+            ind: self.config.args.coeff_stem_len * (ki**2 - 2 * mu * ki + mu**2) - self.config.args.coeff_max_bond * ki**2
             for ind, ki in enumerate(stems)
         }
-        J = {(ind1, ind2): -2 * self.c_B * ki1 * ki2
+        J = {(ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2
              for ind1, ki1 in enumerate(stems)
              for ind2, ki2 in enumerate(stems) if ind2 > ind1}
 
@@ -283,7 +278,7 @@ class RNAFold(object):
 
         # Output SS format
         ss_seq = []
-        for pos in range(len(self.seq)):
+        for pos in range(len(self.nseq)):
             if pos + 1 in lefts:
                 ss_seq.append('(')
             elif pos + 1 in rights:
@@ -292,7 +287,7 @@ class RNAFold(object):
                 ss_seq.append('.')
 
         self.ss_str = ''.join(ss_seq)
-        print(self.seq)
+        print(self.nseq)
         print(self.ss_str)
 
 
