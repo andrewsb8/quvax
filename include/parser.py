@@ -5,6 +5,10 @@ from Bio import SeqIO
 import warnings
 
 class Parser(object):
+    '''
+    Parses command line inputs using argparse
+
+    '''
     def __init__(self):
         self._parse()
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)

@@ -6,6 +6,10 @@ warnings.filterwarnings("ignore")
 
 
 class RNAFold(object):
+    '''
+    Calculate the folded energy of a given codon sequence
+
+    '''
     def __init__(self, nseq, config, skip_params=False):
         self.config = config
         self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq

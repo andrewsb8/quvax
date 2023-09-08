@@ -5,13 +5,17 @@ import tensorflow_probability as tfp
 from rna_folding.rna_fold import RNAFold
 
 class TfDiffEv(Optimizer):
+    '''
+    Tensorflow Differential Evolution optimizer for codon optimization
+
+    '''
     def __init__(self, config):
         self.config = config
         self._optimize()
 
     def _optimize(self):
         '''
-        Main execution. Run tensorflow optimizer for codon optimization. Objective
+        Main execution. Run tensorflow optimizer. Objective
         function computes RNA structure with D-Wave's SA algorithm.
 
         '''

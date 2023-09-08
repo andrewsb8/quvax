@@ -2,16 +2,16 @@ from qodon.codon_tables import code_map
 import random
 
 class GenerateInitialSequences(object):
+    '''
+    Initialize population with randomly assembled members.
+
+    '''
     def __init__(self, seq, ntrials):
         self.ntrials = ntrials
         self.code_map = code_map
         self.initial_sequences = self._get_initial_sequences(seq)
 
     def _get_initial_sequences(self, seq):
-        '''
-        Initialize population with randomly assembled members.
-
-        '''
         initial_members = []
         for i in range(self.ntrials):
             d_sequence = ""
