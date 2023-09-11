@@ -5,6 +5,9 @@ class Optimizer(ABC):
     Parent class for all codon optimizer classes
 
     """
+    def __init__(self, config):
+        self.config = config
+
     @abstractmethod
-    def __init__(self):
+    def _optimize(self):
         pass

@@ -1,5 +1,6 @@
 from qodon.codon_tables import code_map
 import random
+from typing import List
 
 class GenerateInitialSequences(object):
     '''
@@ -11,7 +12,7 @@ class GenerateInitialSequences(object):
         self.code_map = code_map
         self.initial_sequences = self._get_initial_sequences(seq)
 
-    def _get_initial_sequences(self, seq):
+    def _get_initial_sequences(self, seq) -> List:
         initial_members = []
         for i in range(self.ntrials):
             d_sequence = ""

@@ -10,7 +10,7 @@ class TfDiffEv(Optimizer):
 
     '''
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
         self._optimize()
 
     def _optimize(self):

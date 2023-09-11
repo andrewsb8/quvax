@@ -5,6 +5,15 @@ from Bio.Seq import Seq
 
 
 class GeneticAlgorithm(object):
+    """
+    A basic implementation of a genetic algorithm.
+
+    Parameters
+    ----------
+    seq : str
+        amino acid sequence
+
+    """
     def __init__(self, seq, lazy=False):
         self.seq = seq
         self.code_map = code_map
