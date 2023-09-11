@@ -39,7 +39,7 @@ class TfDiffEv(Optimizer):
         print(self.mfe)
         print(self.nseq)
 
-    def _objective(self, members): #without access to "parent" class variable values, need to copy QuDesign variables
+    def _objective(self, members):
         '''
         Objective function for TF to minimize
 
@@ -63,7 +63,7 @@ class TfDiffEv(Optimizer):
         Extract number of possible codons for each amino acid
 
         '''
-        return len(self.config.code_map[res]['codons']) #HERE
+        return len(self.config.code_map[res]['codons'])
 
     def _tf_fold(self, nseq):
         '''
@@ -71,7 +71,7 @@ class TfDiffEv(Optimizer):
 
         '''
         rna_ss = RNAFold(nseq, self.config)
-        results = rna_ss.compute_dwave_sa(sweeps=self.config.args.rna_iterations) #HERE
+        results = rna_ss.compute_dwave_sa(sweeps=self.config.args.rna_iterations)
         return results.first.energy
 
     def _convert_to_nseqs(self, members):
@@ -89,6 +89,6 @@ class TfDiffEv(Optimizer):
         # number of codons for the given position, so take the modulus. This is effectively a hashing
         # function. It's not mathematically rigorous, but it's good enough.
         # Finally, convert list of indices to the RNA sequence.
-        get_seq = lambda se: ''.join([self.config.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)]) #HERE
+        get_seq = lambda se: ''.join([self.config.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)])
         n_seqs = [get_seq(se) for se in members]
         return n_seqs
