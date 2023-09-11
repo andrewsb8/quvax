@@ -12,6 +12,8 @@ class RNAFold(object):
 
     Parameters
     ----------
+    config : Parser
+        Object containing user inputs
     nseq : list
         codon sequence for RNA folded energy calculation
     n : int

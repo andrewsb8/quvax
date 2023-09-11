@@ -1,8 +1,9 @@
 from src.qodon.optimizers.optimizer import Optimizer
+from src.rna_folding.rna_fold import RNAFold
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-from src.rna_folding.rna_fold import RNAFold
+from typing import List
 
 class TfDiffEv(Optimizer):
     '''
@@ -74,7 +75,7 @@ class TfDiffEv(Optimizer):
         results = rna_ss.compute_dwave_sa(sweeps=self.config.args.rna_iterations)
         return results.first.energy
 
-    def _convert_to_nseqs(self, members):
+    def _convert_to_nseqs(self, members) -> List:
         '''
         Continuous --> discrete transformation
 
