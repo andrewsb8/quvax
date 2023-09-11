@@ -10,8 +10,6 @@ class GeneticAlgorithm(object):
 
     Parameters
     ----------
-    seq : str
-        amino acid sequence
 
     """
     def __init__(self, seq, lazy=False):

@@ -1,5 +1,6 @@
 import numpy as np
 import os, itertools
+from include.parser import Parser
 import warnings
 warnings.filterwarnings("ignore")
 # Visualization tool: http://rna.tbi.univie.ac.at/forna/
@@ -7,10 +8,37 @@ warnings.filterwarnings("ignore")
 
 class RNAFold(object):
     '''
-    Calculate the folded energy of a given codon sequence
+    Calculate the folded energy of a given codon sequence.
+
+    Parameters
+    ----------
+    nseq : list
+        codon sequence for RNA folded energy calculation
+    n : int
+        length of codon sequence
+    stems : list
+        List of stems formed in folded RNA structure
+    h : dictionary
+        description
+    J : dictionary
+        description
+    interactions : list
+        List of base pair interaction types
+    pairs : list
+        List of base pair interactions in the sequence
+    twobody_penalty : int
+        Energetic penalty
+    pseudo_factor : float
+        description
+    failed : bool
+        description
+    best_combo : list
+        description
+    best_scroe : float
+        description
 
     '''
-    def __init__(self, nseq, config, skip_params=False):
+    def __init__(self, nseq, config: Parser, skip_params=False):
         self.config = config
         self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq
         self.n = len(self.nseq)

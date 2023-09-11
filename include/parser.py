@@ -6,7 +6,30 @@ import warnings
 
 class Parser(object):
     '''
-    Parses command line inputs using argparse
+    Parses command line inputs using argparse.
+
+    Parameters
+    ----------
+    input : string
+        Input file name
+    codon_iterations : int
+        Iterations for codon optimizations (outer loop)
+    rna_iterations : int
+        Iterations for RNA folded energy calcuations (inner loop)
+    n_trials : int
+        Number of initial codon sequences to generate
+    codon_optimizer : str
+        Designation of outer loop optimizer
+    min_stem_len : int
+        Minimum number of stems required in RNA folding
+    min_loop_len : int
+        Minimum number of loops required in RNA folding
+    solver : str
+        Designation of solver for RNA folding
+    coeff_max_bond : int
+        Coefficient for maximizing the number of bonds in RNA folding
+    coeff_stem_len : int
+        Coefficient for energetically penalizing short stems in RNA folding
 
     '''
     def __init__(self):

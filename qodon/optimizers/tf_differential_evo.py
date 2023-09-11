@@ -6,7 +6,7 @@ from rna_folding.rna_fold import RNAFold
 
 class TfDiffEv(Optimizer):
     '''
-    Tensorflow Differential Evolution optimizer for codon optimization
+    Tensorflow Differential Evolution optimizer for codon optimization.
 
     '''
     def __init__(self, config):
