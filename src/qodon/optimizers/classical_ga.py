@@ -1,10 +1,11 @@
+from src.qodon.optimizers.optimizer import Optimizer
 from qodon.src.codon_tables import code_map
 import random
 from operator import itemgetter
 from Bio.Seq import Seq
 
 
-class GeneticAlgorithm(object):
+class GeneticAlgorithm(Optimizer):
     """
     A basic implementation of a genetic algorithm.
 
@@ -12,23 +13,19 @@ class GeneticAlgorithm(object):
     ----------
 
     """
-    def __init__(self, seq, lazy=False):
+    def __init__(self, seq):
         self.seq = seq
         self.code_map = code_map
-        self.lazy = lazy
         self.elitelist = 10
         self.randomlist = 2
         self.ntrials = 10
         self.numgens = 100
-        if not self.lazy:
-            self.execute()
-        else:
-            self.population = self._get_initial_members()
+        self._optimize()
 
     def __repr__(self):
         return 'Classical genetic algorithm for codon optimization.'
 
-    def _execute(self):
+    def _optimize(self):
         '''
         Main method for codon optimization
 
