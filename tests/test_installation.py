@@ -1,8 +1,6 @@
 """
 Run from parent dir:
-$ python -m test.test_installation [-v INT]
-
-Need to run with -m because of weird import errors.
+$ python -m tests.test_installation [-v INT]
 
 """
 

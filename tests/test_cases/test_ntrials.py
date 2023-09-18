@@ -2,7 +2,7 @@ import sys
 sys.path.append('../../')
 import os
 import unittest
-from qodon.initiate_sequences import GenerateInitialSequences
+from src.qodon.initiate_sequences import GenerateInitialSequences
 
 class TestNTrials(unittest.TestCase):
     def test_lenNTrials_5(self):

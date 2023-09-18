@@ -30,13 +30,25 @@ $ conda install --file requirements.txt -c conda-forge
 
 *The latter currently does not work.
 
-Example execution
+### After Setup
+
+Example execution:
 
 ```
 $ python design.py -i examples/spike_trim.fasta
 ````
 
-For help: ```$ python design.py -h```
+For help:
+
+```$ python design.py -h```
+
+Testing:
+
+```python -m tests.test_installation```
+
+or
+
+```python -m test.test_cases.[test file name without .py]```
 
 ### List of Dependencies in requirements.txt
 
