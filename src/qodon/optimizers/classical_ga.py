@@ -14,10 +14,12 @@ class GeneticAlgorithm(Optimizer):
 
     """
     def __init__(self, config):
-        self.config = config
-        self.code_map = code_map
+        super().__init__(config)
+
+        #parameters are used in _propagate_generations() - should they be added to yaml parameters? removed?
         self.elitelist = 10
         self.randomlist = 2
+
         self._optimize()
 
     def __repr__(self):
@@ -43,8 +45,8 @@ class GeneticAlgorithm(Optimizer):
         # Initialize population
         n_seqs = self.config.initial_sequences
 
-        # Simulate evolution for 'numgens' trials
-        for i in range(self.config.codon_iterations):
+        # Simulate evolution for number of codon_iterations specified by user
+        for i in range(self.config.args.codon_iterations):
 
             # Sort sequences in ascending order by score
             ranked_members = sorted(n_seqs, key=itemgetter(0))
@@ -63,8 +65,8 @@ class GeneticAlgorithm(Optimizer):
             n_seqs += self._procreate(eligible_members)
 
         # Record fittest member of population after simulating evo
-        fittest_member = sorted(population, key=itemgetter(0))[0]
-        self.optimal_codon_indices = fittest_member[1]
+        fittest_member = sorted(n_seqs, key=itemgetter(0))[0]
+        self.optimal_codon_indices = fittest_member[1] # why is this not zero?
 
     def _procreate(self, eligible_members):
         '''
@@ -74,7 +76,7 @@ class GeneticAlgorithm(Optimizer):
         '''
 
         new_members = []
-        for i_trial in range(self.config.n_trials):
+        for i_trial in range(len(eligible_members)):
             lucky_pair = random.sample(eligible_members, 2)
             new_members.append(
                 self._mutate_dna(self._mix_genes(lucky_pair[0][1],
@@ -97,6 +99,7 @@ class GeneticAlgorithm(Optimizer):
                 new_genes.append(genes_xy[i])
         return new_genes
 
+    #mutate_chance should be defined elsewhere, probably yaml
     def _mutate_dna(self, old_genes: list, mutation_chance=0.01):
         '''
         Randomly introduce mutations
@@ -108,26 +111,27 @@ class GeneticAlgorithm(Optimizer):
         for i, res in enumerate(self.seq):
             if mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
-                for j, chance in enumerate(self.code_map[res]['probs']):
+                for j, chance in enumerate(self.config.code_map[res]['probs']):
                     if chance > random.uniform(0.0, 1.0):
                         passing_indices.append(j)
                 chosen_index = passing_indices[0]
             else:
                 chosen_index = old_genes[i]
             new_indices.append(chosen_index)
-            total_log_score += self.code_map[res]['log_scores'][chosen_index]
-            new_d_sequence += self.code_map[res]['codons'][chosen_index]
+            total_log_score += self.config.code_map[res]['log_scores'][chosen_index]
+            new_d_sequence += self.config.code_map[res]['codons'][chosen_index]
         #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
         return [0, new_indices]
 
+    #should we add the two methods to Optimizer? Should be good to in general have a check like this
     def _reverse_translate(self):
         '''
         Convert to nucleotide sequence
 
         '''
-        self.n_seq = ''.join([
-            self.code_map[res]['codons'][self.optimal_codon_indices[i]]
-            for i, res in enumerate(self.seq)
+        self.final_codons = ''.join([
+            self.config.code_map[res]['codons'][self.optimal_codon_indices[i]]
+            for i, res in enumerate(self.config.seq)
         ])
 
     def _verify_dna(self):
@@ -135,6 +139,6 @@ class GeneticAlgorithm(Optimizer):
         Translate nucleotide sequence to make sure it matches input
 
         '''
-        if self.seq != str(Seq(self.n_seq).transcribe().translate()):
+        if self.config.seq != str(Seq(self.final_codons).transcribe().translate()):
             raise ValueError(
                 "Error: Codon sequence did not translate properly!")
