@@ -1,8 +1,8 @@
 from src.qodon.optimizers.optimizer import Optimizer
-from qodon.src.codon_tables import code_map
+from src.qodon.codon_tables import code_map
 import random
 from operator import itemgetter
-from Bio.Seq import Seq
+import numpy as np
 
 
 class GeneticAlgorithm(Optimizer):
@@ -47,26 +47,14 @@ class GeneticAlgorithm(Optimizer):
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
-
-            # Sort sequences in ascending order by score
-            ranked_members = sorted(n_seqs, key=itemgetter(0))
-
-            # Isolate subset of sequences with best score
-            fittest_members = ranked_members[:self.elitelist]
-
-            # Randomly sample the remaining members
-            lucky_members = random.sample(ranked_members[self.elitelist:],
-                                                        self.randomlist)
-
-            # Members eligible for mutation are 'best' and 'lucky'
-            eligible_members = fittest_members + lucky_members
-
             # Introduce mutations
-            n_seqs += self._procreate(eligible_members)
+            n_seqs += self._procreate(n_seqs)
+            # Use the imported scoring function to score all sequences.
+            scores = [self._tf_fold(s) for s in n_seqs]
 
         # Record fittest member of population after simulating evo
-        fittest_member = sorted(n_seqs, key=itemgetter(0))[0]
-        self.optimal_codon_indices = fittest_member[1] # why is this not zero?
+        self.mfe = np.min(scores)
+        self.final_codons = n_seqs[np.argmin(scores)] # why is this not zero?
 
     def _procreate(self, eligible_members):
         '''
@@ -108,7 +96,7 @@ class GeneticAlgorithm(Optimizer):
         new_d_sequence = ""
         new_indices = []
         total_log_score = 0.0
-        for i, res in enumerate(self.seq):
+        for i, res in enumerate(self.config.seq):
             if mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
                 for j, chance in enumerate(self.config.code_map[res]['probs']):
@@ -122,23 +110,3 @@ class GeneticAlgorithm(Optimizer):
             new_d_sequence += self.config.code_map[res]['codons'][chosen_index]
         #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
         return [0, new_indices]
-
-    #should we add the two methods to Optimizer? Should be good to in general have a check like this
-    def _reverse_translate(self):
-        '''
-        Convert to nucleotide sequence
-
-        '''
-        self.final_codons = ''.join([
-            self.config.code_map[res]['codons'][self.optimal_codon_indices[i]]
-            for i, res in enumerate(self.config.seq)
-        ])
-
-    def _verify_dna(self):
-        '''
-        Translate nucleotide sequence to make sure it matches input
-
-        '''
-        if self.config.seq != str(Seq(self.final_codons).transcribe().translate()):
-            raise ValueError(
-                "Error: Codon sequence did not translate properly!")

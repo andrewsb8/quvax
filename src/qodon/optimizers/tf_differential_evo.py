@@ -1,5 +1,4 @@
 from src.qodon.optimizers.optimizer import Optimizer
-from src.rna_folding.rna_fold import RNAFold
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -13,6 +12,8 @@ class TfDiffEv(Optimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
+        #self._reverse_translate()
+        self._verify_dna()
 
     def _optimize(self):
         '''
@@ -34,11 +35,11 @@ class TfDiffEv(Optimizer):
         )
 
         # Assign results as class attributes
-        self.nseq = self._convert_to_nseqs(optim_results.final_population)[np.argmin(optim_results.final_objective_values)]
+        self.final_codons = self._convert_to_nseqs(optim_results.final_population)[np.argmin(optim_results.final_objective_values)]
         self.mfe = np.min(optim_results.final_objective_values)
 
         print(self.mfe)
-        print(self.nseq)
+        print(self.final_codons)
 
     def _objective(self, members):
         '''
@@ -65,15 +66,6 @@ class TfDiffEv(Optimizer):
 
         '''
         return len(self.config.code_map[res]['codons'])
-
-    def _tf_fold(self, nseq):
-        '''
-        Compute Minimum Free Energy (MFE) of RNA fold.
-
-        '''
-        rna_ss = RNAFold(nseq, self.config)
-        results = rna_ss.compute_dwave_sa(sweeps=self.config.args.rna_iterations)
-        return results.first.energy
 
     def _convert_to_nseqs(self, members) -> List:
         '''

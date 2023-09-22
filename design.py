@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     if config.args.codon_optimizer == "TFDE":
         TfDiffEv(config)
-    if config.args.codon_optimizer = "GA":
+    elif config.args.codon_optimizer == "GA":
         GeneticAlgorithm(config)
     else:
         print("Error here.")
