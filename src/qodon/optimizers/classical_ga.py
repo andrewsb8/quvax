@@ -13,13 +13,11 @@ class GeneticAlgorithm(Optimizer):
     ----------
 
     """
-    def __init__(self, seq):
-        self.seq = seq
+    def __init__(self, config):
+        self.config = config
         self.code_map = code_map
         self.elitelist = 10
         self.randomlist = 2
-        self.ntrials = 10
-        self.numgens = 100
         self._optimize()
 
     def __repr__(self):
@@ -43,13 +41,13 @@ class GeneticAlgorithm(Optimizer):
     def _propagate_generations(self):
 
         # Initialize population
-        population = self._get_initial_members()
+        n_seqs = self.config.initial_sequences
 
         # Simulate evolution for 'numgens' trials
-        for i in range(self.numgens):
+        for i in range(self.config.codon_iterations):
 
             # Sort sequences in ascending order by score
-            ranked_members = sorted(population, key=itemgetter(0))
+            ranked_members = sorted(n_seqs, key=itemgetter(0))
 
             # Isolate subset of sequences with best score
             fittest_members = ranked_members[:self.elitelist]
@@ -62,7 +60,7 @@ class GeneticAlgorithm(Optimizer):
             eligible_members = fittest_members + lucky_members
 
             # Introduce mutations
-            population += self._procreate(eligible_members)
+            n_seqs += self._procreate(eligible_members)
 
         # Record fittest member of population after simulating evo
         fittest_member = sorted(population, key=itemgetter(0))[0]
@@ -76,7 +74,7 @@ class GeneticAlgorithm(Optimizer):
         '''
 
         new_members = []
-        for i_trial in range(self.ntrials):
+        for i_trial in range(self.config.n_trials):
             lucky_pair = random.sample(eligible_members, 2)
             new_members.append(
                 self._mutate_dna(self._mix_genes(lucky_pair[0][1],
