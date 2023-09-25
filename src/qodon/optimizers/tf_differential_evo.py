@@ -15,6 +15,9 @@ class TfDiffEv(Optimizer):
         #self._reverse_translate()
         self._verify_dna()
 
+        print(self.mfe)
+        print(self.final_codons)
+
     def _optimize(self):
         '''
         Main execution. Run tensorflow optimizer. Objective
@@ -37,9 +40,6 @@ class TfDiffEv(Optimizer):
         # Assign results as class attributes
         self.final_codons = self._convert_to_nseqs(optim_results.final_population)[np.argmin(optim_results.final_objective_values)]
         self.mfe = np.min(optim_results.final_objective_values)
-
-        print(self.mfe)
-        print(self.final_codons)
 
     def _objective(self, members):
         '''

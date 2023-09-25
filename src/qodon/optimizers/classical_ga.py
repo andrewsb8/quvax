@@ -54,7 +54,7 @@ class GeneticAlgorithm(Optimizer):
 
         # Record fittest member of population after simulating evo
         self.mfe = np.min(scores)
-        self.final_codons = n_seqs[np.argmin(scores)] # why is this not zero?
+        self.final_codons = n_seqs[np.argmin(scores)]
 
     def _procreate(self, eligible_members):
         '''
