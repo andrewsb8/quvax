@@ -11,7 +11,7 @@ class TestInputSeq(unittest.TestCase):
     """
     def test_codon_iterations(self):
         """
-        Test if _validate() will throw error for a numeric input string
+        Test if _validate() will throw error when -c is less than 1
 
         """
         testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-c", "0"]
@@ -21,7 +21,7 @@ class TestInputSeq(unittest.TestCase):
 
     def test_rna_iterations(self):
         """
-        Test if _validate() will throw error for a numeric input string
+        Test if _validate() will throw error when -r is less than 1
 
         """
         testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-r", "0"]
@@ -31,7 +31,7 @@ class TestInputSeq(unittest.TestCase):
 
     def test_ntrials(self):
         """
-        Test if _validate() will throw error for a numeric input string
+        Test if _validate() will throw error when -n is less than 1
 
         """
         testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-n", "0"]
