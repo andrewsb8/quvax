@@ -82,17 +82,11 @@ class Parser(object):
 
         aas = "ACDEFGHIKLMNPQRSTVWY"
 
-        #added sys.exit because an error will throw in GenerateSequences() anyway.
-        #no reason to allow the program to continue
         if any(_ not in aas for _ in self.seq):
             print('Not a valid input sequence!')
             sys.exit(1)
 
-        #also unsure if this will ever execute because U would be caught in the above error check
-        if set(self.seq).issubset(set('GCAU')):
-            warnings.warn("Input protein sequence looks like an RNA sequence!")
-
-        if set(self.seq).issubset(set('GCAT')):
+        if set(self.seq).issubset(set('GCATU')):
             warnings.warn("Input protein sequence looks like an DNA sequence!")
 
         if self.args.codon_iterations < 1:
