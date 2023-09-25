@@ -15,11 +15,11 @@ class TestNTrials(unittest.TestCase):
         self.codons = GenerateInitialSequences(self.seq, self.ntrials)
         self.assertEqual(len(self.codons.initial_sequences), 5)
 
-    def test_lenNTrials_10(self):
+    def test_lenNTrials_str(self):
         self.seq = str(SeqIO.read('tests/test_sequences/GGG.fasta','fasta').seq)
-        self.ntrials = 10
-        self.codons = GenerateInitialSequences(self.seq, self.ntrials)
-        self.assertEqual(len(self.codons.initial_sequences), 10)
+        self.ntrials = "2"
+        with self.assertRaises(TypeError):
+            self.codons = GenerateInitialSequences(self.seq, self.ntrials)
 
 if __name__ == '__main__':
     unittest.main()
