@@ -1,1 +1,0 @@
-**Classes and functions for representing RNA molecules and calculating RNA metrics**
