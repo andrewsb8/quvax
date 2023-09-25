@@ -12,11 +12,6 @@ class TfDiffEv(Optimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
-        self.final_codons = self._reverse_translate(self.final_population)
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
 
     def _optimize(self):
         '''
@@ -42,6 +37,12 @@ class TfDiffEv(Optimizer):
         self.final_energies = optim_results.final_objective_values
         self.mfe = np.min(optim_results.final_objective_values)
         self.mfe_index = np.argmin(optim_results.final_objective_values)
+
+        self.final_codons = self._reverse_translate(self.final_population)
+        self._verify_dna(self.final_codons[self.mfe_index])
+
+        print(self.mfe)
+        print(self.final_codons[self.mfe_index])
 
     def _objective(self, members):
         '''

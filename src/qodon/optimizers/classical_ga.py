@@ -15,11 +15,6 @@ class GeneticAlgorithm(Optimizer):
     """
     def __init__(self, config):
         super().__init__(config)
-
-        #parameters are used in _propagate_generations() - should they be added to yaml parameters? removed?
-        self.elitelist = 10
-        self.randomlist = 2
-
         self._optimize()
 
     def __repr__(self):
@@ -35,10 +30,13 @@ class GeneticAlgorithm(Optimizer):
         self._propagate_generations()
 
         # Recover nucleotide sequence
-        self._reverse_translate()
+        self.final_codons = self._reverse_translate(self.final_population)
 
         # Make sure fittest member translates to correct aa sequence
-        self._verify_dna()
+        self._verify_dna(self.final_codons[self.mfe_index])
+
+        print(self.mfe)
+        print(self.final_codons[self.mfe_index])
 
     def _propagate_generations(self):
 
@@ -49,12 +47,16 @@ class GeneticAlgorithm(Optimizer):
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
             n_seqs += self._procreate(n_seqs)
+            # Translate from indices to codons for energy calculation
+            members = self._reverse_translate(n_seqs)
             # Use the imported scoring function to score all sequences.
-            #self.scores = [self._tf_fold(s) for s in n_seqs]
+            scores = [self._tf_fold(s) for s in members]
 
         # Record fittest member of population after simulating evo
-        self.mfe = np.min(self.scores)
-        self.final_codons = n_seqs
+        self.final_population = n_seqs
+        self.final_energies = scores
+        self.mfe = np.min(scores)
+        self.mfe_index = np.argmin(scores)
 
     def _procreate(self, eligible_members):
         '''
