@@ -1,5 +1,4 @@
 import sys
-sys.path.append('../../')
 import os
 import unittest
 from src.qodon.initiate_sequences import GenerateInitialSequences

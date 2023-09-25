@@ -1,5 +1,4 @@
 import sys
-sys.path.append('../../')
 import os
 import unittest
 from unittest.mock import patch
@@ -16,9 +15,9 @@ class TestInputSeq(unittest.TestCase):
         Test if input sequence is a string
 
         """
-        with patch("sys.argv", ["--input", "tests/test_sequences/integer_sequence.fasta"]):
-            self.parser = Parser()
-            self.assertRaises(TypeError, parser._validate(self.parser))
+        self.parser = Parser()
+        self.parser.seq = str(SeqIO.read('tests/test_sequences/integer_sequence.fasta','fasta').seq)
+        self.assertRaises(TypeError, parser._validate(self.parser))
 
 if __name__ == '__main__':
     unittest.main()
