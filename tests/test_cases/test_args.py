@@ -14,7 +14,7 @@ class TestInputSeq(unittest.TestCase):
         Test if _validate() will throw error when -c is less than 1
 
         """
-        testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-c", "0"]
+        testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-c", "0"]
         with patch.object(sys, 'argv', testargs):
             with self.assertRaises(ValueError):
                 Parser()
@@ -24,7 +24,7 @@ class TestInputSeq(unittest.TestCase):
         Test if _validate() will throw error when -r is less than 1
 
         """
-        testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-r", "0"]
+        testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-r", "0"]
         with patch.object(sys, 'argv', testargs):
             with self.assertRaises(ValueError):
                 Parser()
@@ -34,7 +34,7 @@ class TestInputSeq(unittest.TestCase):
         Test if _validate() will throw error when -n is less than 1
 
         """
-        testargs = ["design.py", "-i", "tests/test_sequences/GGG.fasta", "-n", "0"]
+        testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "0"]
         with patch.object(sys, 'argv', testargs):
             with self.assertRaises(ValueError):
                 Parser()
