@@ -15,9 +15,10 @@ class TestInputSeq(unittest.TestCase):
         Test if input sequence is a string
 
         """
-        self.parser = Parser()
-        self.parser.seq = str(SeqIO.read('tests/test_sequences/integer_sequence.fasta','fasta').seq)
-        self.assertRaises(TypeError, parser._validate(self.parser))
+        testargs = ["design.py", "-i", "tests/test_sequences/integer_sequence.fasta"]
+        with patch.object(sys, 'argv', testargs):
+            with self.assertRaises(TypeError):
+                Parser()
 
 if __name__ == '__main__':
     unittest.main()

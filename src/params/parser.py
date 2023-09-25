@@ -68,6 +68,15 @@ class Parser(object):
 
         '''
 
+        #check that input amino acid sequence is a valid string
+        if self.seq.isnumeric():
+            raise TypeError('''
+            Input protein sequence must be a string! User provided
+            input with type {}
+
+            '''.format(type(self.seq)))
+
+        #I can't think of a time where this will execute
         if not isinstance(self.seq,str):
 
             raise TypeError('''
