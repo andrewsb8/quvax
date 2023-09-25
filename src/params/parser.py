@@ -2,6 +2,7 @@ from src.qodon.initiate_sequences import GenerateInitialSequences
 import argparse
 from Bio.Seq import Seq
 from Bio import SeqIO
+import sys
 import warnings
 
 class Parser(object):
@@ -68,14 +69,6 @@ class Parser(object):
 
         '''
 
-        #check that input amino acid sequence is a valid string
-        if self.seq.isnumeric():
-            raise TypeError('''
-            Input protein sequence must be a string! User provided
-            input with type {}
-
-            '''.format(type(self.seq)))
-
         #I can't think of a time where this will execute
         if not isinstance(self.seq,str):
 
@@ -87,10 +80,11 @@ class Parser(object):
 
         self.seq = self.seq.upper()
 
-        aas = 'ACDEFGHIKLMNPQRSTVWY'
+        aas = "ACDEFGHIKLMNPQRSTVWY"
 
         if any(_ not in aas for _ in self.seq):
             print('Not a valid input sequence!')
+            sys.exit(1)
 
         if set(self.seq).issubset(set('GCAU')):
             warnings.warn("Input protein sequence looks like an RNA sequence!")
