@@ -20,7 +20,7 @@ class TfDiffEv(Optimizer):
 
         '''
 
-        self.initial_members = tf.convert_to_tensor(([_[1] for _ in self.config.initial_sequences]),np.float32)
+        self.initial_members = tf.convert_to_tensor(([_ for _ in self.config.initial_sequences]),np.float32)
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.

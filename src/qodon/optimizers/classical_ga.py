@@ -69,8 +69,8 @@ class GeneticAlgorithm(Optimizer):
         for i_trial in range(len(eligible_members)):
             lucky_pair = random.sample(eligible_members, 2)
             new_members.append(
-                self._mutate_dna(self._mix_genes(lucky_pair[0][1],
-                                                 lucky_pair[1][1]),
+                self._mutate_dna(self._mix_genes(lucky_pair[0],
+                                                 lucky_pair[1]),
                                  mutation_chance=0.05))
         return new_members
 
@@ -110,5 +110,4 @@ class GeneticAlgorithm(Optimizer):
             new_indices.append(chosen_index)
             total_log_score += self.config.code_map[res]['log_scores'][chosen_index]
             new_d_sequence += self.config.code_map[res]['codons'][chosen_index]
-        #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
-        return [0, new_indices]
+        return new_indices
