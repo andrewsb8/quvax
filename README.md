@@ -44,9 +44,9 @@ For help:
 
 Testing:
 
-```$ pytest``` or ```$ python -m tests.test_installation```
+```$ coverage run -m pytest``` or ```$ python -m tests.test_installation [-v]```
 
-or
+For running a specific set of tests:
 
 ```python -m test.test_cases.[test file name without .py]```
 
@@ -60,6 +60,7 @@ flake8==6.1.0
 pandas==2.0.3
 pip==23.2.1
 pipdeptree==2.12.0
+pytest-cov==4.1.0
 python-codon-tables==0.1.12
 tensorflow==2.13.0
 tensorflow-probability==0.21.0
