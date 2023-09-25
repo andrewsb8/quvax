@@ -3,6 +3,7 @@ import os
 import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
+from src.params.parser import InvalidSequenceError
 
 class TestInputSeq(unittest.TestCase):
     """
@@ -16,7 +17,7 @@ class TestInputSeq(unittest.TestCase):
         """
         testargs = ["design.py", "-i", "tests/test_sequences/integer_sequence.fasta"]
         with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(InvalidSequenceError):
                 Parser()
 
     def test_input_seq_partial_str(self):
@@ -26,7 +27,7 @@ class TestInputSeq(unittest.TestCase):
         """
         testargs = ["design.py", "-i", "tests/test_sequences/some_integers.fasta"]
         with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(InvalidSequenceError):
                 Parser()
 
     def test_input_seq_wrong_letter(self):
@@ -37,7 +38,7 @@ class TestInputSeq(unittest.TestCase):
         """
         testargs = ["design.py", "-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
         with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(InvalidSequenceError):
                 Parser()
 
 if __name__ == '__main__':

@@ -5,6 +5,14 @@ from Bio import SeqIO
 import sys
 import warnings
 
+
+class InvalidSequenceError(Exception):
+    """
+    Raise this exception when input amino acid sequence is invalid
+
+    """
+
+
 class Parser(object):
     '''
     Parses command line inputs using argparse.
@@ -69,22 +77,12 @@ class Parser(object):
 
         '''
 
-        #I can't think of a time where this will execute
-        if not isinstance(self.seq,str):
-
-            raise TypeError('''
-            Input protein sequence must be a string! User provided
-            input with type {}
-
-            '''.format(type(self.seq)))
-
         self.seq = self.seq.upper()
 
         aas = "ACDEFGHIKLMNPQRSTVWY"
 
         if any(_ not in aas for _ in self.seq):
-            print('Not a valid input sequence!')
-            sys.exit(1)
+            raise InvalidSequenceError("At least one character in the input sequence is invalid")
 
         if set(self.seq).issubset(set('GCATU')):
             warnings.warn("Input protein sequence looks like an DNA sequence!")

@@ -44,7 +44,7 @@ For help:
 
 Testing:
 
-```python -m tests.test_installation```
+```$ pytest``` or ```$ python -m tests.test_installation```
 
 or
 
