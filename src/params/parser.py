@@ -2,7 +2,16 @@ from src.qodon.initiate_sequences import GenerateInitialSequences
 import argparse
 from Bio.Seq import Seq
 from Bio import SeqIO
+import sys
 import warnings
+
+
+class InvalidSequenceError(Exception):
+    """
+    Raise this exception when input amino acid sequence is invalid
+
+    """
+
 
 class Parser(object):
     '''
@@ -68,25 +77,14 @@ class Parser(object):
 
         '''
 
-        if not isinstance(self.seq,str):
-
-            raise TypeError('''
-            Input protein sequence must be a string! User provided
-            input with type {}
-
-            '''.format(type(self.seq)))
-
         self.seq = self.seq.upper()
 
-        aas = 'ACDEFGHIKLMNPQRSTVWY'
+        aas = "ACDEFGHIKLMNPQRSTVWY"
 
         if any(_ not in aas for _ in self.seq):
-            print('Not a valid input sequence!')
+            raise InvalidSequenceError("At least one character in the input sequence is invalid")
 
-        if set(self.seq).issubset(set('GCAU')):
-            warnings.warn("Input protein sequence looks like an RNA sequence!")
-
-        if set(self.seq).issubset(set('GCAT')):
+        if set(self.seq).issubset(set('GCATU')):
             warnings.warn("Input protein sequence looks like an DNA sequence!")
 
         if self.args.codon_iterations < 1:
