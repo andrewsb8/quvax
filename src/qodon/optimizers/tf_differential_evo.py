@@ -12,11 +12,11 @@ class TfDiffEv(Optimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
-        #self._reverse_translate()
-        self._verify_dna()
+        self.final_codons = self._reverse_translate(self.final_population)
+        self._verify_dna(self.final_codons[self.mfe_index])
 
         print(self.mfe)
-        print(self.final_codons)
+        print(self.final_codons[self.mfe_index])
 
     def _optimize(self):
         '''
@@ -38,8 +38,10 @@ class TfDiffEv(Optimizer):
         )
 
         # Assign results as class attributes
-        self.final_codons = self._convert_to_nseqs(optim_results.final_population)[np.argmin(optim_results.final_objective_values)]
+        self.final_population = self._convert_to_ints(optim_results.final_population)
+        self.final_energies = optim_results.final_objective_values
         self.mfe = np.min(optim_results.final_objective_values)
+        self.mfe_index = np.argmin(optim_results.final_objective_values)
 
     def _objective(self, members):
         '''
@@ -52,7 +54,8 @@ class TfDiffEv(Optimizer):
         '''
 
         # Map continuous valued tensor to RNA sequence
-        n_seqs = self._convert_to_nseqs(members)
+        n_seqs = self._convert_to_ints(members)
+        n_seqs = self._reverse_translate(n_seqs)
 
         # Use the imported scoring function to score all sequences.
         scores = [self._tf_fold(s) for s in n_seqs]
@@ -60,14 +63,7 @@ class TfDiffEv(Optimizer):
         # Return TF object
         return tf.cast(scores, np.float32)
 
-    def _get_nc(self, res):
-        '''
-        Extract number of possible codons for each amino acid
-
-        '''
-        return len(self.config.code_map[res]['codons'])
-
-    def _convert_to_nseqs(self, members) -> List:
+    def _convert_to_ints(self, members) -> List:
         '''
         Continuous --> discrete transformation
 
@@ -78,10 +74,4 @@ class TfDiffEv(Optimizer):
         # So let's cheat. Whatever values are assigned, make them ints and take the absolute value.
         members = np.absolute(np.array(members).astype(int))
 
-        # Now we want to do something with the values. It's possible that some values exceed the
-        # number of codons for the given position, so take the modulus. This is effectively a hashing
-        # function. It's not mathematically rigorous, but it's good enough.
-        # Finally, convert list of indices to the RNA sequence.
-        get_seq = lambda se: ''.join([self.config.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)])
-        n_seqs = [get_seq(se) for se in members]
-        return n_seqs
+        return members

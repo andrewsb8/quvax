@@ -50,11 +50,11 @@ class GeneticAlgorithm(Optimizer):
             # Introduce mutations
             n_seqs += self._procreate(n_seqs)
             # Use the imported scoring function to score all sequences.
-            scores = [self._tf_fold(s) for s in n_seqs]
+            #self.scores = [self._tf_fold(s) for s in n_seqs]
 
         # Record fittest member of population after simulating evo
-        self.mfe = np.min(scores)
-        self.final_codons = n_seqs[np.argmin(scores)]
+        self.mfe = np.min(self.scores)
+        self.final_codons = n_seqs
 
     def _procreate(self, eligible_members):
         '''
