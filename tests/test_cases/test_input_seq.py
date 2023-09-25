@@ -3,7 +3,6 @@ import os
 import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
-from Bio import SeqIO
 
 class TestInputSeq(unittest.TestCase):
     """
