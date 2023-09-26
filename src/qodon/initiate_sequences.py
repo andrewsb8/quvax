@@ -28,6 +28,6 @@ class GenerateInitialSequences(object):
                 chosen_indices.append(chosen_index)
                 d_sequence += code_map[res]['codons'][chosen_index]
             #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
-            member = [0, chosen_indices]
+            member = chosen_indices
             initial_members.append(member)
         return initial_members

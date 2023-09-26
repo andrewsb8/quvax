@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
 from src.params.parser import InvalidSequenceError
+import warnings
 
 class TestInputSeq(unittest.TestCase):
     """
@@ -39,6 +40,17 @@ class TestInputSeq(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
         with patch.object(sys, 'argv', testargs):
             with self.assertRaises(InvalidSequenceError):
+                Parser()
+
+    def test_input_seq_warning(self):
+        """
+        Test if _validate() will produce a warning when it detects a sequence
+        which looks like DNA instead of amino acids
+
+        """
+        testargs = ["design.py", "-i", "tests/test_sequences/GAG.fasta"]
+        with patch.object(sys, 'argv', testargs):
+            with self.assertWarns(Warning):
                 Parser()
 
 if __name__ == '__main__':
