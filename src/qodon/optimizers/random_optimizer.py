@@ -34,9 +34,9 @@ class RandomOptimizer(Optimizer):
         self.mfe = np.min(scores)
         self.mfe_index = np.argmin(scores)
 
-        self.final_codons = self._reverse_translate(self.config.initial_sequences[self.mfe_index])
+        self.final_codons = self._reverse_translate(self.config.initial_sequences)
 
-        self._verify_dna(self.final_codons)
+        self._verify_dna(self.final_codons[self.mfe_index])
 
         print(self.mfe)
-        print(self.final_codons)
+        print(self.final_codons[self.mfe_index])
