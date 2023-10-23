@@ -4,11 +4,12 @@ from src.qodon.codon_tables import code_map
 import random
 from operator import itemgetter
 import numpy as np
+import math
 
 
 class RandomOptimizer(Optimizer):
     """
-    A basic implementation of a genetic algorithm.
+    A basic implementation of a random optimizer for a codon sequence.
 
     Parameters
     ----------
@@ -24,7 +25,8 @@ class RandomOptimizer(Optimizer):
 
         '''
 
-        extra_sequences = GenerateInitialSequences(self.config.seq, self.config.args.codon_iterations - self.config.args.n_trials).initial_sequences
+        num_extra_sequences = abs(self.config.args.codon_iterations - self.config.args.n_trials)
+        extra_sequences = GenerateInitialSequences(self.config.seq, num_extra_sequences).initial_sequences
         for sequence in extra_sequences:
             self.config.initial_sequences.append(sequence)
 

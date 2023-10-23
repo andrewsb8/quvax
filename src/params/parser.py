@@ -104,8 +104,3 @@ class Parser(object):
             --n_trials must be at least 1!
 
             ''')
-
-        if (self.args.codon_optimizer == "RAND") and (self.args.codon_iterations - self.args.n_trials < 0):
-            raise ValueError('''
-            Random optimizer requires that [--codon_iterations] - [--ntrials] must be >= 0.
-            ''')
