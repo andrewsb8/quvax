@@ -62,7 +62,7 @@ class Parser(object):
         self.parser.add_argument("-c", "--codon_iterations", default=100, type=int, help="Number of codon optimization (outer loop) iterations")
         self.parser.add_argument("-r", "--rna_iterations", default=10000, type=int, help="Number of RNA folding (inner loop) iterations")
         self.parser.add_argument("-n", "--n_trials", default=10, type=int, help="Number of initial sequences generated")
-        self.parser.add_argument("-co", "--codon_optimizer", default="TFDE", type=str, help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE)")
+        self.parser.add_argument("-co", "--codon_optimizer", default="TFDE", type=str, help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE), Random Optimizer (RAND)")
         self.parser.add_argument("-ms", "--min_stem_len", default=3, type=int, help="Minimum length of a RNA stem")
         self.parser.add_argument("-ml", "--min_loop_len", default=3, type=int, help="Minimum length of a RNA loop")
         self.parser.add_argument("-s", "--solver", default='hybrid', type=str, help="Choice of solver for RNA folding. Options: hybrid")

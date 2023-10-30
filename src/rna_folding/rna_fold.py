@@ -40,7 +40,7 @@ class RNAFold(object):
         description
 
     '''
-    def __init__(self, nseq, config: Parser, skip_params=False):
+    def __init__(self, nseq, config: Parser):
         self.config = config
         self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq
         self.n = len(self.nseq)
@@ -54,7 +54,6 @@ class RNAFold(object):
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.failed = False
-        self.skip_params = skip_params
         self.execute()
 
         self.best_combo = []
@@ -62,7 +61,7 @@ class RNAFold(object):
 
     def execute(self):
         self._gen_stems()
-        if not self.skip_params:
+        if len(self.stems) != 0:
             self._compute_h_and_J()
 
     def compute_dwave(self):
