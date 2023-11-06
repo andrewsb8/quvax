@@ -64,64 +64,6 @@ class RNAFold(object):
         if len(self.stems) != 0:
             self._compute_h_and_J()
 
-    def compute_dwave(self):
-        if len(self.stems) <= 1:
-            self.failed = True
-            return
-
-        # Import core D-Wave library and construct model
-        import dimod
-        bqm = dimod.BinaryQuadraticModel(self.h,
-                                         self.J,
-                                         0.0,
-                                         dimod.BINARY,
-                                         auto_scale=True)
-
-        # Solve model with desired solver
-        if self.config.args.solver.lower() == 'exact':
-            sampler = dimod.ExactSolver()
-            sampleset = sampler.sample(bqm)
-
-
-        else:
-            from dwave.system import EmbeddingComposite, DWaveSampler
-            its = 0; bad_it = 0; av = []
-            while its < 10:
-                sampler = EmbeddingComposite(DWaveSampler())
-                sampleset = sampler.sample(bqm,
-                                        num_reads=5000,
-                                        annealing_time=20,
-                                        chain_strength=0.5,
-                                        return_embedding=True)
-                self.dwave_result = sampleset
-
-                print('ACTUAL NUMBER OF QUBITS:', len(set([item for sublist in sampleset.info['embedding_context']['embedding'].values() for item in sublist])))
-                print('ACTUAL BEST SCORE:',min([_[1] for _ in sampleset.record]))
-                print()
-
-                # Sometimes D-Wave doesn't return valid solutions. It's a pain.
-                ind = np.argmin([_[1] for _ in sampleset.record])
-                combo = list(np.where(sampleset.record[ind][0] == 1)[0])
-                score = sampleset.record[ind][1]
-                av.append(score)
-                stems_used = [self.stems[_stem] for _stem in combo]
-                if score < 0:
-                    its += 1
-                else:
-                    bad_it += 1
-                    if bad_it >= 3:
-                        its +=1
-                    else:
-                        continue
-                if score < self.best_score:
-                    self.best_score = score
-                    self.best_combo = combo
-                    self.stems_used = stems_used
-
-                with open('dwave_log.log','a') as f:
-                    f.write('{},{},{},{}\n'.format(self.nseq,combo,score,stems_used))
-            print(self.best_score,self.stems_used,np.array(av).mean())
-
     def compute_dwave_sa(self,sweeps=10000):
         import neal
         sampler = neal.SimulatedAnnealingSampler()
@@ -204,9 +146,11 @@ class RNAFold(object):
             ind: self.config.args.coeff_stem_len * (ki**2 - 2 * mu * ki + mu**2) - self.config.args.coeff_max_bond * ki**2
             for ind, ki in enumerate(stems)
         }
-        J = {(ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2
+        J = {
+            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2
              for ind1, ki1 in enumerate(stems)
-             for ind2, ki2 in enumerate(stems) if ind2 > ind1}
+             for ind2, ki2 in enumerate(stems) if ind2 > ind1
+        }
 
         # Replace couplings with 'infinite' energies for clashes. Adjust couplings
         # in cases of pseudoknots.
