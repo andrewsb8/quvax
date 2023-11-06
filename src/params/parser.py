@@ -68,6 +68,7 @@ class Parser(object):
         self.parser.add_argument("-s", "--solver", default='hybrid', type=str, help="Choice of solver for RNA folding. Options: hybrid")
         self.parser.add_argument("-cB", "--coeff_max_bond", default=1, type=int, help="Coefficient for term maximizing number of bonds")
         self.parser.add_argument("-cL", "--coeff_stem_len", default=10, type=int, help="Coefficient for term penalizing short stems")
+        self.parser.add_argument("-ns", "--num_sweeps", default=10000, type=int, help="Number of sweeps for dwave simulated annealer used in RNA Folding")
 
         self.args = self.parser.parse_args()
 

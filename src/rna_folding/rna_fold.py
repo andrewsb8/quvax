@@ -64,17 +64,15 @@ class RNAFold(object):
         if len(self.stems) != 0:
             self._compute_h_and_J()
 
-    def compute_dwave_sa(self,sweeps=10000):
+    def compute_dwave_sa(self):
         import neal
         sampler = neal.SimulatedAnnealingSampler()
         h2 = { (k,k) : v for k,v in self.h.items() }
         Q = self.J
         Q.update(h2)
         if len(self.stems) > 100:
-            sweeps = sweeps*2
-        else:
-            sweeps = sweeps
-        sampleset = sampler.sample_qubo(Q, num_reads=10, num_sweeps=sweeps)
+            self.config.sweeps = self.config.sweeps*2
+        sampleset = sampler.sample_qubo(Q, num_reads=10, num_sweeps=self.config.sweeps)
         self.stems_used = [_ for it,_ in enumerate(self.stems) if it in [k for k,v in sampleset.first.sample.items() if v==1]]
         self.best_score = sampleset.first.energy
         return sampleset
