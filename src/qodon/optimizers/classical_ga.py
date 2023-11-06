@@ -46,7 +46,7 @@ class GeneticAlgorithm(Optimizer):
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
-            n_seqs += self._procreate(n_seqs)
+            n_seqs = self._procreate(n_seqs)
             # Translate from indices to codons for energy calculation
             members = self._reverse_translate(n_seqs)
             # Use the imported scoring function to score all sequences.
