@@ -56,8 +56,6 @@ class RNAFold(object):
         self.no_stem_penalty = 500000
         self.execute()
 
-        print(self.best_score)
-
     def execute(self):
         self._gen_stems()
         self._compute_h_and_J()

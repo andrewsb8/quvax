@@ -60,7 +60,6 @@ class TfDiffEv(Optimizer):
 
         # Use the imported scoring function to score all sequences.
         scores = [self._tf_fold(s) for s in n_seqs]
-        print(scores)
 
         # Return TF object
         return tf.cast(scores, np.float32)
