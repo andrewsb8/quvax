@@ -27,7 +27,7 @@ class Optimizer(ABC):
 
         '''
         rna_ss = RNAFold(nseq, self.config)
-        results = rna_ss.compute_dwave_sa(sweeps=self.config.args.rna_iterations)
+        results = rna_ss.compute_dwave_sa()
         return results.first.energy
 
     def _get_nc(self, res):

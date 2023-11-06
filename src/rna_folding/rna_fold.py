@@ -71,8 +71,8 @@ class RNAFold(object):
         Q = self.J
         Q.update(h2)
         if len(self.stems) > 100:
-            self.config.sweeps = self.config.sweeps*2
-        sampleset = sampler.sample_qubo(Q, num_reads=10, num_sweeps=self.config.sweeps)
+            self.config.args.rna_iterations = self.config.args.rna_iterations*2
+        sampleset = sampler.sample_qubo(Q, num_reads=10, num_sweeps=self.config.args.rna_iterations)
         self.stems_used = [_ for it,_ in enumerate(self.stems) if it in [k for k,v in sampleset.first.sample.items() if v==1]]
         self.best_score = sampleset.first.energy
         return sampleset
