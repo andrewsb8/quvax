@@ -1,4 +1,5 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #removes tensorflow warnings
 from src.params.parser import Parser
 from src.qodon.optimizers.tf_differential_evo import TfDiffEv
 from src.qodon.optimizers.classical_ga import GeneticAlgorithm

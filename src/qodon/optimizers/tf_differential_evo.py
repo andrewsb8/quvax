@@ -1,6 +1,8 @@
 from src.qodon.optimizers.optimizer import Optimizer
 import numpy as np
 from typing import List
+import tensorflow as tf
+import tensorflow_probability as tfp
 
 class TfDiffEv(Optimizer):
     '''
@@ -17,8 +19,6 @@ class TfDiffEv(Optimizer):
         function computes RNA structure with D-Wave's SA algorithm.
 
         '''
-        import tensorflow as tf
-        import tensorflow_probability as tfp
 
         self.initial_members = tf.convert_to_tensor(([_ for _ in self.config.initial_sequences]),np.float32)
 
@@ -60,6 +60,7 @@ class TfDiffEv(Optimizer):
 
         # Use the imported scoring function to score all sequences.
         scores = [self._tf_fold(s) for s in n_seqs]
+        print(scores)
 
         # Return TF object
         return tf.cast(scores, np.float32)

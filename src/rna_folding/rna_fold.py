@@ -21,9 +21,9 @@ class RNAFold(object):
     stems : list
         List of stems formed in folded RNA structure
     h : dictionary
-        description
+        Matrix for first term in folding Hamiltonian
     J : dictionary
-        description
+        Matrix for second term in folding Hamiltonian
     interactions : list
         List of base pair interaction types
     pairs : list
@@ -53,16 +53,14 @@ class RNAFold(object):
                              ('G', 'U'), ('U', 'G')]
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
-        self.failed = False
+        self.no_stem_penalty = 500000
         self.execute()
 
-        self.best_combo = []
-        self.best_score = 0
+        print(self.best_score)
 
     def execute(self):
         self._gen_stems()
-        if len(self.stems) != 0:
-            self._compute_h_and_J()
+        self._compute_h_and_J()
 
     def compute_dwave_sa(self):
         import neal
@@ -75,7 +73,6 @@ class RNAFold(object):
         sampleset = sampler.sample_qubo(Q, num_reads=10, num_sweeps=self.config.args.rna_iterations)
         self.stems_used = [_ for it,_ in enumerate(self.stems) if it in [k for k,v in sampleset.first.sample.items() if v==1]]
         self.best_score = sampleset.first.energy
-        return sampleset
 
     def compute_exact(self):
         self._find_best_combo()
@@ -137,7 +134,14 @@ class RNAFold(object):
 
         # Pull out stem lengths for simplicity
         stems = [_[2] for _ in self.stems]
-        mu = max(stems)
+        if len(stems) == 0:
+            #return "infinite" energy, no simulated annealing because no matrix
+            #to build for the Hamiltonian
+            #print("HERE")
+            self.best_score = self.no_stem_penalty
+            return
+        else:
+            mu = max(stems)
 
         # Compute all local fields and couplings
         h = {
@@ -174,7 +178,8 @@ class RNAFold(object):
         self.h = h
         self.J = J
 
-        self._compute_model()
+        #self._compute_model()
+        self.compute_dwave_sa()
 
     def _compute_model(self):
         arr = np.zeros((len(self.h),len(self.h)))
