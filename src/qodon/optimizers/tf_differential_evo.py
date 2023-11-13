@@ -1,8 +1,8 @@
 from src.qodon.optimizers.optimizer import Optimizer
 import numpy as np
+from typing import List
 import tensorflow as tf
 import tensorflow_probability as tfp
-from typing import List
 
 class TfDiffEv(Optimizer):
     '''
