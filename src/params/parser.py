@@ -1,4 +1,3 @@
-from src.qodon.initiate_sequences import GenerateInitialSequences
 import argparse
 from Bio.Seq import Seq
 from Bio import SeqIO
@@ -48,11 +47,6 @@ class Parser(object):
         self._parse()
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
         self._validate()
-
-        codons = GenerateInitialSequences(self.seq, self.args.n_trials)
-        self.code_map = codons.code_map
-        self.initial_sequences = codons.initial_sequences
-        del codons
 
     def _parse(self):
         '''

@@ -27,15 +27,15 @@ class RandomOptimizer(Optimizer):
 
         num_extra_sequences = abs(self.config.args.codon_iterations - self.config.args.n_trials)
         extra_sequences = GenerateInitialSequences(self.config.seq, num_extra_sequences).initial_sequences
-        self.config.initial_sequences.extend(extra_sequences)
+        self.initial_sequences.extend(extra_sequences)
 
-        scores = [self._tf_fold(s) for s in self.config.initial_sequences]
+        scores = [self._tf_fold(s) for s in self.initial_sequences]
 
         self.final_energies = scores
         self.mfe = np.min(scores)
         self.mfe_index = np.argmin(scores)
 
-        self.final_codons = self._reverse_translate(self.config.initial_sequences)
+        self.final_codons = self._reverse_translate(self.initial_sequences)
 
         self._verify_dna(self.final_codons[self.mfe_index])
 

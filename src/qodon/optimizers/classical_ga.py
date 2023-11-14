@@ -41,7 +41,7 @@ class GeneticAlgorithm(Optimizer):
     def _propagate_generations(self):
 
         # Initialize population
-        n_seqs = self.config.initial_sequences
+        n_seqs = self.initial_sequences
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
@@ -101,13 +101,13 @@ class GeneticAlgorithm(Optimizer):
         for i, res in enumerate(self.config.seq):
             if mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
-                for j, chance in enumerate(self.config.code_map[res]['probs']):
+                for j, chance in enumerate(self.code_map[res]['probs']):
                     if chance > random.uniform(0.0, 1.0):
                         passing_indices.append(j)
                 chosen_index = passing_indices[0]
             else:
                 chosen_index = old_genes[i]
             new_indices.append(chosen_index)
-            total_log_score += self.config.code_map[res]['log_scores'][chosen_index]
-            new_d_sequence += self.config.code_map[res]['codons'][chosen_index]
+            total_log_score += self.code_map[res]['log_scores'][chosen_index]
+            new_d_sequence += self.code_map[res]['codons'][chosen_index]
         return new_indices

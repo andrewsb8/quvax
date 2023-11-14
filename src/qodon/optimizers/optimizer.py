@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from src.params.parser import Parser
+from src.qodon.initiate_sequences import GenerateInitialSequences
 from src.rna_folding.rna_fold import RNAFold
 from Bio.Seq import Seq
 import numpy as np
@@ -16,6 +17,11 @@ class Optimizer(ABC):
     """
     def __init__(self, config: Parser):
         self.config = config
+
+        codons = GenerateInitialSequences(self.config.seq, self.config.args.n_trials)
+        self.code_map = codons.code_map
+        self.initial_sequences = codons.initial_sequences
+        del codons
 
     @abstractmethod
     def _optimize(self):
@@ -34,7 +40,7 @@ class Optimizer(ABC):
         Extract number of possible codons for each amino acid
 
         '''
-        return len(self.config.code_map[res]['codons'])
+        return len(self.code_map[res]['codons'])
 
     def _reverse_translate(self, members):
         '''
@@ -42,7 +48,7 @@ class Optimizer(ABC):
 
         '''
 
-        get_seq = lambda se: ''.join([self.config.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)])
+        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)])
         seqs = [get_seq(se) for se in members]
         return seqs
 
