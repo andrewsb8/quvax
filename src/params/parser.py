@@ -46,6 +46,8 @@ class Parser(object):
     def __init__(self):
         self._parse()
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
+        self._logging()
+        self._validate()
 
     def _parse(self):
         '''
@@ -67,6 +69,18 @@ class Parser(object):
         self.parser.add_argument("-l", "--log_file_name", default="quvax.log", type=str, help="Log file for recording certain output, warnings, and errors")
 
         self.args = self.parser.parse_args()
+
+    def _logging(self):
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.DEBUG)
+        handler = logging.FileHandler(self.args.log_file_name, mode='w+')
+        self.log.addHandler(handler)
+        #check if log file exists already allow user to quit if no overwrite desired
+        if os.path.isfile(self.args.log_file_name):
+            logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
+            input("Press Any Key To Continue or Ctrl+C to Quit\n")
+
+        self.log.info("Command line: python " + ' '.join(sys.argv[1:]))
 
     def _validate(self):
         '''
