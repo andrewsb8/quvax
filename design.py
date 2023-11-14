@@ -10,6 +10,8 @@ if __name__ == "__main__":
     handler = logging.FileHandler(config.args.log_file_name, mode='w+')
     config.log.addHandler(handler)
 
+    config.log.info("Command line: python " + ' '.join(sys.argv[1:]))
+
     if config.args.codon_optimizer == "TFDE":
         from src.qodon.optimizers.tf_differential_evo import TfDiffEv
         TfDiffEv(config)

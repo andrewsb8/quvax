@@ -1,3 +1,1 @@
-HERE
-WARNING
-WARNING2
+Command line: python -i examples/spike_trim_20.fasta -c 3 -n 4
