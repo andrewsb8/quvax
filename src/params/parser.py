@@ -111,5 +111,5 @@ class Parser(object):
 
         #check if log file exists already
         if os.path.isfile(self.args.log_file_name):
-            logging.warn("Log file " + self.args.log_file_name + " exists and will be overwritten.\n")
-            input("Press Any Key To Continue or Ctrl+C to Quit")
+            logging.warn("Log file " + self.args.log_file_name + " exists and will be overwritten.")
+            input("Press Any Key To Continue or Ctrl+C to Quit\n")
