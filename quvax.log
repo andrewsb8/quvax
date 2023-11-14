@@ -1,1 +1,2 @@
-Command line: python -i examples/spike_trim_20.fasta -c 3 -n 4
+Command line: python -i examples/spike_trim_20.fasta -c 3 -n 4 -co idk
+Please select a valid optimizer. See python design.py -h for details.

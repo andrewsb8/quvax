@@ -22,4 +22,4 @@ if __name__ == "__main__":
         from src.qodon.optimizers.random_optimizer import RandomOptimizer
         RandomOptimizer(config)
     else:
-        print("Error here.")
+        config.log.error("Please select a valid optimizer. See python design.py -h for details.")
