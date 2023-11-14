@@ -115,3 +115,15 @@ class Parser(object):
             --n_trials must be at least 1!
 
             ''')
+
+        if self.args.min_stem_len < 1:
+            raise ValueError('''
+            --min_stem_len must be at least 1!
+
+            ''')
+
+        if self.args.min_loop_len < 1:
+            raise ValueError('''
+            --min_loop_len must be at least 1!
+
+            ''')
