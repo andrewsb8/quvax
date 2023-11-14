@@ -46,7 +46,6 @@ class Parser(object):
     def __init__(self):
         self._parse()
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
-        self._validate()
 
     def _parse(self):
         '''
@@ -83,7 +82,7 @@ class Parser(object):
             raise InvalidSequenceError("At least one character in the input sequence is invalid")
 
         if set(self.seq).issubset(set('GCATU')):
-            logging.warn("Input protein sequence looks like an DNA sequence!")
+            self.log.warning("Input protein sequence looks like an DNA sequence!")
 
         if self.args.codon_iterations < 1:
             raise ValueError('''
@@ -102,8 +101,3 @@ class Parser(object):
             --n_trials must be at least 1!
 
             ''')
-
-        #check if log file exists already
-        if os.path.isfile(self.args.log_file_name):
-            logging.warn("Log file " + self.args.log_file_name + " exists and will be overwritten.")
-            input("Press Any Key To Continue or Ctrl+C to Quit\n")
