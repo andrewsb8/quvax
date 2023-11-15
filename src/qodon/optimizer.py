@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from src.params.parser import Parser
-from src.rna_folding.rna_fold import RNAFold
+from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 import python_codon_tables as pct
 from Bio.Seq import Seq
 import random
@@ -124,7 +124,7 @@ class CodonOptimizer(ABC):
         Compute Minimum Free Energy (MFE) of RNA fold.
 
         '''
-        rna_ss = RNAFold(nseq, self.config)
+        rna_ss = SimulatedAnnealer(nseq, self.config)
         return rna_ss.best_score
 
     def _get_nc(self, res):
