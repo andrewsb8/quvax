@@ -50,7 +50,7 @@ class TestInputSeq(unittest.TestCase):
         """
         testargs = ["design.py", "-i", "tests/test_sequences/GAG.fasta"]
         with patch.object(sys, 'argv', testargs):
-            with self.assertWarns(Warning):
+            with self.assertLogs(level='WARNING'):
                 Parser()
 
 if __name__ == '__main__':
