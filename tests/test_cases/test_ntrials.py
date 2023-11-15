@@ -15,16 +15,17 @@ class TestNTrials(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "5"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            opt = CodonOptimizer(parser)
-            opt.codon_table, opt.codon_scores, opt.code_map = opt._construct_codon_table(opt)
-            opt.initial_sequences = opt._get_initial_sequences(opt)
-            self.assertEqual(len(opt.initial_sequences), 5)
+            parser.config.codon_table, parser.config.codon_scores, parser.config.code_map = CodonOptimizer._construct_codon_table(parser, parser.args.species)
+            initial_sequences = CodonOptimizer._get_initial_sequences(parser, parser.seq, parser.args.n_trials)
+            self.assertEqual(len(initial_sequences), 5)
 
     def test_lenNTrials_str(self):
-        self.seq = str(SeqIO.read('tests/test_sequences/GGGN.fasta','fasta').seq)
-        self.n_trials = "2"
-        with self.assertRaises(TypeError):
-            self.codons = GenerateInitialSequences(self.seq, self.n_trials)
+        testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "2"]
+        with patch.object(sys, 'argv', testargs):
+            with self.assertRaises(TypeError):
+                parser = Parser()
+                parser.args.n_trials = str(parser.args.n_trials)
+                self.codons = CodonOptimizer._get_initial_sequences(parser, parser.seq, parser.args.n_trials)
 
 if __name__ == '__main__':
     unittest.main()
