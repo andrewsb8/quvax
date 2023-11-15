@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from src.params.parser import Parser
-from src.qodon.initiate_sequences import GenerateInitialSequences
 from src.rna_folding.rna_fold import RNAFold
 import python_codon_tables as pct
 from Bio.Seq import Seq
