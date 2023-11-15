@@ -25,8 +25,8 @@ class CodonOptimizer(ABC):
     def __init__(self, config: Parser):
         self.config = config
         self.config.log.info("Beginning codon optimization")
-        self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
-        self.initial_sequences = self._get_initial_sequences()
+        self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table(self.config.args.species)
+        self.initial_sequences = self._get_initial_sequences(self.config.seq, self.config.args.n_trials)
 
     @abstractmethod
     def _optimize(self):
@@ -45,7 +45,7 @@ class CodonOptimizer(ABC):
         return l
 
 
-    def _construct_codon_table(self):
+    def _construct_codon_table(self, species):
         '''
         Build reference table containing:
 
@@ -99,12 +99,12 @@ class CodonOptimizer(ABC):
 
         return codon_table, codon_scores, code_map
 
-    def _get_initial_sequences(self) -> List:
+    def _get_initial_sequences(self, seq, n_trials) -> List:
         initial_members = []
-        for i in range(self.config.args.n_trials):
+        for i in range(n_trials):
             d_sequence = ""
             chosen_indices = []
-            for res in self.config.seq:
+            for res in seq:
                 random_prob = random.uniform(0.0, 1.0)
                 reference_chances = self.code_map[res]['probs']
                 passing_indices = []

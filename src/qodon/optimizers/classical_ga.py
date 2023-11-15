@@ -1,5 +1,4 @@
 from src.qodon.optimizer import CodonOptimizer
-from src.qodon.codon_tables import code_map
 import random
 from operator import itemgetter
 import numpy as np

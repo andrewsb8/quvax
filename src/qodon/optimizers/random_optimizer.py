@@ -1,6 +1,4 @@
 from src.qodon.optimizer import CodonOptimizer
-from src.qodon.initiate_sequences import GenerateInitialSequences
-from src.qodon.codon_tables import code_map
 import random
 from operator import itemgetter
 import numpy as np
@@ -26,7 +24,7 @@ class RandomOptimizer(CodonOptimizer):
         '''
 
         num_extra_sequences = abs(self.config.args.codon_iterations - self.config.args.n_trials)
-        extra_sequences = GenerateInitialSequences(self.config.seq, num_extra_sequences).initial_sequences
+        extra_sequences = self._get_initial_sequences(self.config.seq, num_extra_sequences)
         self.initial_sequences.extend(extra_sequences)
 
         scores = [self._tf_fold(s) for s in self.initial_sequences]

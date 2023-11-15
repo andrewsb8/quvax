@@ -1,5 +1,5 @@
-Command line: python -i examples/spike_trim_20.fasta -c 4 -n 4 -ms 2
+Command line: python -i examples/spike_trim_20.fasta -c 4 -n 4 -ms 2 -co GA
 Beginning codon optimization
 Final codon sequence translated properly.
-Minimum energy codon sequence: ATGTTCGTATTCCTCGTGCTGCTGCCTCTGGTGAGCAGCCAATGCGTAAATCTGACTACC
-Energy of codon sequence: -92.0
+Minimum energy codon sequence: ATGTTCGTTTTCCTGGTGCTGCTTCCCCTGGTGAGCAGCCAGTGCGTAAACCTGACCACA
+Energy of codon sequence: -96.0
