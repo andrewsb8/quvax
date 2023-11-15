@@ -26,7 +26,7 @@ class CodonOptimizer(ABC):
         self.config = config
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
-        self.initial_sequences = self._get_initial_sequences(self.config.args.n_trials)
+        self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
 
     @abstractmethod
     def _optimize(self):
@@ -99,7 +99,7 @@ class CodonOptimizer(ABC):
 
         return codon_table, codon_scores, code_map
 
-    def _get_initial_sequences(self, ntrials) -> List:
+    def _generate_sequences(self, ntrials) -> List:
         initial_members = []
         for i in range(ntrials):
             d_sequence = ""

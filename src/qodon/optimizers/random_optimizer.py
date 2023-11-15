@@ -24,7 +24,7 @@ class RandomOptimizer(CodonOptimizer):
         '''
 
         num_extra_sequences = abs(self.config.args.codon_iterations - self.config.args.n_trials)
-        extra_sequences = self._get_initial_sequences(num_extra_sequences)
+        extra_sequences = self._generate_sequences(num_extra_sequences)
         self.initial_sequences.extend(extra_sequences)
 
         scores = [self._tf_fold(s) for s in self.initial_sequences]
