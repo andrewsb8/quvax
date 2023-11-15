@@ -1,10 +1,10 @@
-from src.qodon.optimizers.optimizer import Optimizer
+from src.qodon.optimizer import CodonOptimizer
 import numpy as np
 from typing import List
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-class TfDiffEv(Optimizer):
+class TfDiffEv(CodonOptimizer):
     '''
     Tensorflow Differential Evolution optimizer for codon optimization.
 

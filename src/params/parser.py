@@ -41,6 +41,8 @@ class Parser(object):
         Coefficient for energetically penalizing short stems in RNA folding
     log_file_name : str
         String for log file for writing program outputs, warnings, and errors
+    species : str
+        String to identify which species to generate codon frequencies
 
     '''
     def __init__(self):
@@ -67,6 +69,7 @@ class Parser(object):
         self.parser.add_argument("-cB", "--coeff_max_bond", default=1, type=int, help="Coefficient for term maximizing number of bonds")
         self.parser.add_argument("-cL", "--coeff_stem_len", default=10, type=int, help="Coefficient for term penalizing short stems")
         self.parser.add_argument("-l", "--log_file_name", default="quvax.log", type=str, help="Log file for recording certain output, warnings, and errors")
+        self.parser.add_argument("-sp", "--species", default="e_coli_316407", type=str, help="Species type for generating codon tables and frequencies")
 
         self.args = self.parser.parse_args()
 
@@ -78,7 +81,6 @@ class Parser(object):
         #check if log file exists already allow user to quit if no overwrite desired
         if os.path.isfile(self.args.log_file_name):
             logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
-            input("Press Any Key To Continue or Ctrl+C to Quit\n")
 
         self.log.info("Command line: python " + ' '.join(sys.argv[1:]))
 

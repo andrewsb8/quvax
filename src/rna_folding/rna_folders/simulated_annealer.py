@@ -1,12 +1,13 @@
 import numpy as np
 import os, itertools
 from src.params.parser import Parser
+from src.rna_folding.rna_folder import RNAFolder
 import warnings
 warnings.filterwarnings("ignore")
 # Visualization tool: http://rna.tbi.univie.ac.at/forna/
 
 
-class RNAFold(object):
+class SimulatedAnnealer(RNAFolder):
     '''
     Calculate the folded energy of a given codon sequence.
 
