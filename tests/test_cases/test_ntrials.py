@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
 from src.qodon.optimizer import CodonOptimizer
-from Bio import SeqIO
 
 class FakeOptimizer(CodonOptimizer):
     def __init__(self, config):

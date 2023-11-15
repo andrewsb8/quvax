@@ -155,5 +155,5 @@ class CodonOptimizer(ABC):
                 "Error: Codon sequence did not translate properly!")
         else:
             self.config.log.info("Final codon sequence translated properly.")
-            self.config.log.info("Minimum energy codon sequence: " + self.final_codons[self.mfe_index])
+            self.config.log.info("Minimum energy codon sequence: " + sequence)
             self.config.log.info("Energy of codon sequence: " + str(self.mfe))
