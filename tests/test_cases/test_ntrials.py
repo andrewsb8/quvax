@@ -6,6 +6,13 @@ from src.params.parser import Parser
 from src.qodon.optimizer import CodonOptimizer
 from Bio import SeqIO
 
+class FakeOptimizer(CodonOptimizer):
+    def __init__(self, config):
+        super().__init__(config)
+
+    def _optimize(self):
+        pass
+
 class TestNTrials(unittest.TestCase):
     """
     Test variable n_trials will generate appropriate number of sequences
@@ -15,9 +22,8 @@ class TestNTrials(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "5"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            parser.config.codon_table, parser.config.codon_scores, parser.config.code_map = CodonOptimizer._construct_codon_table(parser, parser.args.species)
-            initial_sequences = CodonOptimizer._get_initial_sequences(parser, parser.seq, parser.args.n_trials)
-            self.assertEqual(len(initial_sequences), 5)
+            opt = FakeOptimizer(parser)
+            self.assertEqual(len(opt.initial_sequences), 5)
 
     def test_lenNTrials_str(self):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "2"]
@@ -25,7 +31,7 @@ class TestNTrials(unittest.TestCase):
             with self.assertRaises(TypeError):
                 parser = Parser()
                 parser.args.n_trials = str(parser.args.n_trials)
-                self.codons = CodonOptimizer._get_initial_sequences(parser, parser.seq, parser.args.n_trials)
+                opt = FakeOptimizer(parser)
 
 if __name__ == '__main__':
     unittest.main()

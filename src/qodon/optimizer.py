@@ -25,8 +25,8 @@ class CodonOptimizer(ABC):
     def __init__(self, config: Parser):
         self.config = config
         self.config.log.info("Beginning codon optimization")
-        self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table(self.config.args.species)
-        self.initial_sequences = self._get_initial_sequences(self.config.seq, self.config.args.n_trials)
+        self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
+        self.initial_sequences = self._get_initial_sequences()
 
     @abstractmethod
     def _optimize(self):
@@ -45,7 +45,7 @@ class CodonOptimizer(ABC):
         return l
 
 
-    def _construct_codon_table(self, species):
+    def _construct_codon_table(self):
         '''
         Build reference table containing:
 
@@ -57,7 +57,7 @@ class CodonOptimizer(ABC):
         '''
         # Load codon data
         codons_tables = pct.get_all_available_codons_tables()
-        table = pct.get_codons_table(species)
+        table = pct.get_codons_table(self.config.args.species)
         df = pd.DataFrame([(a, c, s) for a, v in table.items()
                            for c, s in v.items() if a != '*'],
                           columns=['aa', 'codon', 'score'])
@@ -99,12 +99,12 @@ class CodonOptimizer(ABC):
 
         return codon_table, codon_scores, code_map
 
-    def _get_initial_sequences(self, seq, n_trials) -> List:
+    def _get_initial_sequences(self) -> List:
         initial_members = []
-        for i in range(n_trials):
+        for i in range(self.config.args.n_trials):
             d_sequence = ""
             chosen_indices = []
-            for res in seq:
+            for res in self.config.seq:
                 random_prob = random.uniform(0.0, 1.0)
                 reference_chances = self.code_map[res]['probs']
                 passing_indices = []
