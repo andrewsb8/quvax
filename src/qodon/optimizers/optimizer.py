@@ -13,11 +13,15 @@ class Optimizer(ABC):
     ----------
     config : Parser
         Object containing user inputs
+    code_map : List
+        Map of amino acids to codons based on species
+    initial_sequences : List
+        Randomly generated codon sequences for input amino acid sequence based on code map
 
     """
     def __init__(self, config: Parser):
         self.config = config
-
+        self.config.log.info("Beginning codon optimization")
         codons = GenerateInitialSequences(self.config.seq, self.config.args.n_trials)
         self.code_map = codons.code_map
         self.initial_sequences = codons.initial_sequences
@@ -58,5 +62,10 @@ class Optimizer(ABC):
 
         '''
         if self.config.seq != str(Seq(sequence).transcribe().translate()):
+            self.config.log.error("Error: Codon sequence did not translate properly!")
             raise ValueError(
                 "Error: Codon sequence did not translate properly!")
+        else:
+            self.config.log.info("Final codon sequence translated properly.")
+            self.config.log.info("Minimum energy codon sequence: " + self.final_codons[self.mfe_index])
+            self.config.log.info("Energy of codon sequence: " + str(self.mfe))

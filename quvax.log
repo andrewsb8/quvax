@@ -1,2 +1,2 @@
-Command line: python -i tests/test_sequences/GAG.fasta -c 3 -n 4
-Input protein sequence looks like an DNA sequence!
+Command line: python -i examples/spike_trim_80.fasta -c 2 -n 4 -ms 2
+Beginning codon optimization
