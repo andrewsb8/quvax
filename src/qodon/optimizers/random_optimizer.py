@@ -1,4 +1,4 @@
-from src.qodon.optimizers.optimizer import Optimizer
+from src.qodon.optimizer import CodonOptimizer
 from src.qodon.initiate_sequences import GenerateInitialSequences
 from src.qodon.codon_tables import code_map
 import random
@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 
-class RandomOptimizer(Optimizer):
+class RandomOptimizer(CodonOptimizer):
     """
     A basic implementation of a random optimizer for a codon sequence.
 

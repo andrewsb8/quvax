@@ -1,11 +1,11 @@
-from src.qodon.optimizers.optimizer import Optimizer
+from src.qodon.optimizer import CodonOptimizer
 from src.qodon.codon_tables import code_map
 import random
 from operator import itemgetter
 import numpy as np
 
 
-class GeneticAlgorithm(Optimizer):
+class GeneticAlgorithm(CodonOptimizer):
     """
     A basic implementation of a genetic algorithm.
 
