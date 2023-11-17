@@ -114,7 +114,6 @@ class CodonOptimizer(ABC):
                 chosen_index = passing_indices[0]
                 chosen_indices.append(chosen_index)
                 d_sequence += self.code_map[res]['codons'][chosen_index]
-            #0 was the codon sequence score. Breaks if value is removed. Not sure why yet
             member = chosen_indices
             initial_members.append(member)
         return initial_members
