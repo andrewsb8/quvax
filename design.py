@@ -3,6 +3,7 @@ import sys
 import logging
 from src.params.parser import Parser
 
+
 if __name__ == "__main__":
     config = Parser()
 

@@ -16,7 +16,7 @@ class TestOptimizers(unittest.TestCase):
             parser = Parser()
             opt = TfDiffEv(parser)
             with self.assertLogs(level='INFO'):
-                opt._verify_dna(opt._verify_dna(opt.final_codons[opt.mfe_index]))
+                opt._verify_dna(opt.final_codons[opt.mfe_index])
 
 
     def test_RAND(self):
@@ -26,7 +26,7 @@ class TestOptimizers(unittest.TestCase):
             parser = Parser()
             opt = RandomOptimizer(parser)
             with self.assertLogs(level='INFO'):
-                opt._verify_dna(opt._verify_dna(opt.final_codons[opt.mfe_index]))
+                opt._verify_dna(opt.final_codons[opt.mfe_index])
 
     def test_GA(self):
         from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -35,7 +35,7 @@ class TestOptimizers(unittest.TestCase):
             parser = Parser()
             opt = GeneticAlgorithm(parser)
             with self.assertLogs(level='INFO'):
-                opt._verify_dna(opt._verify_dna(opt.final_codons[opt.mfe_index]))
+                opt._verify_dna(opt.final_codons[opt.mfe_index])
 
 if __name__ == '__main__':
     unittest.main()

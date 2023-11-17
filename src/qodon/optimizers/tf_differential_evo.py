@@ -4,6 +4,7 @@ from typing import List
 import tensorflow as tf
 import tensorflow_probability as tfp
 
+
 class TfDiffEv(CodonOptimizer):
     '''
     Tensorflow Differential Evolution optimizer for codon optimization.

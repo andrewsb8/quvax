@@ -78,7 +78,6 @@ class Parser(object):
         self.log.setLevel(logging.DEBUG)
         handler = logging.FileHandler(self.args.log_file_name, mode='w+')
         self.log.addHandler(handler)
-        #check if log file exists already allow user to quit if no overwrite desired
         if os.path.isfile(self.args.log_file_name):
             logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
 
