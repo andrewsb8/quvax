@@ -4,7 +4,7 @@ from src.params.parser import Parser
 from src.rna_folding.rna_folder import RNAFolder
 
 
-class SimulatedAnnealer(RNAFolder):
+class QuantumSimAnnealer(RNAFolder):
     '''
     Calculate the folded energy of a given codon sequence.
 
