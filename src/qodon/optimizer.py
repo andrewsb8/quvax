@@ -127,7 +127,7 @@ class CodonOptimizer(ABC):
         rna_ss = SimulatedAnnealer(nseq, self.config)
         return rna_ss.best_score
 
-    def _get_nc(self, res):
+    def _get_num_codons(self, res):
         '''
         Extract number of possible codons for each amino acid
 
@@ -140,7 +140,7 @@ class CodonOptimizer(ABC):
 
         '''
 
-        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_nc(res)] for i, res in enumerate(self.config.seq)])
+        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_num_codons(res)] for i, res in enumerate(self.config.seq)])
         seqs = [get_seq(se) for se in members]
         return seqs
 
