@@ -49,7 +49,7 @@ class GeneticAlgorithm(CodonOptimizer):
             # Translate from indices to codons for energy calculation
             members = self._reverse_translate(n_seqs)
             # Use the imported scoring function to score all sequences.
-            scores = [self._tf_fold(s) for s in members]
+            scores = [self._fold_rna(s) for s in members]
 
         # Record fittest member of population after simulating evo
         self.final_population = n_seqs

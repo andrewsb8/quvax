@@ -119,7 +119,7 @@ class CodonOptimizer(ABC):
             initial_members.append(member)
         return initial_members
 
-    def _tf_fold(self, nseq):
+    def _fold_rna(self, nseq):
         '''
         Compute Minimum Free Energy (MFE) of RNA fold.
 

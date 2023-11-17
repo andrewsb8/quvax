@@ -60,7 +60,7 @@ class TfDiffEv(CodonOptimizer):
         n_seqs = self._reverse_translate(n_seqs)
 
         # Use the imported scoring function to score all sequences.
-        scores = [self._tf_fold(s) for s in n_seqs]
+        scores = [self._fold_rna(s) for s in n_seqs]
 
         # Return TF object
         return tf.cast(scores, np.float32)

@@ -27,7 +27,7 @@ class RandomOptimizer(CodonOptimizer):
         extra_sequences = self._generate_sequences(num_extra_sequences)
         self.initial_sequences.extend(extra_sequences)
 
-        scores = [self._tf_fold(s) for s in self.initial_sequences]
+        scores = [self._fold_rna(s) for s in self.initial_sequences]
 
         self.final_energies = scores
         self.mfe = np.min(scores)
