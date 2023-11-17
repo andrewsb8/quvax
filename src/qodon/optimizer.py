@@ -124,8 +124,8 @@ class CodonOptimizer(ABC):
         Compute Minimum Free Energy (MFE) of RNA fold.
 
         '''
-        rna_ss = SimulatedAnnealer(nseq, self.config)
-        return rna_ss.best_score
+        folded_rna = SimulatedAnnealer(nseq, self.config)
+        return folded_rna.best_score
 
     def _get_num_codons(self, res):
         '''
