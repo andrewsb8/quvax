@@ -1,9 +1,9 @@
-from src.qodon.initiate_sequences import GenerateInitialSequences
 import argparse
 from Bio.Seq import Seq
 from Bio import SeqIO
+import os
 import sys
-import warnings
+import logging
 
 
 class InvalidSequenceError(Exception):
@@ -39,17 +39,17 @@ class Parser(object):
         Coefficient for maximizing the number of bonds in RNA folding
     coeff_stem_len : int
         Coefficient for energetically penalizing short stems in RNA folding
+    log_file_name : str
+        String for log file for writing program outputs, warnings, and errors
+    species : str
+        String to identify which species to generate codon frequencies
 
     '''
     def __init__(self):
         self._parse()
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
+        self._logging()
         self._validate()
-
-        codons = GenerateInitialSequences(self.seq, self.args.n_trials)
-        self.code_map = codons.code_map
-        self.initial_sequences = codons.initial_sequences
-        del codons
 
     def _parse(self):
         '''
@@ -68,8 +68,20 @@ class Parser(object):
         self.parser.add_argument("-s", "--solver", default='hybrid', type=str, help="Choice of solver for RNA folding. Options: hybrid")
         self.parser.add_argument("-cB", "--coeff_max_bond", default=1, type=int, help="Coefficient for term maximizing number of bonds")
         self.parser.add_argument("-cL", "--coeff_stem_len", default=10, type=int, help="Coefficient for term penalizing short stems")
+        self.parser.add_argument("-l", "--log_file_name", default="quvax.log", type=str, help="Log file for recording certain output, warnings, and errors")
+        self.parser.add_argument("-sp", "--species", default="e_coli_316407", type=str, help="Species type for generating codon tables and frequencies")
 
         self.args = self.parser.parse_args()
+
+    def _logging(self):
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.DEBUG)
+        handler = logging.FileHandler(self.args.log_file_name, mode='w+')
+        self.log.addHandler(handler)
+        if os.path.isfile(self.args.log_file_name):
+            logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
+
+        self.log.info("Command line: python " + ' '.join(sys.argv[1:]))
 
     def _validate(self):
         '''
@@ -85,7 +97,7 @@ class Parser(object):
             raise InvalidSequenceError("At least one character in the input sequence is invalid")
 
         if set(self.seq).issubset(set('GCATU')):
-            warnings.warn("Input protein sequence looks like an DNA sequence!")
+            self.log.warning("Input protein sequence looks like an DNA sequence!")
 
         if self.args.codon_iterations < 1:
             raise ValueError('''
@@ -102,5 +114,17 @@ class Parser(object):
         if self.args.n_trials < 1:
             raise ValueError('''
             --n_trials must be at least 1!
+
+            ''')
+
+        if self.args.min_stem_len < 1:
+            raise ValueError('''
+            --min_stem_len must be at least 1!
+
+            ''')
+
+        if self.args.min_loop_len < 1:
+            raise ValueError('''
+            --min_loop_len must be at least 1!
 
             ''')

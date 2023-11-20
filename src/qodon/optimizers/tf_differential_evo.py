@@ -1,10 +1,11 @@
-from src.qodon.optimizers.optimizer import Optimizer
+from src.qodon.optimizer import CodonOptimizer
 import numpy as np
 from typing import List
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-class TfDiffEv(Optimizer):
+
+class TfDiffEv(CodonOptimizer):
     '''
     Tensorflow Differential Evolution optimizer for codon optimization.
 
@@ -20,7 +21,7 @@ class TfDiffEv(Optimizer):
 
         '''
 
-        self.initial_members = tf.convert_to_tensor(([_ for _ in self.config.initial_sequences]),np.float32)
+        self.initial_members = tf.convert_to_tensor(([_ for _ in self.initial_sequences]),np.float32)
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.
@@ -59,7 +60,7 @@ class TfDiffEv(Optimizer):
         n_seqs = self._reverse_translate(n_seqs)
 
         # Use the imported scoring function to score all sequences.
-        scores = [self._tf_fold(s) for s in n_seqs]
+        scores = [self._fold_rna(s) for s in n_seqs]
 
         # Return TF object
         return tf.cast(scores, np.float32)

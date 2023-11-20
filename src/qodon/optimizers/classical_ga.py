@@ -1,11 +1,10 @@
-from src.qodon.optimizers.optimizer import Optimizer
-from src.qodon.codon_tables import code_map
+from src.qodon.optimizer import CodonOptimizer
 import random
 from operator import itemgetter
 import numpy as np
 
 
-class GeneticAlgorithm(Optimizer):
+class GeneticAlgorithm(CodonOptimizer):
     """
     A basic implementation of a genetic algorithm.
 
@@ -41,7 +40,7 @@ class GeneticAlgorithm(Optimizer):
     def _propagate_generations(self):
 
         # Initialize population
-        n_seqs = self.config.initial_sequences
+        n_seqs = self.initial_sequences
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
@@ -50,7 +49,7 @@ class GeneticAlgorithm(Optimizer):
             # Translate from indices to codons for energy calculation
             members = self._reverse_translate(n_seqs)
             # Use the imported scoring function to score all sequences.
-            scores = [self._tf_fold(s) for s in members]
+            scores = [self._fold_rna(s) for s in members]
 
         # Record fittest member of population after simulating evo
         self.final_population = n_seqs
@@ -101,13 +100,13 @@ class GeneticAlgorithm(Optimizer):
         for i, res in enumerate(self.config.seq):
             if mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
-                for j, chance in enumerate(self.config.code_map[res]['probs']):
+                for j, chance in enumerate(self.code_map[res]['probs']):
                     if chance > random.uniform(0.0, 1.0):
                         passing_indices.append(j)
                 chosen_index = passing_indices[0]
             else:
                 chosen_index = old_genes[i]
             new_indices.append(chosen_index)
-            total_log_score += self.config.code_map[res]['log_scores'][chosen_index]
-            new_d_sequence += self.config.code_map[res]['codons'][chosen_index]
+            total_log_score += self.code_map[res]['log_scores'][chosen_index]
+            new_d_sequence += self.code_map[res]['codons'][chosen_index]
         return new_indices
