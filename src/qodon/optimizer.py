@@ -176,7 +176,7 @@ class CodonOptimizer(ABC):
         self.mfe = np.min(self.optimization_process['scores'])
         self.mfe_index = np.argmin(self.optimization_process['scores'])
         #print(opt.optimization_process['sequences'], opt.optimization_process['scores'], mfe, mfe_index)
-        print(self.optimization_process['sequences'][self.mfe_index])
+        #print(self.optimization_process['sequences'][self.mfe_index])
         self.final_codons = self._reverse_translate(self.optimization_process['sequences'][self.mfe_index])
         #print(final_codons)
         self._verify_dna(self.final_codons)

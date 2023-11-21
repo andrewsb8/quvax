@@ -33,17 +33,7 @@ class TfDiffEv(CodonOptimizer):
             crossover_prob=0.1,
         )
 
-        # Assign results as class attributes
-        self.final_population = self._convert_to_ints(optim_results.final_population)
-        self.final_energies = optim_results.final_objective_values
-        self.mfe = np.min(optim_results.final_objective_values)
-        self.mfe_index = np.argmin(optim_results.final_objective_values)
-
-        self.final_codons = self._reverse_translate(self.final_population)
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
+        self._get_optimized_sequence()
 
     def _objective(self, members):
         '''
@@ -57,10 +47,14 @@ class TfDiffEv(CodonOptimizer):
 
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_ints(members)
-        n_seqs = self._reverse_translate(n_seqs)
+        tmp = []
+        for i in range(len(n_seqs)):
+            tmp.append([self._reverse_translate(n_seqs[i])])
 
         # Use the imported scoring function to score all sequences.
-        scores = [self._fold_rna(s) for s in n_seqs]
+        scores = [self._fold_rna(s) for s in tmp]
+
+        self._extend_output(n_seqs, scores, None)
 
         # Return TF object
         return tf.cast(scores, np.float32)

@@ -27,15 +27,7 @@ class GeneticAlgorithm(CodonOptimizer):
 
         # Simulate evolution
         self._propagate_generations()
-
-        # Recover nucleotide sequence
-        self.final_codons = self._reverse_translate(self.final_population)
-
-        # Make sure fittest member translates to correct aa sequence
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
+        self._get_optimized_sequence()
 
     def _propagate_generations(self):
 
@@ -47,15 +39,13 @@ class GeneticAlgorithm(CodonOptimizer):
             # Introduce mutations
             n_seqs = self._procreate(n_seqs)
             # Translate from indices to codons for energy calculation
-            members = self._reverse_translate(n_seqs)
+            tmp = []
+            for i in range(len(n_seqs)):
+                tmp.append([self._reverse_translate(n_seqs[i])])
             # Use the imported scoring function to score all sequences.
-            scores = [self._fold_rna(s) for s in members]
+            scores = [self._fold_rna(s) for s in tmp]
 
-        # Record fittest member of population after simulating evo
-        self.final_population = n_seqs
-        self.final_energies = scores
-        self.mfe = np.min(scores)
-        self.mfe_index = np.argmin(scores)
+        self._extend_output(n_seqs, scores, None)
 
     def _procreate(self, eligible_members):
         '''
