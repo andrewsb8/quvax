@@ -38,6 +38,7 @@ class QuantumSimAnnealer(RNAFolder):
     def __init__(self, nseq, config: Parser):
         self.config = config
         self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq
+        print("HERE: ", nseq)
         self.n = len(self.nseq)
 
         self.stems = []
@@ -127,6 +128,7 @@ class QuantumSimAnnealer(RNAFolder):
         if len(stems) == 0:
             #return "infinite" energy, no simulated annealing because no matrix
             #to build for the Hamiltonian
+            self.config.log.warn("No stems formed.")
             self.best_score = self.no_stem_penalty
             return
         else:

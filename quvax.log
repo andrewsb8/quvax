@@ -1,45 +1,15 @@
-Command line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
+Command line: python -i examples/spike_trim_80.fasta -c 1000 -n 5 -co TFDE -ms 2
 Beginning codon optimization
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
+No stems formed.
 Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-Command line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
-Beginning codon optimization
-Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-mmand line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
-Beginning codon optimization
-Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-Final codon sequence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-ed properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-ed properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-um energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-equence translated properly.
-Minimum energy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-nergy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-gy codon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-odon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-odon sequence: GGCGGAGGCAAC
-Energy of codon sequence: 500000
-odon sequence: GGCGGAGGCAAC
+Minimum energy codon sequence: ATGTTTGTATTTCTCGTGCTGCTTCCTCTTGTAAGCTCACAATGTGTCAACCTCACTACCCGTACGCAGCTACCGCCTGCTTATACCAACAGCTTCACCCGAGGTGTGTATTACCCGGACAAAGTCTTTCGCTCGTCCGTTCTGCATTCCACGCAAGATTTATTTCTGCCGTTTTTTTCCAACGTGACATGGTTTCATGCGATCCATGTATCGGGCACGAACGGTACTAAACGTTTCGAC
 Energy of codon sequence: 500000
