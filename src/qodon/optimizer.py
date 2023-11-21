@@ -28,6 +28,9 @@ class CodonOptimizer(ABC):
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+        self.optimization_process = {'sequences':  [],
+                                     'scores':     [],
+                                     'sec_struct': []}
 
     @abstractmethod
     def _optimize(self):
@@ -126,6 +129,16 @@ class CodonOptimizer(ABC):
         '''
         folded_rna = QuantumSimAnnealer(nseq, self.config)
         return folded_rna.best_score
+
+    def _append_output(self):
+        return
+
+    def _pickle_output(self):
+        return
+
+    def _read_pickle(self):
+        #read previous optimization and continue process. not ready yet
+        return
 
     def _get_num_codons(self, res):
         '''

@@ -43,6 +43,8 @@ class Parser(object):
         String for log file for writing program outputs, warnings, and errors
     species : str
         String to identify which species to generate codon frequencies
+    output : str
+        String to identify output file containing information about optimization process
 
     '''
     def __init__(self):
