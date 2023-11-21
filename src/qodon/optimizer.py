@@ -28,9 +28,9 @@ class CodonOptimizer(ABC):
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        self.optimization_process = {'sequences':  [],
-                                     'scores':     [],
-                                     'sec_struct': []}
+        self.optimization_process = {'sequences':  [], #nested list of sequences
+                                     'scores':     [], #list of scores where index corresponds to sequence
+                                     'sec_struct': []} #list of secondary structure information for a sequence
 
     @abstractmethod
     def _optimize(self):
@@ -130,7 +130,9 @@ class CodonOptimizer(ABC):
         folded_rna = QuantumSimAnnealer(nseq, self.config)
         return folded_rna.best_score
 
-    def _append_output(self):
+    def _extend_output(self, sequences, scores, sec_struct):
+        self.optimization_process['sequences'].extend(sequences)
+        self.optimization_process['scores'].extend(scores)
         return
 
     def _pickle_output(self):
@@ -147,15 +149,13 @@ class CodonOptimizer(ABC):
         '''
         return len(self.code_map[res]['codons'])
 
-    def _reverse_translate(self, members):
+    def _reverse_translate(self, sequence):
         '''
         Convert to nucleotide sequence from integer indices of code map
 
         '''
 
-        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_num_codons(res)] for i, res in enumerate(self.config.seq)])
-        seqs = [get_seq(se) for se in members]
-        return seqs
+        return ''.join([self.code_map[res]['codons'][sequence[i] % self._get_num_codons(res)] for i, res in enumerate(self.config.seq)])
 
     def _verify_dna(self, sequence):
         '''
@@ -170,3 +170,13 @@ class CodonOptimizer(ABC):
             self.config.log.info("Final codon sequence translated properly.")
             self.config.log.info("Minimum energy codon sequence: " + sequence)
             self.config.log.info("Energy of codon sequence: " + str(self.mfe))
+
+    def _get_optimized_sequence(self):
+        #get lowest energy and associated sequence from all sequences generated
+        self.mfe = np.min(self.optimization_process['scores'])
+        self.mfe_index = np.argmin(self.optimization_process['scores'])
+        #print(opt.optimization_process['sequences'], opt.optimization_process['scores'], mfe, mfe_index)
+        print(self.optimization_process['sequences'][self.mfe_index])
+        self.final_codons = self._reverse_translate(self.optimization_process['sequences'][self.mfe_index])
+        #print(final_codons)
+        self._verify_dna(self.final_codons)

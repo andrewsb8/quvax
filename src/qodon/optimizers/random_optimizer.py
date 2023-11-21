@@ -29,13 +29,5 @@ class RandomOptimizer(CodonOptimizer):
 
         scores = [self._fold_rna(s) for s in self.initial_sequences]
 
-        self.final_energies = scores
-        self.mfe = np.min(scores)
-        self.mfe_index = np.argmin(scores)
-
-        self.final_codons = self._reverse_translate(self.initial_sequences)
-
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
+        self._extend_output(self.initial_sequences, scores, None)
+        self._get_optimized_sequence()

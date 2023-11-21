@@ -26,7 +26,7 @@ class TestOptimizers(unittest.TestCase):
             parser = Parser()
             opt = RandomOptimizer(parser)
             with self.assertLogs(level='INFO'):
-                opt._verify_dna(opt.final_codons[opt.mfe_index])
+                opt._verify_dna(opt.final_codons)
 
     def test_GA(self):
         from src.qodon.optimizers.classical_ga import GeneticAlgorithm
