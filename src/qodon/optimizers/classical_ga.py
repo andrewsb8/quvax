@@ -41,7 +41,7 @@ class GeneticAlgorithm(CodonOptimizer):
             # Translate from indices to codons for energy calculation
             tmp = []
             for i in range(len(n_seqs)):
-                tmp.append([self._reverse_translate(n_seqs[i])])
+                tmp.append(self._reverse_translate(n_seqs[i]))
             # Use the imported scoring function to score all sequences.
             scores = [self._fold_rna(s) for s in tmp]
 

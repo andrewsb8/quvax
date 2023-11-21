@@ -1,15 +1,5 @@
-Command line: python -i examples/spike_trim_80.fasta -c 1000 -n 5 -co TFDE -ms 2
+Command line: python -i examples/spike_trim_20.fasta -c 4 -n 5 -co TFDE -ms 2
 Beginning codon optimization
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
-No stems formed.
 Final codon sequence translated properly.
-Minimum energy codon sequence: ATGTTTGTATTTCTCGTGCTGCTTCCTCTTGTAAGCTCACAATGTGTCAACCTCACTACCCGTACGCAGCTACCGCCTGCTTATACCAACAGCTTCACCCGAGGTGTGTATTACCCGGACAAAGTCTTTCGCTCGTCCGTTCTGCATTCCACGCAAGATTTATTTCTGCCGTTTTTTTCCAACGTGACATGGTTTCATGCGATCCATGTATCGGGCACGAACGGTACTAAACGTTTCGAC
-Energy of codon sequence: 500000
+Minimum energy codon sequence: ATGTTCGTATTCCTGGTCCTGCTACCGCTGGTTTCCTCGCAGTGTGTCAACTTAACCACC
+Energy of codon sequence: -64.0

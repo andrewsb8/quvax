@@ -28,7 +28,7 @@ class RandomOptimizer(CodonOptimizer):
         self.initial_sequences.extend(extra_sequences)
         tmp = []
         for i in range(len(self.initial_sequences)):
-            tmp.append([self._reverse_translate(self.initial_sequences[i])])
+            tmp.append(self._reverse_translate(self.initial_sequences[i]))
 
         scores = [self._fold_rna(s) for s in tmp]
 

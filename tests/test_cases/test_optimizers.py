@@ -14,6 +14,7 @@ class TestOptimizers(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "TFDE"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
+            parser.log.info("test_TFDE")
             opt = TfDiffEv(parser)
             with self.assertLogs(level='INFO'):
                 opt._verify_dna(opt.final_codons)
@@ -24,6 +25,7 @@ class TestOptimizers(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "RAND"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
+            parser.log.info("test_RAND")
             opt = RandomOptimizer(parser)
             with self.assertLogs(level='INFO'):
                 opt._verify_dna(opt.final_codons)
@@ -33,6 +35,7 @@ class TestOptimizers(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "GA"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
+            parser.log.info("test_GA")
             opt = GeneticAlgorithm(parser)
             with self.assertLogs(level='INFO'):
                 opt._verify_dna(opt.final_codons)
