@@ -34,6 +34,7 @@ class TfDiffEv(CodonOptimizer):
         )
 
         self._get_optimized_sequence()
+        self._pickle_output()
 
     def _objective(self, members):
         '''

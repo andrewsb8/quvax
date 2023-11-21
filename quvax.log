@@ -1,5 +1,48 @@
-Command line: python -i examples/spike_trim_20.fasta -c 4 -n 5 -co TFDE -ms 2
+Command line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
+test_TFDE
 Beginning codon optimization
 Final codon sequence translated properly.
-Minimum energy codon sequence: ATGTTCGTCTTTCTTGTGCTGCTGCCCTTGGTCAGCTCGCAGTGTGTTAATTTGACGACG
-Energy of codon sequence: -64.0
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+Final codon sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+Command line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
+test_TFDE
+Beginning codon optimization
+Final codon sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+Final codon sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+Command line: python -i tests/test_sequences/GGGN.fasta -n 4 -c 4 -ms 2 -co TFDE
+test_TFDE
+Beginning codon optimization
+Final codon sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+Final codon sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+imum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ sequence translated properly.
+Minimum energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ energy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ergy codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0
+ codon sequence: GGCGGCGGCAAC
+Energy of codon sequence: -4.0

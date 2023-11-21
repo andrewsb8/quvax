@@ -28,6 +28,7 @@ class GeneticAlgorithm(CodonOptimizer):
         # Simulate evolution
         self._propagate_generations()
         self._get_optimized_sequence()
+        self._pickle_output()
 
     def _propagate_generations(self):
 

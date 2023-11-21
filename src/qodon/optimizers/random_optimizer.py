@@ -32,3 +32,4 @@ class RandomOptimizer(CodonOptimizer):
 
         self._extend_output(n_seqs, scores, None)
         self._get_optimized_sequence()
+        self._pickle_output()

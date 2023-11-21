@@ -7,6 +7,7 @@ import random
 import numpy as np
 import pandas as pd
 from typing import List
+import pickle
 
 
 class CodonOptimizer(ABC):
@@ -136,6 +137,8 @@ class CodonOptimizer(ABC):
         return
 
     def _pickle_output(self):
+        output_file = open(self.config.args.output, "wb")
+        pickle.dump(self.optimization_process, output_file)
         return
 
     def _read_pickle(self):
@@ -178,4 +181,5 @@ class CodonOptimizer(ABC):
         '''
         self.mfe = np.min(self.optimization_process['scores'])
         self.mfe_index = np.argmin(self.optimization_process['scores'])
-        self._verify_dna(self.optimization_process['sequences'][self.mfe_index])
+        self.final_codons = self.optimization_process['sequences'][self.mfe_index]
+        self._verify_dna(self.final_codons)
