@@ -32,18 +32,17 @@ class GeneticAlgorithm(CodonOptimizer):
     def _propagate_generations(self):
 
         # Initialize population
-        n_seqs = self.initial_sequences
+        members = self.initial_sequences
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
-            n_seqs = self._procreate(n_seqs)
+            members = self._procreate(members)
             # Translate from indices to codons for energy calculation
-            tmp = []
-            for i in range(len(n_seqs)):
-                tmp.append(self._reverse_translate(n_seqs[i]))
+            n_seqs = [self._reverse_translate(s) for s in members]
+
             # Use the imported scoring function to score all sequences.
-            scores = [self._fold_rna(s) for s in tmp]
+            scores = [self._fold_rna(s) for s in n_seqs]
 
         self._extend_output(n_seqs, scores, None)
 

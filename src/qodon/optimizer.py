@@ -178,5 +178,4 @@ class CodonOptimizer(ABC):
         '''
         self.mfe = np.min(self.optimization_process['scores'])
         self.mfe_index = np.argmin(self.optimization_process['scores'])
-        self.final_codons = self._reverse_translate(self.optimization_process['sequences'][self.mfe_index])
-        self._verify_dna(self.final_codons)
+        self._verify_dna(self.optimization_process['sequences'][self.mfe_index])
