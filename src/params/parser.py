@@ -52,6 +52,7 @@ class Parser(object):
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
         self._logging()
         self._validate()
+        self._log_args()
 
     def _parse(self):
         '''
