@@ -132,7 +132,7 @@ class Parser(object):
 
             ''')
 
-    def _print_args(self):
+    def _log_args(self):
         self.log.info("Lists of Parameters:")
         iterable_args = vars(self.args)
         for k in iterable_args:

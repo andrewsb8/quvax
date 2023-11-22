@@ -26,7 +26,7 @@ class CodonOptimizer(ABC):
     """
     def __init__(self, config: Parser):
         self.config = config
-        self.config._print_args()
+        self.config._log_args()
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
