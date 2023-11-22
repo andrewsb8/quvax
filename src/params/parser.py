@@ -131,3 +131,10 @@ class Parser(object):
             --min_loop_len must be at least 1!
 
             ''')
+
+    def _print_args(self):
+        self.log.info("Lists of Parameters:")
+        iterable_args = vars(self.args)
+        for k in iterable_args:
+            self.log.info(k + " : " + str(iterable_args[k]))
+        self.log.info("\n\n")
