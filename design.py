@@ -9,12 +9,12 @@ if __name__ == "__main__":
 
     if config.args.codon_optimizer == "TFDE":
         from src.qodon.optimizers.tf_differential_evo import TfDiffEv
-        opt = TfDiffEv(config)
+        TfDiffEv(config)
     elif config.args.codon_optimizer == "GA":
         from src.qodon.optimizers.classical_ga import GeneticAlgorithm
-        opt = GeneticAlgorithm(config)
+        GeneticAlgorithm(config)
     elif config.args.codon_optimizer == "RAND":
         from src.qodon.optimizers.random_optimizer import RandomOptimizer
-        opt = RandomOptimizer(config)
+        RandomOptimizer(config)
     else:
         config.log.error("Please select a valid optimizer. See python design.py -h for details.")
