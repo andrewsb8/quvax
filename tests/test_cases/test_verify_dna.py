@@ -15,7 +15,7 @@ class TestVerifyDNA(unittest.TestCase):
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
             opt = MockOptimizer(parser)
-            opt.final_codons = "ATGTTCGTATTCTTAGTGTTACTGCCGCTCGT"
+            opt.final_codons = "ATGTTCGTATTCTTAGTGTTACTGCCGCTCGTA"
             with self.assertRaises(ValueError):
                 opt._verify_dna(opt.final_codons)
 
