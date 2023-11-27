@@ -74,6 +74,8 @@ class Parser(object):
         self.parser.add_argument("-l", "--log_file_name", default="quvax.log", type=str, help="Log file for recording certain output, warnings, and errors")
         self.parser.add_argument("-sp", "--species", default="e_coli_316407", type=str, help="Species type for generating codon tables and frequencies")
         self.parser.add_argument("-o", "--output", default="quvax.qu", type=str, help="Specify output file. Includes sequences, folding energies, (TBA) secondary structure")
+        self.parser.add_argument("-sd", "--random_seed", default=1, type=int, help="Random seed for sequence generation, optimization, and folding")
+
 
         self.args = self.parser.parse_args()
 

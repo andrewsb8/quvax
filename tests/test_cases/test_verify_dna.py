@@ -3,25 +3,18 @@ import os
 import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
-from src.qodon.optimizer import CodonOptimizer
-
-class FakeOptimizer(CodonOptimizer):
-    def __init__(self, config):
-        super().__init__(config)
-
-    def _optimize(self):
-        pass
+from tests.mock_optimizer import MockOptimizer
 
 class TestVerifyDNA(unittest.TestCase):
     """
-    Test codon optimization will run for each top level optimizer option
+    Test Optimizer Method _verify_dna for successful and nonsuccessful translations
 
     """
     def test_NoTranslate(self):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "TFDE"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            opt = FakeOptimizer(parser)
+            opt = MockOptimizer(parser)
             opt.final_codons = "ATGTTCGTATTCTTAGTGTTACTGCCGCTCGT"
             with self.assertRaises(ValueError):
                 opt._verify_dna(opt.final_codons)
@@ -30,7 +23,7 @@ class TestVerifyDNA(unittest.TestCase):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "TFDE"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            opt = FakeOptimizer(parser)
+            opt = MockOptimizer(parser)
             opt.final_codons = "GGCGGCGGGAAC"
             with self.assertLogs(level='INFO'):
                 opt._verify_dna(opt.final_codons)

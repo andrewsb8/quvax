@@ -26,11 +26,13 @@ class CodonOptimizer(ABC):
     """
     def __init__(self, config: Parser):
         self.config = config
+        random.seed(self.config.args.random_seed)
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
         self.optimization_process = {'generation-size': self.config.args.n_trials,
                                      'optimizer':       self.config.args.codon_optimizer,
+                                     'random_seed':     self.config.args.random_seed,
                                      'sequences':       [], #nested list of sequences
                                      'scores':          [], #list of scores where index corresponds to sequence
                                      'sec_struct':      []} #list of secondary structure information for a sequence
@@ -141,6 +143,7 @@ class CodonOptimizer(ABC):
     def _pickle_output(self):
         output_file = open(self.config.args.output, "wb")
         pickle.dump(self.optimization_process, output_file)
+        output_file.close()
         return
 
     def _read_pickle(self):

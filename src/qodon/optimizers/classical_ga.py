@@ -63,8 +63,7 @@ class GeneticAlgorithm(CodonOptimizer):
                                  mutation_chance=0.05))
         return new_members
 
-    @staticmethod
-    def _mix_genes(genes_xx, genes_xy):
+    def _mix_genes(self, genes_xx, genes_xy):
         '''
         Create new genes by randomly mixing two
 
