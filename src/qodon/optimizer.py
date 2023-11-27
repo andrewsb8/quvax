@@ -173,8 +173,7 @@ class CodonOptimizer(ABC):
                 "Error: Codon sequence did not translate properly!")
         else:
             self.config.log.info("Final codon sequence translated properly.")
-            self.config.log.info("Minimum energy codon sequence: " + sequence)
-            self.config.log.info("Energy of codon sequence: " + str(self.mfe))
+            return True
 
     def _get_optimized_sequence(self):
         '''
@@ -184,4 +183,6 @@ class CodonOptimizer(ABC):
         self.mfe = np.min(self.optimization_process['scores'])
         self.mfe_index = np.argmin(self.optimization_process['scores'])
         self.final_codons = self.optimization_process['sequences'][self.mfe_index]
-        self._verify_dna(self.final_codons)
+        if self._verify_dna(self.final_codons):
+            self.config.log.info("Minimum energy codon sequence: " + self.final_codons)
+            self.config.log.info("Energy of codon sequence: " + str(self.mfe))
