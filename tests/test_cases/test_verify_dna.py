@@ -27,5 +27,15 @@ class TestVerifyDNA(unittest.TestCase):
             with self.assertRaises(ValueError):
                 opt._verify_dna(opt.final_codons)
 
+    def test_WillTranslate(self):
+        from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+        testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-c", "4", "-ms", "2", "-co", "TFDE"]
+        with patch.object(sys, 'argv', testargs):
+            parser = Parser()
+            opt = FakeOptimizer(parser)
+            opt.final_codons = "GGCGGCGGGAAC"
+            with self.assertLogs(level='INFO'):
+                opt._verify_dna(opt.final_codons)
+
 if __name__ == '__main__':
     unittest.main()
