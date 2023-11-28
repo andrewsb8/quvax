@@ -30,12 +30,13 @@ class CodonOptimizer(ABC):
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        self.optimization_process = {'generation-size': self.config.args.n_trials,
-                                     'optimizer':       self.config.args.codon_optimizer,
-                                     'random_seed':     self.config.args.random_seed,
-                                     'sequences':       [], #nested list of sequences
-                                     'scores':          [], #list of scores where index corresponds to sequence
-                                     'sec_struct':      []} #list of secondary structure information for a sequence
+        self.optimization_process = {'protein_sequence': self.config.seq,
+                                     'generation_size':  self.config.args.n_trials,
+                                     'optimizer':        self.config.args.codon_optimizer,
+                                     'random_seed':      self.config.args.random_seed,
+                                     'sequences':        [], #nested list of sequences
+                                     'scores':           [], #list of scores where index corresponds to sequence
+                                     'sec_struct':       []} #list of secondary structure information for a sequence
 
     @abstractmethod
     def _optimize(self):

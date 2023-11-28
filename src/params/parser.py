@@ -137,6 +137,7 @@ class Parser(object):
 
     def _log_args(self):
         self.log.info("Lists of Parameters:")
+        self.log.info("Protein Sequence : " + self.seq)
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
