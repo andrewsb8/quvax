@@ -3,27 +3,26 @@ import os
 import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
-from tests.mock_optimizer import MockOptimizer
 
 class TestRandomSeed(unittest.TestCase):
     """
-    Test Optimizer Method _verify_dna for successful and nonsuccessful translations
+    Test random seed for initial sequence generation and optimization processes
 
     """
-    def test_SameInitialSequences_DefaultSeed(self):
+    def test_SameInitialSequences_DefaultSeed(self, _mock_optimizer):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            opt = MockOptimizer(parser)
-            opt2 = MockOptimizer(parser)
+            opt = _mock_optimizer(parser)
+            opt2 = _mock_optimizer(parser)
             self.assertEqual(opt.initial_sequences, opt2.initial_sequences)
 
-    def test_SameInitialSequences_NewSeed(self):
+    def test_SameInitialSequences_NewSeed(self, _mock_optimizer):
         testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1098760354"]
         with patch.object(sys, 'argv', testargs):
             parser = Parser()
-            opt = MockOptimizer(parser)
-            opt2 = MockOptimizer(parser)
+            opt = _mock_optimizer(parser)
+            opt2 = _mock_optimizer(parser)
             self.assertEqual(opt.initial_sequences, opt2.initial_sequences)
 
     def test_TfDiffEv_DefaultSeed(self):
