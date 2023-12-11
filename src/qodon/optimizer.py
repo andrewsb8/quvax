@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
 from src.params.parser import Parser
 from src.rna_folding.rna_folders.simulated_annealer import QuantumSimAnnealer
+from src.exceptions.exceptions import *
+from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
 import random
@@ -148,8 +149,8 @@ class CodonOptimizer(ABC):
         return
 
     def _read_pickle(self):
-        #read previous optimization and continue process. not ready yet
-        return
+        #read previous optimization and continue process.
+        raise NotImplementedError()
 
     def _get_num_codons(self, res):
         '''

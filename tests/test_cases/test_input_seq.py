@@ -3,7 +3,7 @@ import os
 import unittest
 from unittest.mock import patch
 from src.params.parser import Parser
-from src.params.parser import InvalidSequenceError
+from src.exceptions.exceptions import *
 import warnings
 
 class TestInputSeq(unittest.TestCase):

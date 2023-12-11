@@ -5,13 +5,7 @@ import os
 import sys
 import logging
 import datetime
-
-
-class InvalidSequenceError(Exception):
-    """
-    Raise this exception when input amino acid sequence is invalid
-
-    """
+from src.exceptions.exceptions import *
 
 
 class Parser(object):
@@ -60,8 +54,9 @@ class Parser(object):
         Define command line arguments. Long options are used as variable names.
         '''
         self.__version__ = 'QuVax v0.0.1'
+        self.prog = 'design.py'
 
-        self.parser = argparse.ArgumentParser(prog='design.py',
+        self.parser = argparse.ArgumentParser(prog=self.prog,
                                               description='QuVax: mRNA design guided by folding potential',
                                               epilog='Please report bugs to: https://github.com/andrewsb8/quvax/issues')
         self.parser.add_argument("--version", action='version', version=self.__version__)
@@ -140,7 +135,7 @@ class Parser(object):
     def _log_args(self):
         self.log.info("Program Version : " + self.__version__)
         self.log.info("Execution Time : " + str(datetime.datetime.now()))
-        self.log.info("Command line: python " + ' '.join(sys.argv[1:]) + "\n")
+        self.log.info("Command line: python " + self.prog + ' '.join(sys.argv[1:]) + "\n")
         self.log.info("Lists of Parameters:")
         self.log.info("Protein Sequence : " + self.seq)
         iterable_args = vars(self.args)
