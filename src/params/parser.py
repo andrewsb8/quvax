@@ -5,7 +5,7 @@ import os
 import sys
 import logging
 import datetime
-from src.exceptions.exceptions import *
+from src.exceptions.exceptions import InvalidSequenceError
 
 
 class Parser(object):
