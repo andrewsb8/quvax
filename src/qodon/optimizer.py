@@ -1,6 +1,5 @@
 from src.params.parser import Parser
 from src.rna_folding.rna_folders.simulated_annealer import QuantumSimAnnealer
-from src.exceptions.exceptions import *
 from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
