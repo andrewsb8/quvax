@@ -34,7 +34,7 @@ def test_input_seq_wrong_letter():
     with pytest.raises(InvalidSequenceError):
         Parser(testargs)
 
-#need to find out how pytest works with logging
+#pytest.warns does not work with logging package warnings
 def test_input_seq_warning():
     """
     Test if _validate() will produce a warning when it detects a sequence
@@ -42,5 +42,5 @@ def test_input_seq_warning():
 
     """
     testargs = ["-i", "tests/test_sequences/GAG.fasta"]
-    with pytest.logs(level='WARNING'):
+    with pytest.warns():
         Parser(testargs)
