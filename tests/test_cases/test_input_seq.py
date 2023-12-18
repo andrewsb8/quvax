@@ -34,7 +34,7 @@ def test_input_seq_wrong_letter():
     with pytest.raises(InvalidSequenceError):
         Parser(testargs)
 
-#won't pass due to reference to "self". need to find out how pytest works with logging
+#need to find out how pytest works with logging
 def test_input_seq_warning():
     """
     Test if _validate() will produce a warning when it detects a sequence
