@@ -9,7 +9,7 @@ class TestInputSeq(unittest.TestCase):
     Test properties of the input sequence
 
     """
-    def test_codon_iterations(self):
+    def test_arg_codon_iterations(self):
         """
         Test if _validate() will throw error when -c is less than 1
 
@@ -19,7 +19,7 @@ class TestInputSeq(unittest.TestCase):
             with self.assertRaises(ValueError):
                 Parser()
 
-    def test_rna_iterations(self):
+    def test_arg_rna_iterations(self):
         """
         Test if _validate() will throw error when -r is less than 1
 
@@ -29,7 +29,7 @@ class TestInputSeq(unittest.TestCase):
             with self.assertRaises(ValueError):
                 Parser()
 
-    def test_ntrials(self):
+    def test_arg_ntrials(self):
         """
         Test if _validate() will throw error when -n is less than 1
 

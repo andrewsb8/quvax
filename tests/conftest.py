@@ -1,4 +1,8 @@
+import sys
 import pytest
+import unittest
+from unittest.mock import patch
+from src.params.parser import Parser
 from src.qodon.optimizer import CodonOptimizer
 
 class MockOptimizer(CodonOptimizer):
@@ -9,5 +13,10 @@ class MockOptimizer(CodonOptimizer):
         pass
 
 @pytest.fixture
-def _mock_optimizer(config):
-    return MockOptimizer(config)
+def mock_optimizer():
+    """Mock optimizer"""
+    testargs = ["design.py", "-i", "tests/test_sequences/GGGN.fasta", "-n", "5"]
+    with patch.object(sys, 'argv', testargs):
+        parser = Parser()
+        opt = MockOptimizer(parser)
+    return opt
