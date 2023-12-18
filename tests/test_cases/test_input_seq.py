@@ -1,57 +1,46 @@
 import sys
 import os
-import unittest
-from unittest.mock import patch
+import logging
+import pytest
 from src.params.parser import Parser
 from src.exceptions.exceptions import InvalidSequenceError
 import warnings
 
-class TestInputSeq(unittest.TestCase):
+def test_input_seq_str():
     """
-    Test properties of the input sequence
+    Test if _validate() will throw error for a numeric input string
 
     """
-    def test_input_seq_str(self):
-        """
-        Test if _validate() will throw error for a numeric input string
+    testargs = ["-i", "tests/test_sequences/integer_sequence.fasta"]
+    with pytest.raises(InvalidSequenceError):
+        Parser(testargs)
 
-        """
-        testargs = ["design.py", "-i", "tests/test_sequences/integer_sequence.fasta"]
-        with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(InvalidSequenceError):
-                Parser()
+def test_input_seq_partial_str():
+    """
+    Test if _validate() will throw error for an alphanumeric input string
 
-    def test_input_seq_partial_str(self):
-        """
-        Test if _validate() will throw error for an alphanumeric input string
+    """
+    testargs = ["-i", "tests/test_sequences/some_integers.fasta"]
+    with pytest.raises(InvalidSequenceError):
+        Parser(testargs)
 
-        """
-        testargs = ["design.py", "-i", "tests/test_sequences/some_integers.fasta"]
-        with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(InvalidSequenceError):
-                Parser()
+def test_input_seq_wrong_letter():
+    """
+    Test if _validate() will throw error for input string with letters not
+    assigned to an amino acid
 
-    def test_input_seq_wrong_letter(self):
-        """
-        Test if _validate() will throw error for input string with letters not
-        assigned to an amino acid
+    """
+    testargs = ["-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
+    with pytest.raises(InvalidSequenceError):
+        Parser(testargs)
 
-        """
-        testargs = ["design.py", "-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
-        with patch.object(sys, 'argv', testargs):
-            with self.assertRaises(InvalidSequenceError):
-                Parser()
+#won't pass due to reference to "self". need to find out how pytest works with logging
+def test_input_seq_warning():
+    """
+    Test if _validate() will produce a warning when it detects a sequence
+    which looks like DNA instead of amino acids
 
-    def test_input_seq_warning(self):
-        """
-        Test if _validate() will produce a warning when it detects a sequence
-        which looks like DNA instead of amino acids
-
-        """
-        testargs = ["design.py", "-i", "tests/test_sequences/GAG.fasta"]
-        with patch.object(sys, 'argv', testargs):
-            with self.assertLogs(level='WARNING'):
-                Parser()
-
-if __name__ == '__main__':
-    unittest.main()
+    """
+    testargs = ["-i", "tests/test_sequences/GAG.fasta"]
+    with pytest.logs(level='WARNING'):
+        Parser(testargs)
