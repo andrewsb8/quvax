@@ -42,14 +42,14 @@ class Parser(object):
         String to identify output file containing information about optimization process
 
     '''
-    def __init__(self):
-        self._parse()
+    def __init__(self, args):
+        self._parse(args)
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
         self._logging()
         self._validate()
         self._log_args()
 
-    def _parse(self):
+    def _parse(self, args=None):
         '''
         Define command line arguments. Long options are used as variable names.
         '''
@@ -75,8 +75,10 @@ class Parser(object):
         self.parser.add_argument("-o", "--output", default="quvax.qu", type=str, help="Specify output file. Includes sequences, folding energies, (TBA) secondary structure")
         self.parser.add_argument("-sd", "--random_seed", default=1, type=int, help="Random seed for sequence generation, optimization, and folding")
 
-
-        self.args = self.parser.parse_args()
+        if args == None:
+            self.args = self.parser.parse_args()
+        else:
+            self.args = self.parser.parse_args(args)
 
     def _logging(self):
         self.log = logging.getLogger(__name__)
