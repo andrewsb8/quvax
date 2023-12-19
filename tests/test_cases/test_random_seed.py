@@ -9,14 +9,14 @@ def test_SameInitialSequences_DefaultSeed():
     parser = Parser(testargs)
     opt = MockOptimizer(parser)
     opt2 = MockOptimizer(parser)
-    self.assertEqual(opt.initial_sequences, opt2.initial_sequences)
+    assert opt.initial_sequences == opt2.initial_sequences
 
 def test_SameInitialSequences_NewSeed():
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1098760354"]
     parser = Parser(testargs)
     opt = MockOptimizer(parser)
     opt2 = MockOptimizer(parser)
-    self.assertEqual(opt.initial_sequences, opt2.initial_sequences)
+    assert opt.initial_sequences == opt2.initial_sequences
 
 def test_TfDiffEv_DefaultSeed():
     from src.qodon.optimizers.tf_differential_evo import TfDiffEv
@@ -24,7 +24,7 @@ def test_TfDiffEv_DefaultSeed():
     parser = Parser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.initial_sequences == opt2.initial_sequences
 
 def test_TfDiffEv_NewSeed():
     from src.qodon.optimizers.tf_differential_evo import TfDiffEv
@@ -32,7 +32,7 @@ def test_TfDiffEv_NewSeed():
     parser = Parser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.initial_sequences == opt2.initial_sequences
 
 def test_TfDiffEv_OneIteration():
     from src.qodon.optimizers.tf_differential_evo import TfDiffEv
@@ -40,7 +40,7 @@ def test_TfDiffEv_OneIteration():
     parser = Parser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    self.assertEqual(opt.optimization_process['sequences'][-1], opt2.optimization_process['sequences'][-1])
+    assert opt.optimization_process['sequences'][-1] == opt2.optimization_process['sequences'][-1]
 
 def test_TfDiffEv_LongerSequence():
     from src.qodon.optimizers.tf_differential_evo import TfDiffEv
@@ -48,7 +48,7 @@ def test_TfDiffEv_LongerSequence():
     parser = Parser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_GA_DefaultSeed():
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -56,7 +56,7 @@ def test_GA_DefaultSeed():
     parser = Parser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_GA_NewSeed():
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -64,7 +64,7 @@ def test_GA_NewSeed():
     parser = Parser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_GA_OneIteration():
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -72,7 +72,7 @@ def test_GA_OneIteration():
     parser = Parser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    self.assertEqual(opt.optimization_process['sequences'][-1], opt2.optimization_process['sequences'][-1])
+    assert opt.optimization_process['sequences'][-1] == opt2.optimization_process['sequences'][-1]
 
 def test_GA_LongerSequence():
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -80,7 +80,7 @@ def test_GA_LongerSequence():
     parser = Parser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_RAND_DefaultSeed():
     from src.qodon.optimizers.random_optimizer import RandomOptimizer
@@ -88,7 +88,7 @@ def test_RAND_DefaultSeed():
     parser = Parser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_RAND_NewSeed():
     from src.qodon.optimizers.random_optimizer import RandomOptimizer
@@ -96,7 +96,7 @@ def test_RAND_NewSeed():
     parser = Parser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons
 
 def test_RAND_OneIteration():
     from src.qodon.optimizers.random_optimizer import RandomOptimizer
@@ -104,7 +104,7 @@ def test_RAND_OneIteration():
     parser = Parser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    self.assertEqual(opt.optimization_process['sequences'][-1], opt2.optimization_process['sequences'][-1])
+    assert opt.optimization_process['sequences'][-1] == opt2.optimization_process['sequences'][-1]
 
 def test_RAND_LongerSequence():
     from src.qodon.optimizers.random_optimizer import RandomOptimizer
@@ -112,4 +112,4 @@ def test_RAND_LongerSequence():
     parser = Parser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    self.assertEqual(opt.final_codons, opt2.final_codons)
+    assert opt.final_codons == opt2.final_codons

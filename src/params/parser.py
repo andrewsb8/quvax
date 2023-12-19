@@ -42,7 +42,7 @@ class Parser(object):
         String to identify output file containing information about optimization process
 
     '''
-    def __init__(self, args):
+    def __init__(self, args = None):
         self._parse(args)
         self.seq = str(SeqIO.read(self.args.input,'fasta').seq)
         self._logging()
@@ -87,6 +87,10 @@ class Parser(object):
         self.log.addHandler(handler)
         if os.path.isfile(self.args.log_file_name):
             logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
+        self.log.info("Program Version : " + self.__version__)
+        self.log.info("Execution Time : " + str(datetime.datetime.now()))
+        self.log.info("Command line: python " + self.prog + ' '.join(sys.argv[1:]) + "\n\n")
+        self.log.info("Warnings and Errors:\n")
 
     def _validate(self):
         '''
@@ -135,10 +139,7 @@ class Parser(object):
             ''')
 
     def _log_args(self):
-        self.log.info("Program Version : " + self.__version__)
-        self.log.info("Execution Time : " + str(datetime.datetime.now()))
-        self.log.info("Command line: python " + self.prog + ' '.join(sys.argv[1:]) + "\n")
-        self.log.info("Lists of Parameters:")
+        self.log.info("\n\nList of Parameters:")
         self.log.info("Protein Sequence : " + self.seq)
         iterable_args = vars(self.args)
         for k in iterable_args:

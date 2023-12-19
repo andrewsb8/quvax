@@ -34,13 +34,18 @@ def test_input_seq_wrong_letter():
     with pytest.raises(InvalidSequenceError):
         Parser(testargs)
 
-#pytest.warns does not work with logging package warnings
-def test_input_seq_warning():
+def test_input_seq_warning(caplog):
     """
     Test if _validate() will produce a warning when it detects a sequence
     which looks like DNA instead of amino acids
 
     """
+
     testargs = ["-i", "tests/test_sequences/GAG.fasta"]
-    with pytest.warns():
-        Parser(testargs)
+    Parser(testargs)
+    warning_entry = (
+        "src.params.parser",
+        30, #30 indicates WARNING, 20 indicates INFO
+        "Input protein sequence looks like an DNA sequence!"
+    )
+    assert warning_entry in caplog.record_tuples
