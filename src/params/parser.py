@@ -12,7 +12,7 @@ class Parser(object):
     '''
     Parses command line inputs using argparse.
 
-    Parameters
+    Parser Options
     ----------
     input : string
         Input file name
