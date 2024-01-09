@@ -27,35 +27,25 @@ class GeneticAlgorithm(CodonOptimizer):
 
         # Simulate evolution
         self._propagate_generations()
-
-        # Recover nucleotide sequence
-        self.final_codons = self._reverse_translate(self.final_population)
-
-        # Make sure fittest member translates to correct aa sequence
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
+        self._get_optimized_sequence()
+        self._pickle_output()
 
     def _propagate_generations(self):
 
         # Initialize population
-        n_seqs = self.initial_sequences
+        members = self.initial_sequences
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
-            n_seqs = self._procreate(n_seqs)
+            members = self._procreate(members)
             # Translate from indices to codons for energy calculation
-            members = self._reverse_translate(n_seqs)
-            # Use the imported scoring function to score all sequences.
-            scores = [self._fold_rna(s) for s in members]
+            n_seqs = [self._reverse_translate(s) for s in members]
 
-        # Record fittest member of population after simulating evo
-        self.final_population = n_seqs
-        self.final_energies = scores
-        self.mfe = np.min(scores)
-        self.mfe_index = np.argmin(scores)
+            # Use the imported scoring function to score all sequences.
+            scores = [self._fold_rna(s) for s in n_seqs]
+
+        self._extend_output(n_seqs, scores, None)
 
     def _procreate(self, eligible_members):
         '''
@@ -73,8 +63,7 @@ class GeneticAlgorithm(CodonOptimizer):
                                  mutation_chance=0.05))
         return new_members
 
-    @staticmethod
-    def _mix_genes(genes_xx, genes_xy):
+    def _mix_genes(self, genes_xx, genes_xy):
         '''
         Create new genes by randomly mixing two
 

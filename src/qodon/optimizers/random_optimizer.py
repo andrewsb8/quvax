@@ -26,16 +26,10 @@ class RandomOptimizer(CodonOptimizer):
         num_extra_sequences = (self.config.args.codon_iterations * self.config.args.n_trials) - self.config.args.n_trials
         extra_sequences = self._generate_sequences(num_extra_sequences)
         self.initial_sequences.extend(extra_sequences)
+        n_seqs = [self._reverse_translate(s) for s in self.initial_sequences]
 
-        scores = [self._fold_rna(s) for s in self.initial_sequences]
+        scores = [self._fold_rna(s) for s in n_seqs]
 
-        self.final_energies = scores
-        self.mfe = np.min(scores)
-        self.mfe_index = np.argmin(scores)
-
-        self.final_codons = self._reverse_translate(self.initial_sequences)
-
-        self._verify_dna(self.final_codons[self.mfe_index])
-
-        print(self.mfe)
-        print(self.final_codons[self.mfe_index])
+        self._extend_output(n_seqs, scores, None)
+        self._get_optimized_sequence()
+        self._pickle_output()

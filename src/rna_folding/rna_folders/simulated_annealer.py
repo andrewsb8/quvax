@@ -1,5 +1,6 @@
 import numpy as np
-import os, itertools
+import os
+import itertools
 from src.params.parser import Parser
 from src.rna_folding.rna_folder import RNAFolder
 

@@ -1,12 +1,13 @@
-from abc import ABC, abstractmethod
 from src.params.parser import Parser
 from src.rna_folding.rna_folders.simulated_annealer import QuantumSimAnnealer
+from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
 import random
 import numpy as np
 import pandas as pd
 from typing import List
+import pickle
 
 
 class CodonOptimizer(ABC):
@@ -25,9 +26,17 @@ class CodonOptimizer(ABC):
     """
     def __init__(self, config: Parser):
         self.config = config
+        random.seed(self.config.args.random_seed)
         self.config.log.info("Beginning codon optimization")
         self.codon_table, self.codon_scores, self.code_map = self._construct_codon_table()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+        self.optimization_process = {'protein_sequence': self.config.seq,
+                                     'generation_size':  self.config.args.n_trials,
+                                     'optimizer':        self.config.args.codon_optimizer,
+                                     'random_seed':      self.config.args.random_seed,
+                                     'sequences':        [], #nested list of sequences
+                                     'scores':           [], #list of scores where index corresponds to sequence
+                                     'sec_struct':       []} #list of secondary structure information for a sequence
 
     @abstractmethod
     def _optimize(self):
@@ -127,6 +136,21 @@ class CodonOptimizer(ABC):
         folded_rna = QuantumSimAnnealer(nseq, self.config)
         return folded_rna.best_score
 
+    def _extend_output(self, sequences, scores, sec_struct):
+        self.optimization_process['sequences'].extend(sequences)
+        self.optimization_process['scores'].extend(scores)
+        return
+
+    def _pickle_output(self):
+        output_file = open(self.config.args.output, "wb")
+        pickle.dump(self.optimization_process, output_file)
+        output_file.close()
+        return
+
+    def _read_pickle(self):
+        #read previous optimization and continue process.
+        raise NotImplementedError()
+
     def _get_num_codons(self, res):
         '''
         Extract number of possible codons for each amino acid
@@ -134,15 +158,13 @@ class CodonOptimizer(ABC):
         '''
         return len(self.code_map[res]['codons'])
 
-    def _reverse_translate(self, members):
+    def _reverse_translate(self, sequence):
         '''
         Convert to nucleotide sequence from integer indices of code map
 
         '''
 
-        get_seq = lambda se: ''.join([self.code_map[res]['codons'][se[i] % self._get_num_codons(res)] for i, res in enumerate(self.config.seq)])
-        seqs = [get_seq(se) for se in members]
-        return seqs
+        return ''.join([self.code_map[res]['codons'][sequence[i] % self._get_num_codons(res)] for i, res in enumerate(self.config.seq)])
 
     def _verify_dna(self, sequence):
         '''
@@ -155,5 +177,15 @@ class CodonOptimizer(ABC):
                 "Error: Codon sequence did not translate properly!")
         else:
             self.config.log.info("Final codon sequence translated properly.")
-            self.config.log.info("Minimum energy codon sequence: " + sequence)
-            self.config.log.info("Energy of codon sequence: " + str(self.mfe))
+
+    def _get_optimized_sequence(self):
+        '''
+        get lowest energy and associated sequence from all sequences generated
+
+        '''
+        self.mfe = np.min(self.optimization_process['scores'])
+        self.mfe_index = np.argmin(self.optimization_process['scores'])
+        self.final_codons = self.optimization_process['sequences'][self.mfe_index]
+        self._verify_dna(self.final_codons)
+        self.config.log.info("Minimum energy codon sequence: " + self.final_codons)
+        self.config.log.info("Energy of codon sequence: " + str(self.mfe))
