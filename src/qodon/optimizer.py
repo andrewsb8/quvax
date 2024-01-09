@@ -14,7 +14,7 @@ class CodonOptimizer(ABC):
     """
     Parent class for all codon optimizer classes.
 
-    Parser Options
+    Parameters
     ----------
     config : Parser
         Object containing user inputs
