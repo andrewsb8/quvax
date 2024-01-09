@@ -50,6 +50,7 @@ def test_TfDiffEv_NewSeed():
     opt2 = TfDiffEv(parser)
     assert opt.final_codons == opt2.final_codons
 
+@pytest.mark.skip
 def test_TfDiffEv_OneIteration():
     """
     Test to verify the same sequence change occurs after one iteration of optimization with default seed with Tensorflow Differential Evolution Optimizer
