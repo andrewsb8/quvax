@@ -40,6 +40,8 @@ class Parser(object):
         String to identify which species to generate codon frequencies
     output : str
         String to identify output file containing information about optimization process
+    random_seed : int
+        Sets random seed for all optimizers and packages
 
     '''
     def __init__(self, args = None):
