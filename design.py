@@ -1,7 +1,7 @@
 import os
 import sys
 import logging
-from src.params.parser import Parser
+from src.params.design_parser import Parser
 
 
 if __name__ == "__main__":
