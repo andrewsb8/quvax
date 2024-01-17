@@ -14,7 +14,7 @@ class DesignParser(object):
 
     Parser Options
     ----------
-    input : string
+    input : str
         Input file name
     codon_iterations : int
         Iterations for codon optimizations (outer loop)

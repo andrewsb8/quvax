@@ -7,14 +7,16 @@ import logging
 import datetime
 
 
-class Parser(object):
+class AnalysisParser(object):
     '''
     Parses command line inputs using argparse.
 
     Parser Options
     ----------
-    input : string
+    input : str
         Input file name
+    analysis_type : str
+        Specify which analysis to perform
     log_file_name : str
         String for log file for writing program outputs, warnings, and errors
     output : str
@@ -68,7 +70,7 @@ class Parser(object):
 
         '''
 
-        
+
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
