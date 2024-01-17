@@ -81,7 +81,7 @@ class AnalysisParser(object):
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
-        #self.log.info("Protein Sequence : " + self.seq)
+        self.log.info("Protein Sequence : " + self.data["protein_sequence"])
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
