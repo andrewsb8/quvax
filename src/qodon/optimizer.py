@@ -57,12 +57,7 @@ class CodonOptimizer(ABC):
 
     def _construct_codon_table(self):
         '''
-        Build reference table containing:
-
-            amino acid:codon mappings
-            codon frequencies
-
-        This data is referenced by both the GA and the BQM
+        Build reference table containing amino acid->codon mappings, codon frequencies
 
         '''
         # Load codon data
