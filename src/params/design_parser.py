@@ -91,7 +91,7 @@ class DesignParser(object):
             logging.warning("Log file " + self.args.log_file_name + " exists and will be overwritten.")
         self.log.info("Program Version : " + self.__version__)
         self.log.info("Execution Time : " + str(datetime.datetime.now()))
-        self.log.info("Command line: python " + self.prog + ' '.join(sys.argv[1:]) + "\n\n")
+        self.log.info("Command line: python " + self.prog + " " + ' '.join(sys.argv[1:]) + "\n\n")
         self.log.info("Warnings and Errors:\n")
 
     def _validate(self):
