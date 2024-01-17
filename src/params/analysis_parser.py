@@ -42,9 +42,10 @@ class AnalysisParser(object):
                                               description='QuVax: mRNA design guided by folding potential',
                                               epilog='Please report bugs to: https://github.com/andrewsb8/quvax/issues')
         self.parser.add_argument("--version", action='version', version=self.__version__)
-        self.parser.add_argument("-i", "--input", required=True, type=str, help="Input sequence")
+        self.parser.add_argument("-i", "--input", required=True, type=str, help="Input file from output of design.py. (default .qu)")
+        self.parser.add_argument("-at", "--analysis_type", default="fe-landscape", type=str, help="Specify type of analysis. Values: fe-landscape")
         self.parser.add_argument("-l", "--log_file_name", default="quvax.log", type=str, help="Log file for recording certain output, warnings, and errors")
-        self.parser.add_argument("-o", "--output", default="quvax.qu", type=str, help="Specify output file. Includes sequences, folding energies, (TBA) secondary structure")
+        self.parser.add_argument("-o", "--output", default="analysis_out.txt", type=str, help="Specify output file.")
         self.parser.add_argument("-sd", "--random_seed", default=1, type=int, help="Random seed for sequence generation, optimization, and folding")
 
         if args == None:
@@ -69,8 +70,6 @@ class AnalysisParser(object):
         Validate user input.
 
         '''
-
-
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")

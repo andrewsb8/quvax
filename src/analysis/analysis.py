@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.params.analysis_parser import AnalysisParser
 
 
 class Analysis(ABC):
@@ -8,7 +9,7 @@ class Analysis(ABC):
     Parameters
     ----------
     """
-    def __init__(self):
+    def __init__(self, config: AnalysisParser):
         pass
 
     @abstractmethod
