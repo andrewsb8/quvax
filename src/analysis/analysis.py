@@ -10,7 +10,7 @@ class Analysis(ABC):
     ----------
     """
     def __init__(self, config: AnalysisParser):
-        pass
+        self.config = config
 
     @abstractmethod
     def _analyze(self):

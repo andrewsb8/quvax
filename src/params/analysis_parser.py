@@ -3,6 +3,7 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 import os
 import sys
+import pickle
 import logging
 import datetime
 
@@ -28,6 +29,7 @@ class AnalysisParser(object):
     def __init__(self, args = None):
         self._parse(args)
         self._logging()
+        self.data = self._load_input()
         self._validate()
         self._log_args()
 
@@ -65,6 +67,12 @@ class AnalysisParser(object):
         self.log.info("Command line: python " + self.prog + " " + ' '.join(sys.argv[1:]) + "\n\n")
         self.log.info("Warnings and Errors:\n")
 
+    def _load_input(self):
+        input_file = open(self.args.input, "rb")
+        data = pickle.load(input_file)
+        input_file.close()
+        return data
+
     def _validate(self):
         '''
         Validate user input.
@@ -73,7 +81,7 @@ class AnalysisParser(object):
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
-        self.log.info("Protein Sequence : " + self.seq)
+        #self.log.info("Protein Sequence : " + self.seq)
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
