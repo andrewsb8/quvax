@@ -1,7 +1,7 @@
 import sys
 import os
 import pytest
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 from tests.conftest import MockOptimizer
 
 def test_lenNTrials_5(mock_optimizer):
@@ -18,6 +18,6 @@ def test_lenNTrials_str():
     """
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "2"]
     with pytest.raises(TypeError):
-        parser = Parser(testargs)
+        parser = DesignParser(testargs)
         parser.args.n_trials = str(parser.args.n_trials)
         opt = MockOptimizer(parser)

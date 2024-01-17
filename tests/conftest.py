@@ -1,7 +1,7 @@
 import sys
 import pytest
 from src.qodon.optimizer import CodonOptimizer
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 
 class MockOptimizer(CodonOptimizer):
     def __init__(self, config):
@@ -14,6 +14,6 @@ class MockOptimizer(CodonOptimizer):
 def mock_optimizer():
     """Mock optimizer"""
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "5"]
-    parser = Parser(testargs)
+    parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
     return opt

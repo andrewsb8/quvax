@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 
 
 class RNAFolder(ABC):

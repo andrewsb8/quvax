@@ -1,7 +1,7 @@
 import sys
 import os
 import pytest
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 
 def test_arg_codon_iterations():
     """
@@ -10,7 +10,7 @@ def test_arg_codon_iterations():
     """
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-c", "0"]
     with pytest.raises(ValueError):
-        Parser(testargs)
+        DesignParser(testargs)
 
 def test_arg_rna_iterations():
     """
@@ -19,7 +19,7 @@ def test_arg_rna_iterations():
     """
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-r", "0"]
     with pytest.raises(ValueError):
-        Parser(testargs)
+        DesignParser(testargs)
 
 def test_arg_ntrials():
     """
@@ -28,4 +28,4 @@ def test_arg_ntrials():
     """
     testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "0"]
     with pytest.raises(ValueError):
-        Parser(testargs)
+        DesignParser(testargs)

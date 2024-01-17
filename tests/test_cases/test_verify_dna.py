@@ -1,7 +1,7 @@
 import sys
 import os
 import pytest
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 
 def test_NoTranslate(mock_optimizer):
     """
@@ -20,7 +20,7 @@ def test_WillTranslate(mock_optimizer, caplog):
     mock_optimizer.final_codons = "GGCGGCGGGAAC"
     mock_optimizer._verify_dna(mock_optimizer.final_codons)
     log_entry = (
-        "src.params.parser",
+        "src.params.design_parser",
         20, #30 indicates WARNING, 20 indicates INFO
         "Final codon sequence translated properly."
     )

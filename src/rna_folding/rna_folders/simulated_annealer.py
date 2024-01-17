@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import itertools
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 from src.rna_folding.rna_folder import RNAFolder
 
 
@@ -35,7 +35,7 @@ class QuantumSimAnnealer(RNAFolder):
         Lowest energy output from simulated annealer for RNA folding
 
     '''
-    def __init__(self, nseq, config: Parser):
+    def __init__(self, nseq, config: DesignParser):
         self.config = config
         self.nseq = nseq #specify nseq here to avoid confusion with self.config.seq
         self.n = len(self.nseq)

@@ -2,7 +2,7 @@ import sys
 import os
 import logging
 import pytest
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 from src.exceptions.exceptions import InvalidSequenceError
 import warnings
 
@@ -13,7 +13,7 @@ def test_input_seq_str():
     """
     testargs = ["-i", "tests/test_sequences/integer_sequence.fasta"]
     with pytest.raises(InvalidSequenceError):
-        Parser(testargs)
+        DesignParser(testargs)
 
 def test_input_seq_partial_str():
     """
@@ -22,7 +22,7 @@ def test_input_seq_partial_str():
     """
     testargs = ["-i", "tests/test_sequences/some_integers.fasta"]
     with pytest.raises(InvalidSequenceError):
-        Parser(testargs)
+        DesignParser(testargs)
 
 def test_input_seq_wrong_letter():
     """
@@ -32,7 +32,7 @@ def test_input_seq_wrong_letter():
     """
     testargs = ["-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
     with pytest.raises(InvalidSequenceError):
-        Parser(testargs)
+        DesignParser(testargs)
 
 def test_input_seq_warning(caplog):
     """
@@ -42,9 +42,9 @@ def test_input_seq_warning(caplog):
     """
 
     testargs = ["-i", "tests/test_sequences/GAG.fasta"]
-    Parser(testargs)
+    DesignParser(testargs)
     warning_entry = (
-        "src.params.parser",
+        "src.params.design_parser",
         30, #30 indicates WARNING, 20 indicates INFO
         "Input protein sequence looks like an DNA sequence!"
     )

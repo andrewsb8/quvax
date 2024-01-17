@@ -8,7 +8,7 @@ import datetime
 from src.exceptions.exceptions import InvalidSequenceError
 
 
-class Parser(object):
+class DesignParser(object):
     '''
     Parses command line inputs using argparse.
 

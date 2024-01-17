@@ -1,4 +1,4 @@
-from src.params.parser import Parser
+from src.params.design_parser import DesignParser
 from src.rna_folding.rna_folders.simulated_annealer import QuantumSimAnnealer
 from abc import ABC, abstractmethod
 import python_codon_tables as pct
@@ -24,7 +24,7 @@ class CodonOptimizer(ABC):
         Randomly generated codon sequences for input amino acid sequence based on code map
 
     """
-    def __init__(self, config: Parser):
+    def __init__(self, config: DesignParser):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.config.log.info("Beginning codon optimization")
