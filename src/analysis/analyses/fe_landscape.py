@@ -10,4 +10,7 @@ class FreeEnergyLandscape(Analysis):
     """
     def __init__(self, config):
         super().__init__(config)
-        self._optimize()
+        self._analyze()
+
+    def _analyze(self):
+        pass
