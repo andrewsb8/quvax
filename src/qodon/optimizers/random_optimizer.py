@@ -1,5 +1,4 @@
 from src.qodon.optimizer import CodonOptimizer
-import random
 
 
 class RandomOptimizer(CodonOptimizer):

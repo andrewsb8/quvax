@@ -6,6 +6,7 @@ if __name__ == "__main__":
 
     if config.args.analysis_type == "fe-landscape":
         from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
+
         FreeEnergyLandscape(config)
     else:
         config.log.error(
