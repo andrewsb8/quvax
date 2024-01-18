@@ -16,5 +16,5 @@ class Analysis(ABC):
     def _analyze(self):
         pass
 
-    def _generate_output_file(self, columns):
+    def _generate_output_file(self, columns, values):
         pass
