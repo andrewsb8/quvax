@@ -55,6 +55,7 @@ For running a specific set of tests:
 ```
 argparse==1.4.0
 biopython==1.81
+black==23.12.1
 dwave-neal==0.6.0
 flake8==6.1.0
 pandas==2.0.3
