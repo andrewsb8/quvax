@@ -1,5 +1,3 @@
-import sys
-import os
 import pytest
 from src.params.design_parser import DesignParser
 from tests.conftest import MockOptimizer

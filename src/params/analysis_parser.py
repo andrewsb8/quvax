@@ -1,6 +1,4 @@
 import argparse
-from Bio.Seq import Seq
-from Bio import SeqIO
 import os
 import sys
 import pickle
@@ -85,7 +83,7 @@ class AnalysisParser(object):
             help="Random seed for sequence generation, optimization, and folding",
         )
 
-        if args == None:
+        if args is None:
             self.args = self.parser.parse_args()
         else:
             self.args = self.parser.parse_args(args)

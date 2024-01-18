@@ -67,7 +67,7 @@ class CodonOptimizer(ABC):
 
         """
         # Load codon data
-        codons_tables = pct.get_all_available_codons_tables()
+        #codons_tables = pct.get_all_available_codons_tables()
         table = pct.get_codons_table(self.config.args.species)
         df = pd.DataFrame(
             [(a, c, s) for a, v in table.items() for c, s in v.items() if a != "*"],

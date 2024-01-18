@@ -1,10 +1,6 @@
-import sys
-import os
-import logging
 import pytest
 from src.params.design_parser import DesignParser
 from src.exceptions.exceptions import InvalidSequenceError
-import warnings
 
 
 def test_input_seq_str():

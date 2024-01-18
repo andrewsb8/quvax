@@ -1,4 +1,3 @@
-import sys
 import pytest
 from src.qodon.optimizer import CodonOptimizer
 from src.params.design_parser import DesignParser

@@ -1,6 +1,3 @@
-import sys
-import os
-import pytest
 from src.params.design_parser import DesignParser
 
 
@@ -25,7 +22,7 @@ def test_TFDE(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_TFDE")
-    opt = TfDiffEv(parser)
+    TfDiffEv(parser)
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO
@@ -55,7 +52,7 @@ def test_RAND(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_RAND")
-    opt = RandomOptimizer(parser)
+    RandomOptimizer(parser)
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO
@@ -85,7 +82,7 @@ def test_GA(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_GA")
-    opt = GeneticAlgorithm(parser)
+    GeneticAlgorithm(parser)
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO

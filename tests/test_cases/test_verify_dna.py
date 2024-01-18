@@ -1,7 +1,4 @@
-import sys
-import os
 import pytest
-from src.params.design_parser import DesignParser
 
 
 def test_NoTranslate(mock_optimizer):
