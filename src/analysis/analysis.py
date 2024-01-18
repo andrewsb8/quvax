@@ -9,6 +9,7 @@ class Analysis(ABC):
     Parameters
     ----------
     """
+
     def __init__(self, config: AnalysisParser):
         self.config = config
 

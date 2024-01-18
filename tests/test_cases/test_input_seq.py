@@ -6,6 +6,7 @@ from src.params.design_parser import DesignParser
 from src.exceptions.exceptions import InvalidSequenceError
 import warnings
 
+
 def test_input_seq_str():
     """
     Test if _validate() will throw error for a numeric input string
@@ -14,6 +15,7 @@ def test_input_seq_str():
     testargs = ["-i", "tests/test_sequences/integer_sequence.fasta"]
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
+
 
 def test_input_seq_partial_str():
     """
@@ -24,6 +26,7 @@ def test_input_seq_partial_str():
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
 
+
 def test_input_seq_wrong_letter():
     """
     Test if _validate() will throw error for input string with letters not
@@ -33,6 +36,7 @@ def test_input_seq_wrong_letter():
     testargs = ["-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
+
 
 def test_input_seq_warning(caplog):
     """
@@ -45,7 +49,7 @@ def test_input_seq_warning(caplog):
     DesignParser(testargs)
     warning_entry = (
         "src.params.design_parser",
-        30, #30 indicates WARNING, 20 indicates INFO
-        "Input protein sequence looks like an DNA sequence!"
+        30,  # 30 indicates WARNING, 20 indicates INFO
+        "Input protein sequence looks like an DNA sequence!",
     )
     assert warning_entry in caplog.record_tuples

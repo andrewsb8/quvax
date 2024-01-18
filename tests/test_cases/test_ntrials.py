@@ -4,12 +4,14 @@ import pytest
 from src.params.design_parser import DesignParser
 from tests.conftest import MockOptimizer
 
+
 def test_lenNTrials_5(mock_optimizer):
     """
     Test the correct number of codon sequences are generated
 
     """
     assert len(mock_optimizer.initial_sequences) == 5
+
 
 def test_lenNTrials_str():
     """

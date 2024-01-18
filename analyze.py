@@ -11,4 +11,6 @@ if __name__ == "__main__":
     if config.args.analysis_type == "fe-landscape":
         FreeEnergyLandscape(config)
     else:
-        config.log.error("Please select a valid analysis. See python analyze.py -h for details.")
+        config.log.error(
+            "Please select a valid analysis. See python analyze.py -h for details."
+        )
