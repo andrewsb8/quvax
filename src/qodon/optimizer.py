@@ -34,8 +34,8 @@ class CodonOptimizer(ABC):
                                      'generation_size':  self.config.args.n_trials,
                                      'optimizer':        self.config.args.codon_optimizer,
                                      'random_seed':      self.config.args.random_seed,
-                                     'sequences':        [], #nested list of sequences
-                                     'scores':           [], #list of scores where index corresponds to sequence
+                                     'sequences':        [], #list of sequences
+                                     'energies':         [], #list of energies where index corresponds to sequence
                                      'sec_struct':       []} #list of secondary structure information for a sequence
 
     @abstractmethod
@@ -131,9 +131,9 @@ class CodonOptimizer(ABC):
         folded_rna = QuantumSimAnnealer(nseq, self.config)
         return folded_rna.best_score
 
-    def _extend_output(self, sequences, scores, sec_struct):
+    def _extend_output(self, sequences, energies, sec_struct):
         self.optimization_process['sequences'].extend(sequences)
-        self.optimization_process['scores'].extend(scores)
+        self.optimization_process['energies'].extend(energies)
         return
 
     def _pickle_output(self):
@@ -178,8 +178,8 @@ class CodonOptimizer(ABC):
         get lowest energy and associated sequence from all sequences generated
 
         '''
-        self.mfe = np.min(self.optimization_process['scores'])
-        self.mfe_index = np.argmin(self.optimization_process['scores'])
+        self.mfe = np.min(self.optimization_process['energies'])
+        self.mfe_index = np.argmin(self.optimization_process['energies'])
         self.final_codons = self.optimization_process['sequences'][self.mfe_index]
         self._verify_dna(self.final_codons)
         self.config.log.info("Minimum energy codon sequence: " + self.final_codons)

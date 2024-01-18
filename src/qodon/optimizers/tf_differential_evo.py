@@ -52,12 +52,12 @@ class TfDiffEv(CodonOptimizer):
         n_seqs = [self._reverse_translate(s) for s in n_seqs]
 
         # Use the imported scoring function to score all sequences.
-        scores = [self._fold_rna(s) for s in n_seqs]
+        energies = [self._fold_rna(s) for s in n_seqs]
 
-        self._extend_output(n_seqs, scores, None)
+        self._extend_output(n_seqs, energies, None)
 
         # Return TF object
-        return tf.cast(scores, np.float32)
+        return tf.cast(energies, np.float32)
 
     def _convert_to_ints(self, members) -> List:
         '''

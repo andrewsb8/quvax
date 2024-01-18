@@ -43,9 +43,9 @@ class GeneticAlgorithm(CodonOptimizer):
             n_seqs = [self._reverse_translate(s) for s in members]
 
             # Use the imported scoring function to score all sequences.
-            scores = [self._fold_rna(s) for s in n_seqs]
+            energies = [self._fold_rna(s) for s in n_seqs]
 
-        self._extend_output(n_seqs, scores, None)
+        self._extend_output(n_seqs, energies, None)
 
     def _procreate(self, eligible_members):
         '''

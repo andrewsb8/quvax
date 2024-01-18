@@ -15,3 +15,6 @@ class Analysis(ABC):
     @abstractmethod
     def _analyze(self):
         pass
+
+    def _generate_output_file(self, columns):
+        pass

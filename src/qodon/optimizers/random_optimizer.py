@@ -28,8 +28,8 @@ class RandomOptimizer(CodonOptimizer):
         self.initial_sequences.extend(extra_sequences)
         n_seqs = [self._reverse_translate(s) for s in self.initial_sequences]
 
-        scores = [self._fold_rna(s) for s in n_seqs]
+        energies = [self._fold_rna(s) for s in n_seqs]
 
-        self._extend_output(n_seqs, scores, None)
+        self._extend_output(n_seqs, energies, None)
         self._get_optimized_sequence()
         self._pickle_output()
