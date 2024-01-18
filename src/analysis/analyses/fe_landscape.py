@@ -21,8 +21,8 @@ class FreeEnergyLandscape(Analysis):
 
         self.codon_diff = [sum([self._calc_codon_diff(self.mfe_codons[i*3:(i*3)+3], self.config.data['sequences'][j][i*3:(i*3)+3]) for i in range(int(len(self.mfe_codons)/3))]) for j in range(len(self.config.data['sequences']))]
         self.energy_diff = [self._calc_energy_diff(energy) for energy in self.config.data['energies']]
-        #print(self.energy_diff)
-        print(self.codon_diff)
+
+        #TODO output the info to a file and plot or don't plot
 
     def _calc_codon_diff(self, mfe_codon, codon):
         """
