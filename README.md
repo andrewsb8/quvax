@@ -50,7 +50,7 @@ For running a specific set of tests:
 
 ```pytest -k "test file name without .py"``` (no path required)
 
-### List of Dependencies in requirements.txt
+### List of Dependencies in requirements.md
 
 ```
 argparse==1.4.0
