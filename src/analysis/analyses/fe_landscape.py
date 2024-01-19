@@ -5,7 +5,9 @@ import numpy as np
 
 class FreeEnergyLandscape(Analysis):
     """
-    Characterizing the local free energy landscape of mRNA sequence space for a given protein sequence sampled with design.py.
+    Characterizing the local free energy landscape, relative to the lowest
+    energy sequence sampled, of mRNA sequence space for a given protein
+    sequence sampled with design.py.
 
     Parameters
     ----------
@@ -36,7 +38,9 @@ class FreeEnergyLandscape(Analysis):
             self._calc_energy_diff(energy) for energy in self.config.data["energies"]
         ]
 
-        # TODO output the info to a file and plot or don't plot
+        print([self.codon_diff, self.energy_diff])
+
+        self._generate_output_2D([self.codon_diff, self.energy_diff])
 
     def _calc_codon_diff(self, mfe_codon, codon):
         """
