@@ -19,6 +19,14 @@ class Analysis(ABC):
         pass
 
     def _generate_output_2D(self, values):
+        """
+        Generates user-specified output file with two columns which are not
+        binned.
+
+        Parameters
+        ----------
+        values = [ [column 1 numbers], [column 2 numbers] ]
+        """
         out = open(self.config.args.output, "w+")
         for i in range(len(values[0])):
             line = ""
