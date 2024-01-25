@@ -199,3 +199,5 @@ class CodonOptimizer(ABC):
         self._verify_dna(self.final_codons)
         self.config.log.info("Minimum energy codon sequence: " + self.final_codons)
         self.config.log.info("Energy of codon sequence: " + str(self.mfe))
+        self.config.log.info("Generation Size: " + str(self.optimization_process["generatoion_size"]))
+        self.config.log.info("Number of Generations: " + str(len(self.optimization_process["energies"])/self.optimization_process["generation_size"]))
