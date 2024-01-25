@@ -60,7 +60,7 @@ class AnalysisParser(object):
             "--analysis_type",
             default="fe_landscape",
             type=str,
-            help="Specify type of analysis. Values: fe_landscape, fe_generation",
+            help="Specify type of analysis. Values: fe_landscape, fe_generation, trajectory, trajectory_per_generation",
         )
         self.parser.add_argument(
             "-l",
