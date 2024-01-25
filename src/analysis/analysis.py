@@ -18,7 +18,7 @@ class Analysis(ABC):
     def _analyze(self):
         pass
 
-    def _generate_output_2D(self, values):
+    def _generate_output_2D(self, filename, values):
         """
         Generates user-specified output file with two columns which are not
         binned. What the two columns represent and what post-processing is
@@ -28,7 +28,7 @@ class Analysis(ABC):
         ----------
         values = [ [column 1 numbers], [column 2 numbers] ]
         """
-        out = open(self.config.args.output, "w+")
+        out = open(filename, "w+")
         for i in range(len(values[0])):
             line = ""
             for j in range(len(values)):

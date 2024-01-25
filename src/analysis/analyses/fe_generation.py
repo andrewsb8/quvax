@@ -33,7 +33,7 @@ class FreeEnergyGeneration(Analysis):
             self._calc_energy_diff(self.config.data["energies"][k], self.config.data["energies"][k+self.config.data["generation_size"]]) for k in range(len(self.config.data["sequences"])-self.config.data["generation_size"])
         ]
 
-        self._generate_output_2D([self.codon_diff, self.energy_diff])
+        self._generate_output_2D(self.config.args.output, [self.codon_diff, self.energy_diff])
 
     def _calc_codon_diff(self, ref_codon, codon):
         """
