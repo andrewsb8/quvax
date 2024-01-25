@@ -8,7 +8,7 @@ if __name__ == "__main__":
         from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
 
         FreeEnergyLandscape(config)
-    if config.args.analysis_type == "fe_generation":
+    elif config.args.analysis_type == "fe_generation":
         from src.analysis.analyses.fe_generation import FreeEnergyGeneration
 
         FreeEnergyGeneration(config)

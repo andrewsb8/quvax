@@ -31,6 +31,7 @@ class AnalysisParser(object):
         self.data = self._load_input()
         self._validate()
         self._log_args()
+        self._log_input()
 
     def _parse(self, args=None):
         """
@@ -57,7 +58,7 @@ class AnalysisParser(object):
         self.parser.add_argument(
             "-at",
             "--analysis_type",
-            default="fe-landscape",
+            default="fe_landscape",
             type=str,
             help="Specify type of analysis. Values: fe_landscape, fe_generation",
         )
@@ -120,8 +121,15 @@ class AnalysisParser(object):
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
-        self.log.info("Protein Sequence : " + self.data["protein_sequence"])
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
-        self.log.info("\n\n")
+        self.log.info("\n")
+
+    def _log_input(self):
+        self.log.info("Input Information:")
+        self.log.info("Protein Sequence : " + self.data["protein_sequence"])
+        self.log.info("Generation Size : " + str(self.data["generation_size"]))
+        self.log.info("Number of Generations : " + str(len(self.data["energies"])/self.data["generation_size"]))
+        self.log.info("Minimum Energy Sampled : " + str(min(self.data["energies"])))
+        self.log.info("\n")
