@@ -21,7 +21,8 @@ class Analysis(ABC):
     def _generate_output_2D(self, values):
         """
         Generates user-specified output file with two columns which are not
-        binned.
+        binned. What the two columns represent and what post-processing is
+        necessary is then up to the user.
 
         Parameters
         ----------
