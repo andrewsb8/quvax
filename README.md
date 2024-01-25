@@ -3,22 +3,14 @@
 
 ## Getting Started
 
-Create Conda environment
-
-### Mac
-
-```bash conda env create --file requirements.txt```
-
-### Linux
-
-Create and activate environment
+Install your preferred version of conda (Anaconda or Miniconda). Create Conda environment:
 
 ```
 $ conda env create -n quvax python=3.11
 $ conda activate quvax
 ```
 
-Install dependencies
+Install dependencies:
 
 ```
 $ python -m pip install -r requirements.txt
@@ -32,23 +24,31 @@ $ conda install --file requirements.txt -c conda-forge
 
 ### After Setup
 
-Example execution:
+QuVax has two primary functions: codon sequence and folding optimization and a small analysis suite. Optimization is executed with ```design.py``` and analyses with ```analyze.py```.
+
+Example execution of ```design.py```:
 
 ```
 $ python design.py -i examples/spike_trim.fasta
-````
+```
 
-For help:
+```analyze.py``` then takes in the output of ```design.py```, which is simply a pickled dictionary with default extension ```.qu``` (this can be changed on command line if desired). Example execution of ```analyze.py```:
 
-```$ python design.py -h```
+```
+$ python analyze.py -i quvax.qu
+```
+
+For help (each will produce unique output):
+
+```$ python design.py -h``` or ```$ python analyze.py -h```
 
 Testing:
 
 ```$ coverage run -m pytest``` or ```$ pytest```
 
-For running a specific set of tests:
+Test python files are in ```tests/test_cases```. For running a specific set of tests (no path required):
 
-```pytest -k "test file name without .py"``` (no path required)
+```pytest -k "test file name without .py"```
 
 ### List of Dependencies in requirements.md
 
