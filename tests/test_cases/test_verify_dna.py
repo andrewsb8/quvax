@@ -11,7 +11,7 @@ def test_NoTranslate(mock_optimizer, caplog):
     log_entry = (
         "src.params.design_parser",
         40,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Error: Codon sequence did not translate properly!",
+        "Error: Codon sequence did not translate properly! Sequence: ATGTTCGTATTCTTAGTGTTACTGCCGCTCGTA",
     )
     assert log_entry in caplog.record_tuples
 

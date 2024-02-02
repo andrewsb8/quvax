@@ -44,6 +44,8 @@ class DesignParser(object):
         Sets random seed for all optimizers and packages
     target : str
         Optional input to include target codon sequence
+    output_sequences : str
+        Output file which lists output codon sequences with minimum free energy
 
     """
 
@@ -170,6 +172,13 @@ class DesignParser(object):
             type=str,
             help="Optional input to include target codon sequence",
         )
+        self.parser.add_argument(
+            "-os",
+            "--output_sequences",
+            default="sequences.txt",
+            type=str,
+            help="Output file which lists output codon sequences with minimum free energy",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -251,6 +260,10 @@ class DesignParser(object):
 
             """
             )
+
+        if self.args.target is not None:
+            if len(self.args.target) != 3*len(self.seq):
+                raise ValueError("Error: Target sequence is not the correct length to code for the input protein sequence!")
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
