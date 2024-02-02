@@ -221,6 +221,17 @@ class DesignParser(object):
         if set(self.seq).issubset(set("GCATU")):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
 
+        if self.args.target is not None:
+            cs = "GCATU"
+
+            if any(_ not in aas for _ in self.args.target):
+                raise InvalidSequenceError(
+                    "Target is not a codon sequence!"
+                )
+
+            if len(self.args.target) != 3*len(self.seq):
+                raise ValueError("Target sequence is not the correct length to code for the input protein sequence!")
+
         if self.args.codon_iterations < 1:
             raise ValueError(
                 """
@@ -260,10 +271,6 @@ class DesignParser(object):
 
             """
             )
-
-        if self.args.target is not None:
-            if len(self.args.target) != 3*len(self.seq):
-                raise ValueError("Error: Target sequence is not the correct length to code for the input protein sequence!")
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
