@@ -196,10 +196,11 @@ class CodonOptimizer(ABC):
         """
         self.mfe = np.min(self.optimization_process["energies"])
         self.final_codons = [self.optimization_process["sequences"][i] for i in range(len(self.optimization_process["sequences"])) if self.optimization_process["energies"][i] == self.mfe]
+        self.config.log.info("Number of degenerate minimum free energy sequences sampled: " + str(len(self.final_codons)))
         self.config.log.info("Minimum energy codon sequences: ")
         for codons in self.final_codons:
             self._verify_dna(codons)
             self.config.log(codons)
-        self.config.log.info("Energy of codon sequence: " + str(self.mfe))
+        self.config.log.info("Energy of codon sequences: " + str(self.mfe))
         self.config.log.info("Generation Size: " + str(self.optimization_process["generatoion_size"]))
         self.config.log.info("Number of Generations: " + str(len(self.optimization_process["energies"])/self.optimization_process["generation_size"]))
