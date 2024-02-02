@@ -42,6 +42,8 @@ class DesignParser(object):
         String to identify output file containing information about optimization process
     random_seed : int
         Sets random seed for all optimizers and packages
+    target : str
+        Optional input to include target codon sequence
 
     """
 
@@ -160,6 +162,13 @@ class DesignParser(object):
             default=1,
             type=int,
             help="Random seed for sequence generation, optimization, and folding",
+        )
+        self.parser.add_argument(
+            "-t",
+            "--target",
+            default=None,
+            type=str,
+            help="Optional input to include target codon sequence",
         )
 
         if args is None:

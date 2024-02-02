@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 import pickle
+import sys
 
 
 class CodonOptimizer(ABC):
@@ -184,20 +185,21 @@ class CodonOptimizer(ABC):
         """
         if self.config.seq != str(Seq(sequence).transcribe().translate()):
             self.config.log.error("Error: Codon sequence did not translate properly!")
-            raise ValueError("Error: Codon sequence did not translate properly!")
+            sys.stderr.write("Error: Codon sequence did not translate properly! Sequence: " + sequence)
         else:
             self.config.log.info("Final codon sequence translated properly.")
 
     def _get_optimized_sequence(self):
         """
-        get lowest energy and associated sequence from all sequences generated
+        Get lowest energy sequences from all sequences sampled
 
         """
         self.mfe = np.min(self.optimization_process["energies"])
-        self.mfe_index = np.argmin(self.optimization_process["energies"])
-        self.final_codons = self.optimization_process["sequences"][self.mfe_index]
-        self._verify_dna(self.final_codons)
-        self.config.log.info("Minimum energy codon sequence: " + self.final_codons)
+        self.final_codons = [self.optimization_process["sequences"][i] for i in range(len(self.optimization_process["sequences"])) if self.optimization_process["energies"][i] == self.mfe]
+        self.config.log.info("Minimum energy codon sequences: ")
+        for codons in self.final_codons:
+            self._verify_dna(codons)
+            self.config.log(codons)
         self.config.log.info("Energy of codon sequence: " + str(self.mfe))
         self.config.log.info("Generation Size: " + str(self.optimization_process["generatoion_size"]))
         self.config.log.info("Number of Generations: " + str(len(self.optimization_process["energies"])/self.optimization_process["generation_size"]))
