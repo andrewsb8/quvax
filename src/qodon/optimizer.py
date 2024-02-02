@@ -189,7 +189,7 @@ class CodonOptimizer(ABC):
         else:
             self.config.log.info("Final codon sequence translated properly.")
 
-    def _get_optimized_sequence(self):
+    def _get_optimized_sequences(self):
         """
         Get lowest energy sequences from all sequences sampled
 
@@ -200,7 +200,14 @@ class CodonOptimizer(ABC):
         self.config.log.info("Minimum energy codon sequences: ")
         for codons in self.final_codons:
             self._verify_dna(codons)
-            self.config.log(codons)
+            self.config.log.info(codons)
         self.config.log.info("Energy of codon sequences: " + str(self.mfe))
-        self.config.log.info("Generation Size: " + str(self.optimization_process["generatoion_size"]))
+        self.config.log.info("Generation Size: " + str(self.optimization_process["generation_size"]))
         self.config.log.info("Number of Generations: " + str(len(self.optimization_process["energies"])/self.optimization_process["generation_size"]))
+        self.config.log.info("\n\n")
+
+    def _check_target(self):
+        if self.config.args.target in self.final_codons:
+            self.config.log.info("The target codon sequence is in the list of minimum free energy sequences!")
+        else:
+            self.config.log.info("The target codon sequence is NOT in the list of minimum free energy sequences.")

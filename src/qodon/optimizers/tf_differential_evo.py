@@ -37,7 +37,9 @@ class TfDiffEv(CodonOptimizer):
             seed=self.config.args.random_seed,
         )
 
-        self._get_optimized_sequence()
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
         self._pickle_output()
 
     def _objective(self, members):
