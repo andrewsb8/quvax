@@ -184,8 +184,14 @@ class CodonOptimizer(ABC):
 
         """
         if self.config.seq != str(Seq(sequence).transcribe().translate()):
-            self.config.log.error("Error: Codon sequence did not translate properly! Sequence: " + sequence)
-            sys.stderr.write("Error: Codon sequence did not translate properly! Sequence: " + sequence)
+            self.config.log.error(
+                "Error: Codon sequence did not translate properly! Sequence: "
+                + sequence
+            )
+            sys.stderr.write(
+                "Error: Codon sequence did not translate properly! Sequence: "
+                + sequence
+            )
         else:
             self.config.log.info("Final codon sequence translated properly.")
 
@@ -195,21 +201,40 @@ class CodonOptimizer(ABC):
 
         """
         self.mfe = np.min(self.optimization_process["energies"])
-        self.final_codons = [self.optimization_process["sequences"][i] for i in range(len(self.optimization_process["sequences"])) if self.optimization_process["energies"][i] == self.mfe]
+        self.final_codons = [
+            self.optimization_process["sequences"][i]
+            for i in range(len(self.optimization_process["sequences"]))
+            if self.optimization_process["energies"][i] == self.mfe
+        ]
         out_seq = open(self.config.args.output_sequences, "w+")
         for codons in self.final_codons:
             self._verify_dna(codons)
             out_seq.write(codons + "\n")
         out_seq.close()
 
-        self.config.log.info("Number of degenerate minimum free energy sequences sampled: " + str(len(self.final_codons)))
+        self.config.log.info(
+            "Number of degenerate minimum free energy sequences sampled: "
+            + str(len(self.final_codons))
+        )
         self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
-        self.config.log.info("Generation Size: " + str(self.optimization_process["generation_size"]))
-        self.config.log.info("Number of Generations: " + str(len(self.optimization_process["energies"])/self.optimization_process["generation_size"]))
+        self.config.log.info(
+            "Generation Size: " + str(self.optimization_process["generation_size"])
+        )
+        self.config.log.info(
+            "Number of Generations: "
+            + str(
+                len(self.optimization_process["energies"])
+                / self.optimization_process["generation_size"]
+            )
+        )
         self.config.log.info("\n\n")
 
     def _check_target(self):
         if self.config.args.target in self.final_codons:
-            self.config.log.info("The target codon sequence is in the list of minimum free energy sequences!")
+            self.config.log.info(
+                "The target codon sequence is in the list of minimum free energy sequences!"
+            )
         else:
-            self.config.log.error("The target codon sequence is NOT in the list of minimum free energy sequences.")
+            self.config.log.error(
+                "The target codon sequence is NOT in the list of minimum free energy sequences."
+            )

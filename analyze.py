@@ -17,7 +17,9 @@ if __name__ == "__main__":
 
         Trajectory(config)
     elif config.args.analysis_type == "trajectory-pergeneration":
-        from src.analysis.analyses.trajectory_per_generation import TrajectoryPerGeneration
+        from src.analysis.analyses.trajectory_per_generation import (
+            TrajectoryPerGeneration,
+        )
 
         TrajectoryPerGeneration(config)
     else:

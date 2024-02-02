@@ -15,6 +15,7 @@ def test_NoTranslate(mock_optimizer, caplog):
     )
     assert log_entry in caplog.record_tuples
 
+
 def test_WillTranslate(mock_optimizer, caplog):
     """
     Test to verify correct codon sequence will correctly translate to input protein sequence

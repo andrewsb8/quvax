@@ -225,12 +225,12 @@ class DesignParser(object):
             cs = "GCATU"
 
             if any(_ not in aas for _ in self.args.target):
-                raise InvalidSequenceError(
-                    "Target is not a codon sequence!"
-                )
+                raise InvalidSequenceError("Target is not a codon sequence!")
 
-            if len(self.args.target) != 3*len(self.seq):
-                raise ValueError("Target sequence is not the correct length to code for the input protein sequence!")
+            if len(self.args.target) != 3 * len(self.seq):
+                raise ValueError(
+                    "Target sequence is not the correct length to code for the input protein sequence!"
+                )
 
         if self.args.codon_iterations < 1:
             raise ValueError(

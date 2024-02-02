@@ -33,7 +33,6 @@ mpiexec -np 16 python3 exact_solver.py RNAModel seq <min_stem_len> <min_loop_len
 
 
 class Model(object):
-
     """Model Base Class"""
 
     def __init__(self):
@@ -99,7 +98,6 @@ class Model(object):
 
 
 class RNAModel(Model):
-
     """Derived model class to compute RNA model"""
 
     def __init__(self, seq: str, min_stem_len: int = 3, min_loop_len: int = 3):
