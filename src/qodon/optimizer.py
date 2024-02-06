@@ -190,10 +190,6 @@ class CodonOptimizer(ABC):
                 "Error: Codon sequence did not translate properly! Sequence: "
                 + sequence
             )
-            sys.stderr.write(
-                "Error: Codon sequence did not translate properly! Sequence: "
-                + sequence
-            )
         else:
             self.config.log.info("Final codon sequence translated properly.")
 
