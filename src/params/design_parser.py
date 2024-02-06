@@ -226,7 +226,7 @@ class DesignParser(object):
         if self.args.target is not None:
             cs = "GCATU"
 
-            if any(_ not in aas for _ in self.args.target):
+            if any(_ not in cs for _ in self.args.target):
                 raise InvalidSequenceError("Target is not a codon sequence!")
 
             if len(self.args.target) != 3 * len(self.seq):
