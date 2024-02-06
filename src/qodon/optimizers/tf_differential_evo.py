@@ -13,8 +13,7 @@ class TfDiffEv(CodonOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
-        if self.config.args.codon_optimizer == "TFDE":
-            tf.random.set_seed(self.config.args.random_seed)
+        tf.random.set_seed(self.config.args.random_seed)
         self._optimize()
 
     def _optimize(self):

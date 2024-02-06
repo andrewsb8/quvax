@@ -234,7 +234,11 @@ class CodonOptimizer(ABC):
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
+        elif self.config.args.target in self.optimization_process["sequences"]:
+            self.config.log.warning(
+                "The target codon sequence was sampled but was not the lowest free energy sequence."
+            )
         else:
             self.config.log.error(
-                "The target codon sequence is NOT in the list of minimum free energy sequences."
+                "The target codon sequence was NOT sampled."
             )
