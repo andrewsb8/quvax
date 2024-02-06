@@ -30,5 +30,7 @@ class RandomOptimizer(CodonOptimizer):
         energies = [self._fold_rna(s) for s in n_seqs]
 
         self._extend_output(n_seqs, energies, None)
-        self._get_optimized_sequence()
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
         self._pickle_output()

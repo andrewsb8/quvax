@@ -130,6 +130,9 @@ class AnalysisParser(object):
         self.log.info("Input Information:")
         self.log.info("Protein Sequence : " + self.data["protein_sequence"])
         self.log.info("Generation Size : " + str(self.data["generation_size"]))
-        self.log.info("Number of Generations : " + str(len(self.data["energies"])/self.data["generation_size"]))
+        self.log.info(
+            "Number of Generations : "
+            + str(len(self.data["energies"]) / self.data["generation_size"])
+        )
         self.log.info("Minimum Energy Sampled : " + str(min(self.data["energies"])))
         self.log.info("\n")

@@ -42,12 +42,18 @@ class DesignParser(object):
         String to identify output file containing information about optimization process
     random_seed : int
         Sets random seed for all optimizers and packages
+    target : str
+        Optional input to include target codon sequence
+    output_sequences : str
+        Output file which lists output codon sequences with minimum free energy
 
     """
 
     def __init__(self, args=None):
         self._parse(args)
         self.seq = str(SeqIO.read(self.args.input, "fasta").seq)
+        if self.args.target is not None:
+            self.args.target = self.args.target.upper()
         self._logging()
         self._validate()
         self._log_args()
@@ -161,6 +167,20 @@ class DesignParser(object):
             type=int,
             help="Random seed for sequence generation, optimization, and folding",
         )
+        self.parser.add_argument(
+            "-t",
+            "--target",
+            default=None,
+            type=str,
+            help="Optional input to include target codon sequence",
+        )
+        self.parser.add_argument(
+            "-os",
+            "--output_sequences",
+            default="sequences.txt",
+            type=str,
+            help="Output file which lists output codon sequences with minimum free energy",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -202,6 +222,17 @@ class DesignParser(object):
 
         if set(self.seq).issubset(set("GCATU")):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
+
+        if self.args.target is not None:
+            cs = "GCATU"
+
+            if any(_ not in cs for _ in self.args.target):
+                raise InvalidSequenceError("Target is not a codon sequence!")
+
+            if len(self.args.target) != 3 * len(self.seq):
+                raise ValueError(
+                    "Target sequence is not the correct length to code for the input protein sequence!"
+                )
 
         if self.args.codon_iterations < 1:
             raise ValueError(

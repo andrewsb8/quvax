@@ -13,6 +13,7 @@ class TfDiffEv(CodonOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
+        tf.random.set_seed(self.config.args.random_seed)
         self._optimize()
 
     def _optimize(self):
@@ -33,11 +34,12 @@ class TfDiffEv(CodonOptimizer):
             initial_population=self.initial_members,
             max_iterations=self.config.args.codon_iterations,
             differential_weight=0.01,
-            crossover_prob=0.1,
-            seed=self.config.args.random_seed,
+            crossover_prob=0.1
         )
 
-        self._get_optimized_sequence()
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
         self._pickle_output()
 
     def _objective(self, members):
