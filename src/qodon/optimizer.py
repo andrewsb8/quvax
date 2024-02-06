@@ -197,7 +197,7 @@ class CodonOptimizer(ABC):
 
     def _get_optimized_sequences(self):
         """
-        Get lowest energy sequences from all sequences sampled
+        Get lowest energy sequences from all sampled sequences
 
         """
         self.mfe = np.min(self.optimization_process["energies"])
