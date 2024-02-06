@@ -35,6 +35,8 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
+        if self.config.args.target is not None:
+            self._verify_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
         self.optimization_process = {
             "protein_sequence": self.config.seq,
@@ -229,7 +231,20 @@ class CodonOptimizer(ABC):
         )
         self.config.log.info("\n\n")
 
+    def _verify_target(self):
+        """
+        Verify target codes for the input protein sequence
+
+        """
+        self.config.log.info("Verifying target codes for input protein.")
+        self._verify_dna(self.config.args.target)
+        self.config.log.info("\n")
+
     def _check_target(self):
+        """
+        Check if target codon sequence was sampled and if it was lowest energy
+
+        """
         if self.config.args.target in self.final_codons:
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
