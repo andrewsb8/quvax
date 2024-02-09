@@ -6,7 +6,7 @@ class Trajectory(Analysis):
     """
     Plotting the free energy changes as a function of codon optimization step
     relative to the initial sequence of the population. This analysis will
-    produce a number of output files equal to the population size(n_trials in
+    produce a number of output files equal to the population size (n_trials in
     design.py).
 
     Parameters
@@ -18,26 +18,25 @@ class Trajectory(Analysis):
         self._analyze()
 
     def _analyze(self):
+        number_of_gens = int(len(self.config.data["sequences"]) / self.config.data["generation_size"])
         self.iterations = np.arange(
-            1, len(self.config.data["sequences"]) / self.config.data["generation_size"]
+            1, number_of_gens
         )
 
-        self.energy_diff = [
-            self._calc_energy_diff(
-                self.config.data["energies"][dumb],
-                self.config.data["energies"][k + self.config.data["generation_size"]],
-            )
-            for k in range(
-                0,
-                len(self.config.data["sequences"])
-                - self.config.data["generation_size"],
-                self.config.data["generation_size"],
-            )
-        ]
+        for m in range(self.config.data["generation_size"]):
+            self.energy_diff = [
+                self._calc_energy_diff(
+                    self.config.data["energies"][m],
+                    self.config.data["energies"][m + (k * self.config.data["generation_size"])],
+                )
+                for k in range(number_of_gens)
+            ]
 
-        self._generate_output_2D(
-            self.config.args.output, [self.iterations, self.energy_diff]
-        )
+            file = self.config.args.output + "-" + str(m)
+
+            self._generate_output_2D(
+                file, [self.iterations, self.energy_diff]
+            )
 
     def _calc_energy_diff(self, ref_energy, energy):
         return energy - ref_energy
