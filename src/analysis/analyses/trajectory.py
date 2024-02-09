@@ -34,7 +34,7 @@ class Trajectory(Analysis):
 
             file = self.config.args.output + "-" + str(m)
 
-            self._generate_output_2D(
+            self._print_output_2D(
                 file, [self.iterations, self.energy_diff]
             )
 

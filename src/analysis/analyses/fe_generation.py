@@ -43,7 +43,7 @@ class FreeEnergyGeneration(Analysis):
             )
         ]
 
-        self._generate_output_2D(
+        self._print_output_2D(
             self.config.args.output, [self.codon_diff, self.energy_diff]
         )
 

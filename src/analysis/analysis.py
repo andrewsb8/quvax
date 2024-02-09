@@ -18,9 +18,9 @@ class Analysis(ABC):
     def _analyze(self):
         pass
 
-    def _generate_output_2D(self, filename, values):
+    def _print_output_2D(self, filename, values):
         """
-        Generates user-specified output file with two columns which are not
+        Prints user-specified output file with two columns which are not
         binned. What the two columns represent and what post-processing is
         necessary is then up to the user.
 

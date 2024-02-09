@@ -38,7 +38,7 @@ class FreeEnergyLandscape(Analysis):
             self._calc_energy_diff(energy) for energy in self.config.data["energies"]
         ]
 
-        self._generate_output_2D(
+        self._print_output_2D(
             self.config.args.output, [self.codon_diff, self.energy_diff]
         )
 

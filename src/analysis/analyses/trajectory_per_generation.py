@@ -34,7 +34,7 @@ class TrajectoryPerGeneration(Analysis):
             )
         ]
 
-        self._generate_output_2D(
+        self._print_output_2D(
             self.config.args.output, [self.iterations, self.energy_diff]
         )
 
