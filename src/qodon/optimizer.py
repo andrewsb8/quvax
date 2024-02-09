@@ -250,6 +250,4 @@ class CodonOptimizer(ABC):
                 "The target codon sequence was sampled but was not the lowest free energy sequence."
             )
         else:
-            self.config.log.error(
-                "The target codon sequence was NOT sampled."
-            )
+            self.config.log.error("The target codon sequence was NOT sampled.")
