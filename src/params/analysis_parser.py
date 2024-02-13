@@ -119,6 +119,21 @@ class AnalysisParser(object):
 
         """
 
+        expected_keys = [
+            "protein_sequence",
+            "generation_size",
+            "optimizer",
+            "random_seed",
+            "sequences",
+            "energies",
+            "sec_struct",
+        ]
+        input_keys = list(self.data.keys())
+        if input_keys != expected_keys:
+            raise ValueError(
+                "The input dictionary is incorrectly formatted or missing keys!"
+            )
+
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
         iterable_args = vars(self.args)
