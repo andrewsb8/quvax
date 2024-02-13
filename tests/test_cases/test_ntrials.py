@@ -16,7 +16,7 @@ def test_lenNTrials_str():
     Test exception when non-integer is provided for -n
 
     """
-    testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "2"]
+    testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-n", "2"]
     with pytest.raises(TypeError):
         parser = DesignParser(testargs)
         parser.args.n_trials = str(parser.args.n_trials)

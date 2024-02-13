@@ -8,7 +8,7 @@ def test_input_seq_str():
     Test if _validate() will throw error for a numeric input string
 
     """
-    testargs = ["-i", "tests/test_sequences/integer_sequence.fasta"]
+    testargs = ["-i", "tests/test_files/test_sequences/integer_sequence.fasta"]
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
 
@@ -18,7 +18,7 @@ def test_input_seq_partial_str():
     Test if _validate() will throw error for an alphanumeric input string
 
     """
-    testargs = ["-i", "tests/test_sequences/some_integers.fasta"]
+    testargs = ["-i", "tests/test_files/test_sequences/some_integers.fasta"]
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
 
@@ -29,7 +29,7 @@ def test_input_seq_wrong_letter():
     assigned to an amino acid
 
     """
-    testargs = ["-i", "tests/test_sequences/non_aminoacid_letter.fasta"]
+    testargs = ["-i", "tests/test_files/test_sequences/non_aminoacid_letter.fasta"]
     with pytest.raises(InvalidSequenceError):
         DesignParser(testargs)
 
@@ -41,7 +41,7 @@ def test_input_seq_warning(caplog):
 
     """
 
-    testargs = ["-i", "tests/test_sequences/GAG.fasta"]
+    testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta"]
     DesignParser(testargs)
     warning_entry = (
         "src.params.design_parser",

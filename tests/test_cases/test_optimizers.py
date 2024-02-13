@@ -10,7 +10,7 @@ def test_TFDE(caplog):
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-n",
         "4",
         "-c",
@@ -40,7 +40,7 @@ def test_RAND(caplog):
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-n",
         "4",
         "-c",
@@ -70,7 +70,7 @@ def test_GA(caplog):
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-n",
         "4",
         "-c",

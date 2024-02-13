@@ -14,7 +14,7 @@ class MockOptimizer(CodonOptimizer):
 @pytest.fixture
 def mock_optimizer():
     """Mock optimizer"""
-    testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "5"]
+    testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-n", "5"]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
     return opt

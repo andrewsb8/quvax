@@ -36,7 +36,7 @@ def test_TfDiffEv_DefaultSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-n",
         "4",
         "-c",
@@ -59,7 +59,7 @@ def test_TfDiffEv_NewSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "TFDE",
         "-n",
@@ -85,7 +85,7 @@ def test_TfDiffEv_OneIteration():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "TFDE",
         "-n",
@@ -138,7 +138,7 @@ def test_GA_DefaultSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "GA",
         "-n",
@@ -163,7 +163,7 @@ def test_GA_NewSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "GA",
         "-n",
@@ -188,7 +188,7 @@ def test_GA_OneIteration():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "GA",
         "-n",
@@ -241,7 +241,7 @@ def test_RAND_DefaultSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "RAND",
         "-n",
@@ -266,7 +266,7 @@ def test_RAND_NewSeed():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "RAND",
         "-n",
@@ -291,7 +291,7 @@ def test_RAND_OneIteration():
 
     testargs = [
         "-i",
-        "tests/test_sequences/GGGN.fasta",
+        "tests/test_files/test_sequences/GGGN.fasta",
         "-co",
         "RAND",
         "-n",
