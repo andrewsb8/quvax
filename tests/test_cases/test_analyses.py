@@ -27,7 +27,7 @@ def test_trajectory():
             filecmp.cmp(
                 "test_traj_out.txt-" + str(i),
                 "tests/test_files/test_analysis/test_trajectory_output/analysis_out.txt-"
-                + str(i),
+                + str(i)
             )
             == True
         )
