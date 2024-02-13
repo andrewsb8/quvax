@@ -3,6 +3,6 @@
 qodon/__pycache__
 rna_folding/__pycache__
 .*
-*.log
-*.qu
+/*.log
+/*.qu
 *.txt
