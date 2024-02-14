@@ -35,7 +35,8 @@ def test_trajectory():
 
 def test_fe_landscape():
     """
-    Test Free Energy Landscape, with respect to min energy sequence, analysis produces correct output
+    Test Free Energy Landscape, with respect to min energy sequence, analysis
+    produces correct output
 
     """
     from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
@@ -55,5 +56,31 @@ def test_fe_landscape():
         filecmp.cmp(
             "test_felandscape_out.txt",
             "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt"
+        )
+    ) == True
+
+def test_fe_generation():
+    """
+    Test Free Energy of sequences of subsequent generations analysis produces
+    correct output
+
+    """
+    from src.analysis.analyses.fe_generation import FreeEnergyGeneration
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_analysis/test_trajectory.qu",
+        "-at",
+        "fe_generation",
+        "-o",
+        "test_fegeneration_out.txt",
+    ]
+    config = AnalysisParser(testargs)
+    analysis = FreeEnergyGeneration(config)
+
+    assert (
+        filecmp.cmp(
+            "test_fegeneration_out.txt",
+            "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt"
         )
     ) == True

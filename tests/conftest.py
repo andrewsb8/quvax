@@ -28,6 +28,6 @@ def test_cleanup():
 
     """
     yield
-    files = ["quvax.qu", "quvax.log", "sequences.txt", "test_felandscape_out.txt"]
+    files = ["quvax.qu", "quvax.log", "sequences.txt", "test_felandscape_out.txt", "test_fegeneration_out.txt"]
     for file in files:
         os.remove(file)
