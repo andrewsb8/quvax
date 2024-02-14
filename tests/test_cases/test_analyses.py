@@ -57,4 +57,3 @@ def test_fe_landscape():
             "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt"
         )
     ) == True
-    os.remove("test_felandscape_out.txt")
