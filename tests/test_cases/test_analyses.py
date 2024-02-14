@@ -32,3 +32,29 @@ def test_trajectory():
             == True
         )
         os.remove("test_traj_out.txt-" + str(i))
+
+def test_fe_landscape():
+    """
+    Test Free Energy Landscape, with respect to min energy sequence, analysis produces correct output
+
+    """
+    from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_analysis/test_trajectory.qu",
+        "-at",
+        "fe_landscape",
+        "-o",
+        "test_felandscape_out.txt",
+    ]
+    config = AnalysisParser(testargs)
+    analysis = FreeEnergyLandscape(config)
+
+    assert (
+        filecmp.cmp(
+            "test_felandscape_out.txt",
+            "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt"
+        )
+    ) == True
+    os.remove("test_felandscape_out.txt")
