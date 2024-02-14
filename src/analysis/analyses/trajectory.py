@@ -28,7 +28,7 @@ class Trajectory(Analysis):
                 self.config.data["energies"][
                     m + (k * self.config.data["generation_size"])
                 ]
-                for k in range(number_of_gens) #extra to account for initial sequences
+                for k in range(number_of_gens)  # extra to account for initial sequences
             ]
 
             file = self.config.args.output + "-" + str(m)

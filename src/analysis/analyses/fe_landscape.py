@@ -34,7 +34,8 @@ class FreeEnergyLandscape(Analysis):
             for j in range(len(self.config.data["sequences"]))
         ]
         self.energy_diff = [
-            self._calc_energy_diff(self.mfe, energy) for energy in self.config.data["energies"]
+            self._calc_energy_diff(self.mfe, energy)
+            for energy in self.config.data["energies"]
         ]
 
         self._print_output_2D(

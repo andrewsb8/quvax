@@ -27,11 +27,12 @@ def test_trajectory():
             filecmp.cmp(
                 "test_traj_out.txt-" + str(i),
                 "tests/test_files/test_analysis/test_trajectory_output/analysis_out.txt-"
-                + str(i)
+                + str(i),
             )
             == True
         )
         os.remove("test_traj_out.txt-" + str(i))
+
 
 def test_fe_landscape():
     """
@@ -55,9 +56,10 @@ def test_fe_landscape():
     assert (
         filecmp.cmp(
             "test_felandscape_out.txt",
-            "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt"
+            "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt",
         )
     ) == True
+
 
 def test_fe_generation():
     """
@@ -81,6 +83,6 @@ def test_fe_generation():
     assert (
         filecmp.cmp(
             "test_fegeneration_out.txt",
-            "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt"
+            "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt",
         )
     ) == True
