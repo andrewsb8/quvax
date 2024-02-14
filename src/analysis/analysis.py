@@ -1,3 +1,4 @@
+import difflib
 from abc import ABC, abstractmethod
 from src.params.analysis_parser import AnalysisParser
 
@@ -35,3 +36,17 @@ class Analysis(ABC):
                 line += str(values[j][i]) + " "
             out.write(line + "\n")
         out.close()
+
+    def _calc_codon_diff(self, ref_codon, codon):
+        """
+        Checks if codons in two sequences are different.
+
+        """
+        diff = difflib.context_diff(ref_codon, codon)
+        for i, s in enumerate(diff):
+            if s[0] == "+" or s[0] == "-":
+                return 1
+        return 0
+
+    def _calc_energy_diff(self, ref_energy, energy):
+        return energy - ref_energy

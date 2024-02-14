@@ -1,5 +1,4 @@
 from src.analysis.analysis import Analysis
-import difflib
 import numpy as np
 
 
@@ -35,23 +34,9 @@ class FreeEnergyLandscape(Analysis):
             for j in range(len(self.config.data["sequences"]))
         ]
         self.energy_diff = [
-            self._calc_energy_diff(energy) for energy in self.config.data["energies"]
+            self._calc_energy_diff(self.mfe, energy) for energy in self.config.data["energies"]
         ]
 
         self._print_output_2D(
             self.config.args.output, [self.codon_diff, self.energy_diff]
         )
-
-    def _calc_codon_diff(self, mfe_codon, codon):
-        """
-        Checks if codons in two sequences are different.
-
-        """
-        diff = difflib.context_diff(mfe_codon, codon)
-        for i, s in enumerate(diff):
-            if s[0] == "+" or s[0] == "-":
-                return 1
-        return 0
-
-    def _calc_energy_diff(self, energy):
-        return energy - self.mfe

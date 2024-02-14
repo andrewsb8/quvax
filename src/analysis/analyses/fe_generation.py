@@ -1,5 +1,4 @@
 from src.analysis.analysis import Analysis
-import difflib
 import numpy as np
 
 
@@ -46,17 +45,3 @@ class FreeEnergyGeneration(Analysis):
         self._print_output_2D(
             self.config.args.output, [self.codon_diff, self.energy_diff]
         )
-
-    def _calc_codon_diff(self, ref_codon, codon):
-        """
-        Checks if codons in two sequences are different.
-
-        """
-        diff = difflib.context_diff(ref_codon, codon)
-        for i, s in enumerate(diff):
-            if s[0] == "+" or s[0] == "-":
-                return 1
-        return 0
-
-    def _calc_energy_diff(self, ref_energy, energy):
-        return energy - ref_energy
