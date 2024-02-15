@@ -8,7 +8,7 @@ def test_SameInitialSequences_DefaultSeed():
     Test to verify the same initial codon sequences will be initialized in subsequent optimizations and the same, default seed
 
     """
-    testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1"]
+    testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1"]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
     opt2 = MockOptimizer(parser)
@@ -20,7 +20,7 @@ def test_SameInitialSequences_NewSeed():
     Test to verify the same initial codon sequences will be initialized in subsequent optimizations and the same, nondefault seed
 
     """
-    testargs = ["-i", "tests/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1098760354"]
+    testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-n", "4", "-sd", "1098760354"]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
     opt2 = MockOptimizer(parser)
