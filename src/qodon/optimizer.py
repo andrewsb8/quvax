@@ -17,7 +17,7 @@ class CodonOptimizer(ABC):
 
     Parameters
     ----------
-    config : Parser
+    config : DesignParser
         Object containing user inputs
     code_map : List
         Map of amino acids to codons based on species

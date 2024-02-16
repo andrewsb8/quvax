@@ -238,10 +238,18 @@ class DesignParser(object):
                 )
 
             if "AUG" in self.args.target and "M" not in self.seq:
-                raise ValueError("Your target sequence includes the start codon AUG but your input protein sequence does not contain amino acid M!")
+                raise ValueError(
+                    "Your target sequence includes the start codon AUG but your input protein sequence does not contain amino acid M!"
+                )
 
-            if "UAA" in self.args.target or "UAG" in self.args.target or "UGA" in self.args.target:
-                raise ValueError("Your target sequence includes stop codons UAG, UGA, or UAA!")
+            if (
+                "UAA" in self.args.target
+                or "UAG" in self.args.target
+                or "UGA" in self.args.target
+            ):
+                raise ValueError(
+                    "Your target sequence includes stop codons UAG, UGA, or UAA!"
+                )
 
         if self.args.codon_iterations < 1:
             raise ValueError(

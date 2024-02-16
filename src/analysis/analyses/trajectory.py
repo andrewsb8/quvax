@@ -11,6 +11,9 @@ class Trajectory(Analysis):
 
     Parameters
     ----------
+    config : AnalysisParser
+        Object containing user inputs
+
     """
 
     def __init__(self, config):

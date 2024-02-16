@@ -10,6 +10,9 @@ class Analysis(ABC):
 
     Parameters
     ----------
+    config : AnalysisParser
+        Object containing user inputs
+
     """
 
     def __init__(self, config: AnalysisParser):
