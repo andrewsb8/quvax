@@ -49,3 +49,25 @@ def test_input_seq_warning(caplog):
         "Input protein sequence looks like an DNA sequence!",
     )
     assert warning_entry in caplog.record_tuples
+
+def test_target_start_codon():
+    """
+    Test if _validate() will produce an error if start codon is in target and M is not in protein sequence
+
+    """
+
+    testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-t", "AUGAAAAAA"]
+    with pytest.raises(ValueError):
+        DesignParser(testargs)
+
+def test_target_stop_codon():
+    """
+    Test if _validate() will produce an error if stop codons are in the target sequence
+
+    """
+
+    stop_codons = ["UAAAAAAAA", "UAGAAAAAA", "UGAAAAAAA"]
+    for stop in stop_codons:
+        testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-t", stop]
+        with pytest.raises(ValueError):
+            DesignParser(testargs)
