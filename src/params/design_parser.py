@@ -51,9 +51,7 @@ class DesignParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
-        self.seq = str(SeqIO.read(self.args.input, "fasta").seq)
-        if self.args.target is not None:
-            self.args.target = self.args.target.upper()
+        self._load_input()
         self._logging()
         self._validate()
         self._log_args()
@@ -186,6 +184,11 @@ class DesignParser(object):
             self.args = self.parser.parse_args()
         else:
             self.args = self.parser.parse_args(args)
+
+    def _load_input(self):
+        self.seq = str(SeqIO.read(self.args.input, "fasta").seq)
+        if self.args.target is not None:
+            self.args.target = self.args.target.upper()
 
     def _logging(self):
         self.log = logging.getLogger(__name__)

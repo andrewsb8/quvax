@@ -27,8 +27,8 @@ class AnalysisParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
+        self._load_input()
         self._logging()
-        self.data = self._load_input()
         self._validate()
         self._log_args()
         self._log_input()
@@ -109,9 +109,8 @@ class AnalysisParser(object):
 
     def _load_input(self):
         input_file = open(self.args.input, "rb")
-        data = pickle.load(input_file)
+        self.data = pickle.load(input_file)
         input_file.close()
-        return data
 
     def _validate(self):
         """
