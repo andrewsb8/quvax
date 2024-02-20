@@ -191,7 +191,7 @@ class CodonOptimizer(ABC):
                 + sequence
             )
         else:
-            self.config.log.info("Final codon sequence translated properly.")
+            self.config.log.info("Codon sequence translated properly.")
 
     def _get_optimized_sequences(self):
         """

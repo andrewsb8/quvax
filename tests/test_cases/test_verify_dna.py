@@ -26,6 +26,6 @@ def test_WillTranslate(mock_optimizer, caplog):
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Final codon sequence translated properly.",
+        "Codon sequence translated properly.",
     )
     assert log_entry in caplog.record_tuples
