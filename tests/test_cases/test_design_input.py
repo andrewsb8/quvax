@@ -61,6 +61,31 @@ def test_target_start_codon():
     with pytest.raises(ValueError):
         DesignParser(testargs)
 
+def test_target_start_codon_withM():
+    """
+    Test if _validate() will produce an error if there are more start codons than amino acids M
+
+    """
+
+    testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AUGAUGAAA"]
+    with pytest.raises(ValueError):
+        DesignParser(testargs)
+
+def test_target_start_codon_withM_noerror(caplog):
+    """
+    Test if _validate() will not produce an error if there are an equal number of start codons and amino acids M.
+    Pass condition is observation of log output in method after _validate()
+
+    """
+
+    testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AAAAUGAAA"]
+    DesignParser(testargs)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 30 indicates WARNING, 20 indicates INFO
+        "\n\nList of Parameters:",
+    )
+    assert log_entry in caplog.record_tuples
 
 def test_target_stop_codon():
     """
