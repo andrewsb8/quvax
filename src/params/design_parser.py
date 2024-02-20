@@ -147,7 +147,7 @@ class DesignParser(object):
         self.parser.add_argument(
             "-sp",
             "--species",
-            default="e_coli_316407",
+            default="h_sapiens_9606",
             type=str,
             help="Species type for generating codon tables and frequencies",
         )
