@@ -6,7 +6,7 @@
 Install your preferred version of conda (Anaconda or Miniconda). Create Conda environment:
 
 ```
-$ conda env create -n quvax python=3.11
+$ conda create -n quvax python=3.11
 $ conda activate quvax
 ```
 
