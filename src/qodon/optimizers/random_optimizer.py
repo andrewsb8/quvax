@@ -1,8 +1,4 @@
 from src.qodon.optimizer import CodonOptimizer
-import random
-from operator import itemgetter
-import numpy as np
-import math
 
 
 class RandomOptimizer(CodonOptimizer):
@@ -13,23 +9,28 @@ class RandomOptimizer(CodonOptimizer):
     ----------
 
     """
+
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
 
     def _optimize(self):
-        '''
+        """
         Main method for codon optimization
 
-        '''
+        """
 
-        num_extra_sequences = (self.config.args.codon_iterations * self.config.args.n_trials) - self.config.args.n_trials
+        num_extra_sequences = (
+            self.config.args.codon_iterations * self.config.args.n_trials
+        ) - self.config.args.n_trials
         extra_sequences = self._generate_sequences(num_extra_sequences)
         self.initial_sequences.extend(extra_sequences)
         n_seqs = [self._reverse_translate(s) for s in self.initial_sequences]
 
-        scores = [self._fold_rna(s) for s in n_seqs]
+        energies = [self._fold_rna(s) for s in n_seqs]
 
-        self._extend_output(n_seqs, scores, None)
-        self._get_optimized_sequence()
+        self._extend_output(n_seqs, energies, None)
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
         self._pickle_output()

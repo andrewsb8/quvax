@@ -1,10 +1,9 @@
 argparse==1.4.0
 biopython==1.81
+black==23.12.1
 dwave-neal==0.6.0
 flake8==6.1.0
 pandas==2.0.3
-pip==23.2.1
-pipdeptree==2.12.0
 pytest-cov==4.1.0
 python-codon-tables==0.1.12
 tensorflow==2.13.0
