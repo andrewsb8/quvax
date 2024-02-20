@@ -26,7 +26,7 @@ def test_TFDE(caplog):
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO
-        "Final codon sequence translated properly.",
+        "Codon sequence translated properly.",
     )
     assert log_entry in caplog.record_tuples
 
@@ -56,7 +56,7 @@ def test_RAND(caplog):
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO
-        "Final codon sequence translated properly.",
+        "Codon sequence translated properly.",
     )
     assert log_entry in caplog.record_tuples
 
@@ -86,6 +86,6 @@ def test_GA(caplog):
     log_entry = (
         "src.params.design_parser",
         20,  # 30 indicates WARNING, 20 indicates INFO
-        "Final codon sequence translated properly.",
+        "Codon sequence translated properly.",
     )
     assert log_entry in caplog.record_tuples
