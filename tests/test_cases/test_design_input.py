@@ -61,6 +61,7 @@ def test_target_start_codon():
     with pytest.raises(ValueError):
         DesignParser(testargs)
 
+
 def test_target_start_codon_withM():
     """
     Test if _validate() will produce an error if there are more start codons than amino acids M
@@ -70,6 +71,7 @@ def test_target_start_codon_withM():
     testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AUGAUGAAA"]
     with pytest.raises(ValueError):
         DesignParser(testargs)
+
 
 def test_target_start_codon_withM_noerror(caplog):
     """
@@ -86,6 +88,7 @@ def test_target_start_codon_withM_noerror(caplog):
         "\n\nList of Parameters:",
     )
     assert log_entry in caplog.record_tuples
+
 
 def test_target_stop_codon():
     """

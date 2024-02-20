@@ -237,7 +237,10 @@ class DesignParser(object):
                     "Target sequence is not the correct length to code for the input protein sequence!"
                 )
 
-            target_reshape = [ [self.args.target[i:i+3]] for i in range(0, len(self.args.target), 3) ]
+            target_reshape = [
+                [self.args.target[i : i + 3]]
+                for i in range(0, len(self.args.target), 3)
+            ]
             if target_reshape.count(["AUG"]) > self.seq.count("M"):
                 raise ValueError(
                     "Your target sequence includes the start codon AUG but your input protein sequence does not contain amino acid M!"

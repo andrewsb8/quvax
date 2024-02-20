@@ -238,7 +238,9 @@ class CodonOptimizer(ABC):
 
     def _fold_target(self):
         self.target_folded_energy = self._fold_rna(self.config.args.target)
-        self.config.log.info("Target sequence folding energy: " + str(self.target_folded_energy))
+        self.config.log.info(
+            "Target sequence folding energy: " + str(self.target_folded_energy)
+        )
         self.config.log.info("\n")
 
     def _check_target(self):
