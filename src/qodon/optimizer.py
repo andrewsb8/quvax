@@ -37,6 +37,7 @@ class CodonOptimizer(ABC):
         ) = self._construct_codon_table()
         if self.config.args.target is not None:
             self._verify_target()
+            self._fold_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
         self.optimization_process = {
             "protein_sequence": self.config.seq,
@@ -234,6 +235,10 @@ class CodonOptimizer(ABC):
         """
         self.config.log.info("Verifying target codes for input protein.")
         self._verify_dna(self.config.args.target)
+
+    def _fold_target(self):
+        self.target_folded_energy = self._fold_rna(self.config.args.target)
+        self.config.log.info("Target sequence folding energy: " + str(self.target_folded_energy))
         self.config.log.info("\n")
 
     def _check_target(self):
