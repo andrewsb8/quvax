@@ -13,11 +13,11 @@ $ conda activate quvax
 Install dependencies:
 
 ```
-$ python -m pip install -r requirements.txt
+$ python -m pip install -r requirements.md
 
 OR
 
-$ conda install --file requirements.txt -c conda-forge
+$ conda install --file requirements.md -c conda-forge
 ```
 
 *The latter currently does not work.
