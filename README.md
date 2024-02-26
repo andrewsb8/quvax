@@ -64,3 +64,7 @@ python-codon-tables==0.1.12
 tensorflow==2.13.0
 tensorflow-probability==0.21.0
 ```
+
+## Known Issues
+
+[Tensorflow does not support Mac](https://github.com/tensorflow/tensorflow/issues/61382) so you will have to use ```tensorflow==2.11``` and ```tensorflow-probability==0.19``` in ```requirements.md``` if installing via pip. Alternatively, you can try to install these packages manually via wheel from the PyPi repositories for the newer verions.
