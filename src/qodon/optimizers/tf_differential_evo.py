@@ -35,6 +35,8 @@ class TfDiffEv(CodonOptimizer):
             max_iterations=self.config.args.codon_iterations,
             differential_weight=0.01,
             crossover_prob=0.1,
+            func_tolerance=-1,
+            position_tolerance=0,
         )
 
         self._get_optimized_sequences()
