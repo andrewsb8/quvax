@@ -24,7 +24,7 @@ class TfDiffEv(CodonOptimizer):
         """
 
         self.initial_members = tf.convert_to_tensor(
-            ([_ for _ in self.initial_sequences]), np.float32
+            ([_ for _ in self.initial_sequences]), np.float16
         )
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
@@ -63,7 +63,7 @@ class TfDiffEv(CodonOptimizer):
         self._extend_output(n_seqs, energies, None)
 
         # Return TF object
-        return tf.cast(energies, np.float32)
+        return tf.cast(energies, np.float16)
 
     def _convert_to_ints(self, members) -> List:
         """
