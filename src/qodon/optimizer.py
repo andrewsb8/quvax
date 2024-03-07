@@ -56,7 +56,13 @@ class CodonOptimizer(ABC):
 
     def _update_codon_step(self):
         self.codon_optimize_step += 1
-        sys.stderr.write("Codon optimization step (" + str(self.codon_optimize_step) + ") of total steps (" + str(self.config.args.codon_iterations) + ")\r")
+        sys.stderr.write(
+            "Codon optimization step ("
+            + str(self.codon_optimize_step)
+            + ") of total steps ("
+            + str(self.config.args.codon_iterations)
+            + ")\r"
+        )
 
     def _convert_to_p_list(self, a):
         """
