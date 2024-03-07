@@ -16,20 +16,19 @@ class RandomOptimizer(CodonOptimizer):
 
     def _optimize(self):
         """
-        Main method for codon optimization
+        Main method for random codon optimization
 
         """
-
-        num_extra_sequences = (
-            self.config.args.codon_iterations * self.config.args.n_trials
-        ) - self.config.args.n_trials
-        extra_sequences = self._generate_sequences(num_extra_sequences)
-        self.initial_sequences.extend(extra_sequences)
         n_seqs = [self._reverse_translate(s) for s in self.initial_sequences]
-
         energies = [self._fold_rna(s) for s in n_seqs]
-
         self._extend_output(n_seqs, energies, None)
+
+        for i in range(self.config.args.codon_iterations):
+            self._update_codon_step()
+            extra_sequences = self._generate_sequences(self.config.args.n_trials)
+            n_seqs = [self._reverse_translate(s) for s in extra_sequences]
+            energies = [self._fold_rna(s) for s in n_seqs]
+            self._extend_output(n_seqs, energies, None)
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()

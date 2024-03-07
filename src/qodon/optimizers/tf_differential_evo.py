@@ -24,7 +24,7 @@ class TfDiffEv(CodonOptimizer):
         """
 
         self.initial_members = tf.convert_to_tensor(
-            ([_ for _ in self.initial_sequences]), np.float16
+            ([_ for _ in self.initial_sequences]), np.float32
         )
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
@@ -53,6 +53,8 @@ class TfDiffEv(CodonOptimizer):
 
         """
 
+        self._update_codon_step()
+
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_ints(members)
         n_seqs = [self._reverse_translate(s) for s in n_seqs]
@@ -63,7 +65,7 @@ class TfDiffEv(CodonOptimizer):
         self._extend_output(n_seqs, energies, None)
 
         # Return TF object
-        return tf.cast(energies, np.float16)
+        return tf.cast(energies, np.float32)
 
     def _convert_to_ints(self, members) -> List:
         """
