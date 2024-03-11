@@ -35,6 +35,7 @@ class TfDiffEv(CodonOptimizer):
             max_iterations=self.config.args.codon_iterations,
             differential_weight=0.01,
             crossover_prob=0.1,
+            func_tolerance=-1,  # force tensorflow to do max_iterations
         )
 
         self._get_optimized_sequences()
@@ -51,6 +52,8 @@ class TfDiffEv(CodonOptimizer):
         it gets the job done.
 
         """
+
+        self._update_codon_step()
 
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_ints(members)

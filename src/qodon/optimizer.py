@@ -29,6 +29,7 @@ class CodonOptimizer(ABC):
     def __init__(self, config: DesignParser):
         self.config = config
         random.seed(self.config.args.random_seed)
+        self.codon_optimize_step = 0
         self.config.log.info("Beginning codon optimization")
         (
             self.codon_table,
@@ -52,6 +53,16 @@ class CodonOptimizer(ABC):
     @abstractmethod
     def _optimize(self):
         pass
+
+    def _update_codon_step(self):
+        self.codon_optimize_step += 1
+        sys.stderr.write(
+            "Codon optimization step ("
+            + str(self.codon_optimize_step)
+            + ") of total steps ("
+            + str(self.config.args.codon_iterations)
+            + ")\r"
+        )
 
     def _convert_to_p_list(self, a):
         """
