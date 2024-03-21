@@ -38,7 +38,7 @@ class AnalysisParser(object):
         Define command line arguments. Long options are used as variable names.
         """
         self.__version__ = "QuVax v0.0.1"
-        self.prog = "analysis.py"
+        self.prog = "analyze.py"
 
         self.parser = argparse.ArgumentParser(
             prog=self.prog,
@@ -53,14 +53,14 @@ class AnalysisParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input file from output of design.py. (default .qu)",
+            help="Input file from output of design.py (default .qu)",
         )
         self.parser.add_argument(
             "-at",
             "--analysis_type",
             default="fe_landscape",
             type=str,
-            help="Specify type of analysis. Values: fe_landscape, fe_generation, trajectory, trajectory_per_generation",
+            help="Specify type of analysis. Values: fe_landscape, fe_generation, trajectory",
         )
         self.parser.add_argument(
             "-l",
@@ -74,7 +74,7 @@ class AnalysisParser(object):
             "--output",
             default="analysis_out.txt",
             type=str,
-            help="Specify output file.",
+            help="Specify output file",
         )
         self.parser.add_argument(
             "-sd",
