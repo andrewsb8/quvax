@@ -40,7 +40,7 @@ class CodonOptimizer(ABC):
             self._verify_target()
             self._fold_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        
+
     @abstractmethod
     def _optimize(self):
         pass
@@ -148,24 +148,8 @@ class CodonOptimizer(ABC):
         folded_rna = QuantumSimAnnealer(nseq, self.config)
         return folded_rna.best_score
 
-    def _extend_output(self, step, sequences, energies, sec_struct):
-        print(self.codon_sequences, self.energies) #dask arrays
-        print(sequences, energies) #lists to add to dask arrays
-        print("step, n_trials: ", step, self.config.args.n_trials)
-        for i in range(len(energies)):
-            print("i: ", i)
-            self.codon_sequences[(step*self.config.args.n_trials) + i] = sequences[i]
-            self.energies[(step*self.config.args.n_trials) + i] = energies[i]
-        print(self.energies.compute())
-        return
-
-    def _write_output(self):
-        with h5py.File(self.config.args.output, 'w') as f:
-            f.create_dataset('/protein_sequence', data=self.config.seq)
-            f.create_dataset('/generation_size', data=self.config.args.n_trials)
-            f.create_dataset('/optimizer', data=self.config.args.codon_optimizer)
-            f.create_dataset('/random_seed', data=self.config.args.random_seed)
-            da.to_hdf5(f, {'/sequences': self.codon_sequences, '/energies': self.energies})
+    def _write_output(self, sequences, energies, secondary_structure):
+        #write data to database
         return
 
     def _read_output(self):

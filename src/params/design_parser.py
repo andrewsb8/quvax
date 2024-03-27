@@ -309,6 +309,7 @@ class DesignParser(object):
         self.log.info("Creating database " + self.args.output)
         self.db = sqlite3.connect(self.args.output)
         self.db_cursor = self.db.cursor()
+        #need to set up a key for each of these tables
         self.db_cursor.execute("CREATE TABLE INPUTS(protein_sequence, generation_size, optimizer, random_seed)")
         #self.db_cursor.execute("INSERT INTO INPUTS(protein_sequence, generation_size, optimizer, random_seed) VALUES(?, ?, ?, ?)", (self.seq, self.args.n_trials, self.args.codon_optimizer, self.args.random_seed))
         self.db_cursor.execute("CREATE TABLE OUTPUTS(sequences, energies)")

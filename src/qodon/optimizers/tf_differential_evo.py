@@ -62,7 +62,7 @@ class TfDiffEv(CodonOptimizer):
         # Use the imported scoring function to score all sequences.
         energies = [self._fold_rna(s) for s in n_seqs]
 
-        self._extend_output(self.codon_optimize_step, n_seqs, energies, None)
+        self._write_output(n_seqs, energies, None)
 
         # Return TF object
         return tf.cast(energies, np.float32)
