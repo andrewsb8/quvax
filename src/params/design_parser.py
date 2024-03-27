@@ -6,6 +6,7 @@ import sys
 import logging
 import datetime
 from src.exceptions.exceptions import InvalidSequenceError
+import sqlite3
 
 
 class DesignParser(object):
@@ -39,7 +40,7 @@ class DesignParser(object):
     species : str
         String to identify which species to generate codon frequencies
     output : str
-        String to identify output file containing information about optimization process
+        String to identify output sqlite database file
     random_seed : int
         Sets random seed for all optimizers and packages
     target : str
@@ -55,6 +56,7 @@ class DesignParser(object):
         self._logging()
         self._validate()
         self._log_args()
+        self._create_db()
 
     def _parse(self, args=None):
         """
@@ -154,9 +156,9 @@ class DesignParser(object):
         self.parser.add_argument(
             "-o",
             "--output",
-            default="quvax.qu",
+            default="quvax.db",
             type=str,
-            help="Specify output file. Includes sequences, folding energies, (TBA) secondary structure",
+            help="String to identify output sqlite database file. Default: quvax.db",
         )
         self.parser.add_argument(
             "-sd",
@@ -302,3 +304,11 @@ class DesignParser(object):
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
+
+    def _create_db(self):
+        self.log.info("Creating database " + self.args.output)
+        self.db = sqlite3.connect(self.args.output)
+        self.db_cursor = self.db.cursor()
+        self.db_cursor.execute("CREATE TABLE INPUTS(protein_sequence, generation_size, optimizer, random_seed)")
+        #self.db_cursor.execute("INSERT INTO INPUTS(protein_sequence, generation_size, optimizer, random_seed) VALUES(?, ?, ?, ?)", (self.seq, self.args.n_trials, self.args.codon_optimizer, self.args.random_seed))
+        self.db_cursor.execute("CREATE TABLE OUTPUTS(sequences, energies)")
