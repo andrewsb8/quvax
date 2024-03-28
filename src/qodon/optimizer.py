@@ -57,6 +57,14 @@ class CodonOptimizer(ABC):
         )
         if self.codon_optimize_step >= self.config.args.codon_iterations:
             sys.stderr.write("\n")
+            self.config.log.info(
+                "Number of Generations: ("
+                + str(self.codon_optimize_step)
+                + ") of total generations ("
+                + str(self.config.args.codon_iterations)
+                + ")\n"
+            )
+
 
     def _update_mfe(self, energies):
         for energy in energies:
@@ -213,10 +221,21 @@ class CodonOptimizer(ABC):
         Get lowest energy sequences from all sampled sequences
 
         """
-        self.config.db_cursor.execute("UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?", (self.mfe.item(), self.config.seq))
+        #write min free energy to log and db
+        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
+        self.config.db_cursor.execute("UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;", (self.mfe, self.config.seq))
         self.config.db.commit()
 
-        """self.mfe = np.min(self.optimization_process["energies"])
+        #get number and list of degenerate min free energy sequences
+        self.config.db_cursor.execute(f"SELECT sequences FROM OUTPUTS WHERE energies = {self.mfe};")
+        degen_sequences = self.config.db_cursor.fetchall()
+        self.config.log.info(
+            "Number of degenerate minimum free energy sequences sampled: "
+            + str(len(degen_sequences))
+        )
+
+
+        """
         self.final_codons = [
             self.optimization_process["sequences"][i]
             for i in range(len(self.optimization_process["sequences"]))
