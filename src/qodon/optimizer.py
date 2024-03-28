@@ -227,43 +227,14 @@ class CodonOptimizer(ABC):
         self.config.db.commit()
 
         #get number and list of degenerate min free energy sequences
-        self.config.db_cursor.execute(f"SELECT sequences FROM OUTPUTS WHERE energies = {self.mfe};")
-        degen_sequences = self.config.db_cursor.fetchall()
+        self.config.db_cursor.execute(f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};")
+        num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
             "Number of degenerate minimum free energy sequences sampled: "
-            + str(len(degen_sequences))
+            + str(num_degen_sequences)
         )
-
-
-        """
-        self.final_codons = [
-            self.optimization_process["sequences"][i]
-            for i in range(len(self.optimization_process["sequences"]))
-            if self.optimization_process["energies"][i] == self.mfe
-        ]
-        out_seq = open(self.config.args.output_sequences, "w+")
-        for codons in self.final_codons:
-            self._verify_dna(codons)
-            out_seq.write(codons + "\n")
-        out_seq.close()
-
-        self.config.log.info(
-            "Number of degenerate minimum free energy sequences sampled: "
-            + str(len(self.final_codons))
-        )
-        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
-        self.config.log.info(
-            "Generation Size: " + str(self.optimization_process["generation_size"])
-        )
-        self.config.log.info(
-            "Number of Generations: "
-            + str(
-                len(self.optimization_process["energies"])
-                / self.optimization_process["generation_size"]
-            )
-        )
-        self.config.log.info("\n\n")"""
-        return
+        self.config.db_cursor.execute("INSERT INTO MFE_SEQUENCES (sequences) SELECT sequences FROM OUTPUTS WHERE energies = ?", (self.mfe,))
+        self.config.db.commit()
 
     def _verify_target(self):
         """
