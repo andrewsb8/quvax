@@ -25,12 +25,12 @@ class RandomOptimizer(CodonOptimizer):
 
         for i in range(self.config.args.codon_iterations):
             self._update_codon_step()
+            self._update_mfe(energies)
             extra_sequences = self._generate_sequences(self.config.args.n_trials)
             n_seqs = [self._reverse_translate(s) for s in extra_sequences]
             energies = [self._fold_rna(s) for s in n_seqs]
             self._write_output(n_seqs, energies, None)
 
-        """self._get_optimized_sequences()
+        self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
-        self._pickle_output()"""

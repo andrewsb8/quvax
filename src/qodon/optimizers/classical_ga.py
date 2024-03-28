@@ -29,7 +29,6 @@ class GeneticAlgorithm(CodonOptimizer):
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
-        self._pickle_output()
 
     def _propagate_generations(self):
         # Initialize population
@@ -41,6 +40,7 @@ class GeneticAlgorithm(CodonOptimizer):
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             self._update_codon_step()
+            self._update_mfe(energies)
             # Introduce mutations
             members = self._procreate(members)
             n_seqs = [self._reverse_translate(s) for s in members]

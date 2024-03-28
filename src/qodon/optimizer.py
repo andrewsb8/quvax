@@ -40,6 +40,7 @@ class CodonOptimizer(ABC):
             self._verify_target()
             self._fold_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+        self.mfe = 1000000 #set min free energy to high number
 
     @abstractmethod
     def _optimize(self):
@@ -54,6 +55,13 @@ class CodonOptimizer(ABC):
             + str(self.config.args.codon_iterations)
             + ")\r"
         )
+        if self.codon_optimize_step >= self.config.args.codon_iterations:
+            sys.stderr.write("\n")
+
+    def _update_mfe(self, energies):
+        for energy in energies:
+            if energy < self.mfe:
+                self.mfe = energy
 
     def _convert_to_p_list(self, a):
         """
@@ -205,7 +213,7 @@ class CodonOptimizer(ABC):
         Get lowest energy sequences from all sampled sequences
 
         """
-        self.mfe = np.min(self.optimization_process["energies"])
+        """self.mfe = np.min(self.optimization_process["energies"])
         self.final_codons = [
             self.optimization_process["sequences"][i]
             for i in range(len(self.optimization_process["sequences"]))
@@ -232,7 +240,8 @@ class CodonOptimizer(ABC):
                 / self.optimization_process["generation_size"]
             )
         )
-        self.config.log.info("\n\n")
+        self.config.log.info("\n\n")"""
+        return
 
     def _verify_target(self):
         """

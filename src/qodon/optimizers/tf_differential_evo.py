@@ -41,7 +41,6 @@ class TfDiffEv(CodonOptimizer):
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
-        self._pickle_output()
 
     def _objective(self, members):
         """
@@ -61,6 +60,7 @@ class TfDiffEv(CodonOptimizer):
 
         # Use the imported scoring function to score all sequences.
         energies = [self._fold_rna(s) for s in n_seqs]
+        self._update_mfe(energies)
 
         self._write_output(n_seqs, energies, None)
 
