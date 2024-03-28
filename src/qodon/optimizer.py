@@ -40,7 +40,7 @@ class CodonOptimizer(ABC):
             self._verify_target()
             self._fold_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        self.mfe = 1000000 #set min free energy to high number
+        self.mfe = 1000000  # set min free energy to high number
 
     @abstractmethod
     def _optimize(self):
@@ -64,7 +64,6 @@ class CodonOptimizer(ABC):
                 + str(self.config.args.codon_iterations)
                 + ")\n"
             )
-
 
     def _update_mfe(self, energies):
         for energy in energies:
@@ -221,19 +220,27 @@ class CodonOptimizer(ABC):
         Get lowest energy sequences from all sampled sequences
 
         """
-        #write min free energy to log and db
+        # write min free energy to log and db
         self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
-        self.config.db_cursor.execute("UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;", (self.mfe, self.config.seq))
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;",
+            (self.mfe, self.config.seq),
+        )
         self.config.db.commit()
 
-        #get number and list of degenerate min free energy sequences
-        self.config.db_cursor.execute(f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};")
+        # get number and list of degenerate min free energy sequences
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};"
+        )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
             "Number of degenerate minimum free energy sequences sampled: "
             + str(num_degen_sequences)
         )
-        self.config.db_cursor.execute("INSERT INTO MFE_SEQUENCES (sequences) SELECT sequences FROM OUTPUTS WHERE energies = ?", (self.mfe,))
+        self.config.db_cursor.execute(
+            "INSERT INTO MFE_SEQUENCES (sequences) SELECT sequences FROM OUTPUTS WHERE energies = ?",
+            (self.mfe,),
+        )
         self.config.db.commit()
 
     def _verify_target(self):
