@@ -213,6 +213,9 @@ class CodonOptimizer(ABC):
         Get lowest energy sequences from all sampled sequences
 
         """
+        self.config.db_cursor.execute("UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?", (self.mfe.item(), self.config.seq))
+        self.config.db.commit()
+
         """self.mfe = np.min(self.optimization_process["energies"])
         self.final_codons = [
             self.optimization_process["sequences"][i]
