@@ -263,11 +263,19 @@ class CodonOptimizer(ABC):
         Check if target codon sequence was sampled and if it was lowest energy
 
         """
-        if self.config.args.target in self.final_codons:
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM MFE_SEQUENCES WHERE sequences = '{self.config.args.target}';"
+        )
+        mfe_samples = self.config.db_cursor.fetchall()[0][0]
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
+        )
+        samples = self.config.db_cursor.fetchall()[0][0]
+        if mfe_samples > 0:
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-        elif self.config.args.target in self.optimization_process["sequences"]:
+        elif mfe_samples == 0 and samples > 0:
             self.config.log.warning(
                 "The target codon sequence was sampled but was not the lowest free energy sequence."
             )
