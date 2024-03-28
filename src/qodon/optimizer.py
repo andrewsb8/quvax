@@ -150,7 +150,16 @@ class CodonOptimizer(ABC):
 
     def _write_output(self, sequences, energies, secondary_structure):
         for i in range(len(energies)):
-            self.config.db_cursor.execute("INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);", (self.config.sim_key, i, self.codon_optimize_step, sequences[i], energies[i]))
+            self.config.db_cursor.execute(
+                "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
+                (
+                    self.config.sim_key,
+                    i,
+                    self.codon_optimize_step,
+                    sequences[i],
+                    energies[i],
+                ),
+            )
             self.config.db.commit()
         return
 
