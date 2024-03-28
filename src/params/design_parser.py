@@ -309,8 +309,12 @@ class DesignParser(object):
         self.log.info("Creating database " + self.args.output)
         self.db = sqlite3.connect(self.args.output)
         self.db_cursor = self.db.cursor()
-        self.db_cursor.execute(f"CREATE TABLE INPUTS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), generation_size INT UNSIGNED, optimizer VARCHAR(10), random_seed INT);")
-        self.db_cursor.execute("INSERT INTO INPUTS(protein_sequence, generation_size, optimizer, random_seed) VALUES(?, ?, ?, ?);", (self.seq, self.args.n_trials, self.args.codon_optimizer, self.args.random_seed))
-        self.db_cursor.execute(f"CREATE TABLE OUTPUTS(index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT);")
+        #This will fail if a db already exists in this directory
+        self.db_cursor.execute(f"CREATE TABLE INPUTS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, optimizer VARCHAR(10), random_seed INT);")
+        #f strings do not work with INSERT statements
+        self.db_cursor.execute("INSERT INTO INPUTS(protein_sequence, target_sequence, generation_size, optimizer, random_seed) VALUES(?, ?, ?, ?, ?);", (self.seq, self.args.target, self.args.n_trials, self.args.codon_optimizer, self.args.random_seed))
+        self.db_cursor.execute(f"CREATE TABLE OUTPUTS(index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT);")
         self.db.commit()
+        self.db_cursor.execute(f"SELECT sim_key FROM INPUTS WHERE protein_sequence = '{self.seq}';")
+        self.sim_key = self.db_cursor.fetchall()[0][0]
         self.log.info("Created database " + self.args.output + "\n\n")

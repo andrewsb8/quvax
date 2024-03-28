@@ -149,7 +149,9 @@ class CodonOptimizer(ABC):
         return folded_rna.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
-        #write data to database
+        for i in range(len(energies)):
+            self.config.db_cursor.execute("INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);", (self.config.sim_key, i, self.codon_optimize_step, sequences[i], energies[i]))
+            self.config.db.commit()
         return
 
     def _read_output(self):

@@ -4,7 +4,7 @@ from src.params.design_parser import DesignParser
 if __name__ == "__main__":
     config = DesignParser()
 
-    """if config.args.codon_optimizer == "TFDE":
+    if config.args.codon_optimizer == "TFDE":
         from src.qodon.optimizers.tf_differential_evo import TfDiffEv
 
         TfDiffEv(config)
@@ -19,4 +19,4 @@ if __name__ == "__main__":
     else:
         config.log.error(
             "Please select a valid optimizer. See python design.py -h for details."
-        )"""
+        )
