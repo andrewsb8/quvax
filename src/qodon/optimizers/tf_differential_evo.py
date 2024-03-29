@@ -14,6 +14,9 @@ class TfDiffEv(CodonOptimizer):
     def __init__(self, config):
         super().__init__(config)
         tf.random.set_seed(self.config.args.random_seed)
+        #tensorflow counts initial pop as first step but others don't
+        #line below makes counting consistent among all optimizers
+        self.codon_optimize_step -= 1
         self._optimize()
 
     def _optimize(self):
@@ -52,16 +55,15 @@ class TfDiffEv(CodonOptimizer):
 
         """
 
-        self._update_codon_step()
-
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_ints(members)
         n_seqs = [self._reverse_translate(s) for s in n_seqs]
 
         # Use the imported scoring function to score all sequences.
         energies = [self._fold_rna(s) for s in n_seqs]
-        self._update_mfe(energies)
 
+        self._update_mfe(energies)
+        self._update_codon_step()
         self._write_output(n_seqs, energies, None)
 
         # Return TF object

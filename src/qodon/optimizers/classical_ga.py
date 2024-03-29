@@ -39,12 +39,12 @@ class GeneticAlgorithm(CodonOptimizer):
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
-            self._update_codon_step()
-            self._update_mfe(energies)
             # Introduce mutations
             members = self._procreate(members)
             n_seqs = [self._reverse_translate(s) for s in members]
             energies = [self._fold_rna(s) for s in n_seqs]
+            self._update_mfe(energies)
+            self._update_codon_step()
             self._write_output(n_seqs, energies, None)
 
     def _procreate(self, eligible_members):

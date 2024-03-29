@@ -55,7 +55,7 @@ class CodonOptimizer(ABC):
             + str(self.config.args.codon_iterations)
             + ")\r"
         )
-        if self.codon_optimize_step >= self.config.args.codon_iterations:
+        if self.codon_optimize_step == self.config.args.codon_iterations:
             sys.stderr.write("\n")
             self.config.log.info(
                 "Number of Generations: ("
