@@ -256,6 +256,11 @@ class CodonOptimizer(ABC):
         self.config.log.info(
             "Target sequence folding energy: " + str(self.target_folded_energy)
         )
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET target_min_free_energy = ? WHERE target_sequence = ?;",
+            (self.target_folded_energy, self.config.args.target),
+        )
+        self.config.db.commit()
         self.config.log.info("\n")
 
     def _check_target(self):
