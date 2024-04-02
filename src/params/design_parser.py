@@ -45,8 +45,6 @@ class DesignParser(object):
         Sets random seed for all optimizers and packages
     target : str
         Optional input to include target codon sequence
-    output_sequences : str
-        Output file which lists output codon sequences with minimum free energy
 
     """
 
