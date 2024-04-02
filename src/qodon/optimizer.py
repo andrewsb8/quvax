@@ -242,6 +242,7 @@ class CodonOptimizer(ABC):
             (self.mfe,),
         )
         self.config.db.commit()
+        self.config.log.info("Finished parsing optimized sequences.")
 
     def _verify_target(self):
         """

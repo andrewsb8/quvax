@@ -23,6 +23,12 @@ def test_TFDE(caplog):
     parser = DesignParser(testargs)
     parser.log.info("test_TFDE")
     TfDiffEv(parser)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
 
 
 def test_RAND(caplog):
@@ -47,6 +53,12 @@ def test_RAND(caplog):
     parser = DesignParser(testargs)
     parser.log.info("test_RAND")
     RandomOptimizer(parser)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
 
 
 def test_GA(caplog):
@@ -71,3 +83,9 @@ def test_GA(caplog):
     parser = DesignParser(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
