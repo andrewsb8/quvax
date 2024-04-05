@@ -60,7 +60,7 @@ class TfDiffEv(CodonOptimizer):
         self.n_seqs = [self._reverse_translate(s) for s in n_seqs]
 
         # Use the imported scoring function to score all sequences.
-        self.energies = [self._fold_rna(s) for s in n_seqs]
+        self.energies = [self._fold_rna(s) for s in self.n_seqs]
 
         self._update_mfe(self.energies)
         self._update_codon_step()
