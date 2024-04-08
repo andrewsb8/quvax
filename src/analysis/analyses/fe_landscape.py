@@ -20,26 +20,17 @@ class FreeEnergyLandscape(Analysis):
         self._analyze()
 
     def _analyze(self):
-        self.mfe = np.min(self.config.data["energies"])
-        self.mfe_index = np.argmin(self.config.data["energies"])
-        self.mfe_codons = self.config.data["sequences"][self.mfe_index]
+        self.codon_diff_all = []
+        self.energy_diff_all = []
 
-        self.codon_diff = [
-            sum(
-                [
-                    self._calc_codon_diff(
-                        self.mfe_codons[i * 3 : (i * 3) + 3],
-                        self.config.data["sequences"][j][i * 3 : (i * 3) + 3],
-                    )
-                    for i in range(int(len(self.mfe_codons) / 3))
-                ]
-            )
-            for j in range(len(self.config.data["sequences"]))
-        ]
-        self.energy_diff = [
-            self._calc_energy_diff(self.mfe, energy)
-            for energy in self.config.data["energies"]
-        ]
+        self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS;")
+        data = self.config.db_cursor.fetchall()
+        self.sequences = [dat[0] for dat in data]
+        self.energies = [dat[1] for dat in data]
+        self.mfe_sequence = self.sequences[np.argmin(self.energies)]
+
+        self.codon_diff = [self._calc_codon_diff(self.mfe_sequence, sequence) for sequence in self.sequences]
+        self.energy_diff = [self._calc_energy_diff(self.config.sim_details['min_free_energy'], energy) for energy in self.energies]
 
         self._print_output_2D(
             self.config.args.output, [self.codon_diff, self.energy_diff]
