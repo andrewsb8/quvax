@@ -27,9 +27,6 @@ class FreeEnergyGeneration(Analysis):
             data = self.config.db_cursor.fetchall()
             self.codons = [dat[0] for dat in data]
             self.energies = [dat[1] for dat in data]
-            print(self.codons, self.energies)
-
-            print(self.codons[0], self.codons[1])
 
             self.codon_diff = [self._calc_codon_diff(self.codons[i], self.codons[i+1]) for i in range(len(self.codons) - 1)]
             self.energy_diff = [self._calc_energy_diff(self.energies[i], self.energies[i+1]) for i in range(len(self.codons) - 1)]
