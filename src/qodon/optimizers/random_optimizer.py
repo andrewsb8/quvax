@@ -10,7 +10,7 @@ class RandomOptimizer(CodonOptimizer):
 
     """
 
-    def __init__(self, config):
+    def __init__(self, config : DesignParser):
         super().__init__(config)
         self._optimize()
 
