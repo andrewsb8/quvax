@@ -302,15 +302,16 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         # This will fail if a db already exists in this directory
         self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT);"
+            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, number_generations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT);"
         )
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_sequence, target_sequence, generation_size, optimizer, random_seed) VALUES (?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_sequence, target_sequence, generation_size, number_generations, optimizer, random_seed) VALUES (?, ?, ?, ?, ?, ?);",
             (
                 self.seq,
                 self.args.target,
                 self.args.n_trials,
+                self.args.codon_iterations,
                 self.args.codon_optimizer,
                 self.args.random_seed,
             ),
