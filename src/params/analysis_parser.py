@@ -136,7 +136,9 @@ class AnalysisParser(object):
         self.db_cursor.execute(
             f"SELECT * FROM SIM_DETAILS;"
         )
-        self.sim_details = self.db_cursor.fetchall()
+        sim_details = self.db_cursor.fetchall()
+        self.sim_details = {} #dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
-            self.log.info(keys[i][1] + " : " + str(self.sim_details[0][i]))
+            self.log.info(keys[i][1] + " : " + str(sim_details[0][i]))
+            self.sim_details[keys[i][1]] = sim_details[0][i]

@@ -21,18 +21,22 @@ class Trajectory(Analysis):
         self._analyze()
 
     def _analyze(self):
-        self.config.data["number_of_gens"] = int(
-            len(self.config.data["sequences"]) / self.config.data["generation_size"]
-        )
-        self.iterations = np.arange(0, self.config.data["number_of_gens"])
+        self.iterations = np.arange(0, self.config.sim_details["number_generations"])
 
-        for m in range(self.config.data["generation_size"]):
+        for m in range(self.config.sim_details["number_generations"]):
+            self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS WHERE population_key = {m};")
+            data = self.config.db_cursor.fetchall()
+
+            self.energy_diff = []
+
+            """
             self.energy_diff = [
                 self.config.data["energies"][
                     m + (k * self.config.data["generation_size"])
                 ]
-                for k in range(self.config.data["number_of_gens"])
+                for k in range(len(data))
             ]
 
             file = self.config.args.output + "-" + str(m)
             self._print_output_2D(file, [self.iterations, self.energy_diff])
+            """
