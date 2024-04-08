@@ -4,6 +4,7 @@ import sys
 import pickle
 import logging
 import datetime
+import sqlite3
 
 
 class AnalysisParser(object):
@@ -27,11 +28,11 @@ class AnalysisParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
-        self._load_input()
+        self._connect_to_db()
         self._logging()
         self._validate()
         self._log_args()
-        self._log_input()
+        self._query_details()
 
     def _parse(self, args=None):
         """
@@ -53,7 +54,7 @@ class AnalysisParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input file from output of design.py (default .qu)",
+            help="Input SQLite database from output of design.py (default .db)",
         )
         self.parser.add_argument(
             "-at",
@@ -107,10 +108,10 @@ class AnalysisParser(object):
         )
         self.log.info("Warnings and Errors:\n")
 
-    def _load_input(self):
-        input_file = open(self.args.input, "rb")
-        self.data = pickle.load(input_file)
-        input_file.close()
+    def _connect_to_db(self):
+        self.log.info("Connecting to database " + self.args.input)
+        self.db = sqlite3.connect(self.args.output)
+        self.db_cursor = self.db.cursor()
 
     def _validate(self):
         """
@@ -118,20 +119,7 @@ class AnalysisParser(object):
 
         """
 
-        expected_keys = [
-            "protein_sequence",
-            "generation_size",
-            "optimizer",
-            "random_seed",
-            "sequences",
-            "energies",
-            "sec_struct",
-        ]
-        input_keys = list(self.data.keys())
-        if input_keys != expected_keys:
-            raise ValueError(
-                "The input dictionary is incorrectly formatted or missing keys!"
-            )
+        return
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
@@ -140,13 +128,5 @@ class AnalysisParser(object):
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n")
 
-    def _log_input(self):
-        self.log.info("Input Information:")
-        self.log.info("Protein Sequence : " + self.data["protein_sequence"])
-        self.log.info("Generation Size : " + str(self.data["generation_size"]))
-        self.log.info(
-            "Number of Generations : "
-            + str(len(self.data["energies"]) / self.data["generation_size"])
-        )
-        self.log.info("Minimum Energy Sampled : " + str(min(self.data["energies"])))
-        self.log.info("\n")
+    def _query_details(self):
+        #can do a query of sim details and then log the results
