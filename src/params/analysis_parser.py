@@ -115,7 +115,7 @@ class AnalysisParser(object):
 
     def _validate(self):
         """
-        Validate user input.
+        Validate user input. TO DO: need to validate database structure?
 
         """
 
