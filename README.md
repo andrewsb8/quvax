@@ -32,10 +32,10 @@ Example execution of ```design.py```:
 $ python design.py -i examples/spike_trim.fasta
 ```
 
-```analyze.py``` then takes in the output of ```design.py```, which is simply a pickled dictionary with default extension ```.qu``` (this can be changed on command line if desired). Example execution of ```analyze.py```:
+```analyze.py``` then takes in the output of ```design.py```, which is simply a SQLite3 database with default extension ```.db``` (this can be changed on command line if desired). The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.) and can be read by the analysis modules of QuVax. Example execution of ```analyze.py```:
 
 ```
-$ python analyze.py -i quvax.qu
+$ python analyze.py -i quvax.db
 ```
 
 For help (each will produce unique output):
