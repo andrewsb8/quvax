@@ -7,3 +7,4 @@ rna_folding/__pycache__
 /*.qu
 /*.txt
 /*.db
+/analysis_out.txt-*

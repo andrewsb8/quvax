@@ -13,7 +13,7 @@ def test_trajectory():
 
     testargs = [
         "-i",
-        "tests/test_files/test_analysis/test_trajectory.qu",
+        "tests/test_files/test_analysis/quvax.db",
         "-at",
         "trajectory",
         "-o",
@@ -22,7 +22,7 @@ def test_trajectory():
     config = AnalysisParser(testargs)
     analysis = Trajectory(config)
 
-    for i in range(analysis.config.data["generation_size"]):
+    for i in range(analysis.config.sim_details["generation_size"]):
         assert (
             filecmp.cmp(
                 "test_traj_out.txt-" + str(i),
