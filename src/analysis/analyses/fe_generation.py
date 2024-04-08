@@ -25,11 +25,19 @@ class FreeEnergyGeneration(Analysis):
         for m in range(self.config.sim_details["generation_size"]):
             self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS WHERE population_key = {m};")
             data = self.config.db_cursor.fetchall()
-            self.codons = [dat[0] for dat in data]
+            self.sequences = [dat[0] for dat in data]
             self.energies = [dat[1] for dat in data]
 
-            self.codon_diff = [self._calc_codon_diff(self.codons[i], self.codons[i+1]) for i in range(len(self.codons) - 1)]
-            self.energy_diff = [self._calc_energy_diff(self.energies[i], self.energies[i+1]) for i in range(len(self.codons) - 1)]
+            self.codon_diff = [ sum(
+                [
+                    self._calc_codon_diff(
+                        self.sequences[j][i * 3 : (i * 3) + 3],
+                        self.sequences[j+1][i * 3 : (i * 3) + 3],
+                    )
+                    for i in range(int(len(self.sequences[0]) / 3))
+                ]
+            ) for j in range(len(self.sequences) - 1)]
+            self.energy_diff = [self._calc_energy_diff(self.energies[i], self.energies[i+1]) for i in range(len(self.energies) - 1)]
 
             self.codon_diff_all.extend(self.codon_diff)
             self.energy_diff_all.extend(self.energy_diff)
