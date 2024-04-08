@@ -44,7 +44,7 @@ def test_fe_landscape():
 
     testargs = [
         "-i",
-        "tests/test_files/test_analysis/test_trajectory.qu",
+        "tests/test_files/test_analysis/quvax.db",
         "-at",
         "fe_landscape",
         "-o",
@@ -71,7 +71,7 @@ def test_fe_generation():
 
     testargs = [
         "-i",
-        "tests/test_files/test_analysis/test_trajectory.qu",
+        "tests/test_files/test_analysis/quvax.db",
         "-at",
         "fe_generation",
         "-o",

@@ -19,32 +19,24 @@ class FreeEnergyGeneration(Analysis):
         self._analyze()
 
     def _analyze(self):
-        self.codon_diff = [
-            sum(
-                [
-                    self._calc_codon_diff(
-                        self.config.data["sequences"][j][i * 3 : (i * 3) + 3],
-                        self.config.data["sequences"][
-                            j + self.config.data["generation_size"]
-                        ][i * 3 : (i * 3) + 3],
-                    )
-                    for i in range(int(len(self.config.data["sequences"][0]) / 3))
-                ]
-            )
-            for j in range(
-                len(self.config.data["sequences"]) - self.config.data["generation_size"]
-            )
-        ]
-        self.energy_diff = [
-            self._calc_energy_diff(
-                self.config.data["energies"][k],
-                self.config.data["energies"][k + self.config.data["generation_size"]],
-            )
-            for k in range(
-                len(self.config.data["sequences"]) - self.config.data["generation_size"]
-            )
-        ]
+        self.codon_diff_all = []
+        self.energy_diff_all = []
+
+        for m in range(self.config.sim_details["generation_size"]):
+            self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS WHERE population_key = {m};")
+            data = self.config.db_cursor.fetchall()
+            self.codons = [dat[0] for dat in data]
+            self.energies = [dat[1] for dat in data]
+            print(self.codons, self.energies)
+
+            print(self.codons[0], self.codons[1])
+
+            self.codon_diff = [self._calc_codon_diff(self.codons[i], self.codons[i+1]) for i in range(len(self.codons) - 1)]
+            self.energy_diff = [self._calc_energy_diff(self.energies[i], self.energies[i+1]) for i in range(len(self.codons) - 1)]
+
+            self.codon_diff_all.extend(self.codon_diff)
+            self.energy_diff_all.extend(self.energy_diff)
 
         self._print_output_2D(
-            self.config.args.output, [self.codon_diff, self.energy_diff]
+            self.config.args.output, [self.codon_diff_all, self.energy_diff_all]
         )
