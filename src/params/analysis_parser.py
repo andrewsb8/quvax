@@ -28,8 +28,8 @@ class AnalysisParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
-        self._connect_to_db()
         self._logging()
+        self._connect_to_db()
         self._validate()
         self._log_args()
         self._query_details()
@@ -110,7 +110,7 @@ class AnalysisParser(object):
 
     def _connect_to_db(self):
         self.log.info("Connecting to database " + self.args.input)
-        self.db = sqlite3.connect(self.args.output)
+        self.db = sqlite3.connect(self.args.input)
         self.db_cursor = self.db.cursor()
 
     def _validate(self):
@@ -129,4 +129,14 @@ class AnalysisParser(object):
         self.log.info("\n")
 
     def _query_details(self):
-        #can do a query of sim details and then log the results
+        #query to get sim_detail columns info
+        self.db_cursor.execute(f"PRAGMA table_info(SIM_DETAILS);")
+        keys = self.db_cursor.fetchall()
+        #this query is not valid if there are more than one sim_ids in the db
+        self.db_cursor.execute(
+            f"SELECT * FROM SIM_DETAILS;"
+        )
+        self.sim_details = self.db_cursor.fetchall()
+        self.log.info("Input Optimization Details:")
+        for i in range(len(keys)):
+            self.log.info(keys[i][1] + " : " + str(self.sim_details[0][i]))
