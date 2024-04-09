@@ -21,10 +21,14 @@ class Trajectory(Analysis):
         self._analyze()
 
     def _analyze(self):
-        self.iterations = np.arange(0, self.config.sim_details["number_generations"] + 1)
+        self.iterations = np.arange(
+            0, self.config.sim_details["number_generations"] + 1
+        )
 
         for m in range(self.config.sim_details["generation_size"]):
-            self.config.db_cursor.execute(f"SELECT energies from OUTPUTS WHERE population_key = {m};")
+            self.config.db_cursor.execute(
+                f"SELECT energies from OUTPUTS WHERE population_key = {m};"
+            )
             self.data = self.config.db_cursor.fetchall()
             self.data = [dat[0] for dat in self.data]
 

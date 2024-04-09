@@ -129,15 +129,13 @@ class AnalysisParser(object):
         self.log.info("\n")
 
     def _query_details(self):
-        #query to get sim_detail columns info
+        # query to get sim_detail columns info
         self.db_cursor.execute(f"PRAGMA table_info(SIM_DETAILS);")
         keys = self.db_cursor.fetchall()
-        #this query is not valid if there are more than one sim_ids in the db
-        self.db_cursor.execute(
-            f"SELECT * FROM SIM_DETAILS;"
-        )
+        # this query is not valid if there are more than one sim_ids in the db
+        self.db_cursor.execute(f"SELECT * FROM SIM_DETAILS;")
         sim_details = self.db_cursor.fetchall()
-        self.sim_details = {} #dict to store details for later access
+        self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
             self.log.info(keys[i][1] + " : " + str(sim_details[0][i]))

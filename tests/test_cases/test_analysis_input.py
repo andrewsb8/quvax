@@ -1,6 +1,7 @@
 import pytest
 from src.params.analysis_parser import AnalysisParser
 
+
 @pytest.mark.skip
 def test_incorrect_input():
     """
