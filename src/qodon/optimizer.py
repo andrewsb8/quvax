@@ -273,15 +273,17 @@ class CodonOptimizer(ABC):
             f"SELECT COUNT(sequences) FROM MFE_SEQUENCES WHERE sequences = '{self.config.args.target}';"
         )
         mfe_samples = self.config.db_cursor.fetchall()[0][0]
-        self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
-        )
-        samples = self.config.db_cursor.fetchall()[0][0]
         if mfe_samples > 0:
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-        elif mfe_samples == 0 and samples > 0:
+            return # return early if condition is met to avoid unnecessary query
+
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
+        )
+        samples = self.config.db_cursor.fetchall()[0][0]
+        if mfe_samples == 0 and samples > 0:
             self.config.log.warning(
                 "The target codon sequence was sampled but was not the lowest free energy sequence."
             )
