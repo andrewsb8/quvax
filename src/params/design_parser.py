@@ -50,11 +50,20 @@ class DesignParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
-        self._load_input()
         self._logging()
+        self._load_input()
         self._validate()
         self._log_args()
         self._create_db()
+
+    @classmethod
+    def _resume(cls, args=None):
+        cls._parse(cls, args) #this loads argument defaults which we may not want
+        #write to the same database
+        cls.args.output = cls.args.input
+        cls._logging(cls)
+        cls._load_db(cls)
+        #cls._log_args(cls)
 
     def _parse(self, args=None):
         """
@@ -72,7 +81,7 @@ class DesignParser(object):
             "--version", action="version", version=self.__version__
         )
         self.parser.add_argument(
-            "-i", "--input", required=True, type=str, help="Input sequence"
+            "-i", "--input", required=True, type=str, help="Input fasta-format protein sequence (or SQLite database with --resume)"
         )
         self.parser.add_argument(
             "-c",
@@ -171,6 +180,11 @@ class DesignParser(object):
             default=None,
             type=str,
             help="Optional input to include target codon sequence",
+        )
+        self.parser.add_argument(
+            "--resume",
+            action="store_true",
+            help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag",
         )
 
         if args is None:
@@ -337,3 +351,27 @@ class DesignParser(object):
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
         self.log.info("Created database " + self.args.output + "\n\n")
+
+    def _load_db(self):
+        """
+        Function to load information from previous use of design.py when the
+        --resume option is used
+
+        """
+        self.log.info("Loading info from database " + self.args.input)
+        self.db = sqlite3.connect(self.args.input)
+        self.db_cursor = self.db.cursor()
+
+        #Only one simulation can be stored in the database, so no chance of picking wrong row
+        self.db_cursor.execute(
+            f"SELECT * FROM SIM_DETAILS;"
+        )
+        data = self.db_cursor.fetchall()
+        #print(data)
+        self.args.codon_optimizer = "TFDE"
+
+        print(vars(self.args))
+
+        #get initial population from the final generation of previous optimization
+
+        #profit??

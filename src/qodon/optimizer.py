@@ -26,7 +26,7 @@ class CodonOptimizer(ABC):
 
     """
 
-    def __init__(self, config: DesignParser):
+    def __init__(self, config: DesignParser, initial_sequences: List):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.codon_optimize_step = 0
@@ -39,7 +39,14 @@ class CodonOptimizer(ABC):
         if self.config.args.target is not None:
             self._verify_target()
             self._fold_target()
-        self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+        #if --resume is used, initial sequences will be final generation from database
+        #if --resume is not used, initial_sequences will be randomly generated
+        if initial_sequences == None:
+            self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+        else:
+            #TODO: need to translate these from strings of nucleotides
+            # to integers for GA and TFDE algorithms
+            self.initial_sequences = initial_sequences
         self.mfe = 1000000  # set min free energy to high number
 
     @abstractmethod
@@ -277,7 +284,7 @@ class CodonOptimizer(ABC):
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-            return # return early if condition is met to avoid unnecessary query
+            return  # return early if condition is met to avoid unnecessary query
 
         self.config.db_cursor.execute(
             f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
