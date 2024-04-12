@@ -1,6 +1,6 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-04-08 10:32:08.904359
-Command line: python design.py -i examples/spike_trim_20.fasta -n 4 -c 5 -ms 2 -ml 2
+Execution Time : 2024-04-12 13:02:12.641985
+Command line: python design.py -i tests/test_files/test_sequences/spike_trim_20.fasta -n 4 -c 5 -ms 2 -ml 2
 
 
 Warnings and Errors:
@@ -9,14 +9,14 @@ Warnings and Errors:
 
 List of Parameters:
 Protein Sequence : MFVFLVLLPLVSSQCVNLTT
-input : examples/spike_trim_20.fasta
+input : tests/test_files/test_sequences/spike_trim_20.fasta
 codon_iterations : 5
 rna_iterations : 10000
 n_trials : 4
 codon_optimizer : TFDE
 min_stem_len : 2
 min_loop_len : 2
-solver : hybrid
+solver : SA
 coeff_max_bond : 1
 coeff_stem_len : 10
 log_file_name : quvax.log
