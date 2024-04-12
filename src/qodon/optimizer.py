@@ -1,5 +1,5 @@
 from src.params.design_parser import DesignParser
-from src.rna_folding.rna_folders.simulated_annealer import QuantumSimAnnealer
+from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
@@ -40,15 +40,7 @@ class CodonOptimizer(ABC):
             self._verify_target()
             self._fold_target()
         self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        self.optimization_process = {
-            "protein_sequence": self.config.seq,
-            "generation_size": self.config.args.n_trials,
-            "optimizer": self.config.args.codon_optimizer,
-            "random_seed": self.config.args.random_seed,
-            "sequences": [],  # list of sequences
-            "energies": [],  # list of energies where index corresponds to sequence
-            "sec_struct": [],
-        }  # list of secondary structure information for a sequence
+        self.mfe = 1000000  # set min free energy to high number
 
     @abstractmethod
     def _optimize(self):
@@ -63,6 +55,20 @@ class CodonOptimizer(ABC):
             + str(self.config.args.codon_iterations)
             + ")\r"
         )
+        if self.codon_optimize_step == self.config.args.codon_iterations:
+            sys.stderr.write("\n")
+            self.config.log.info(
+                "Number of Generations: ("
+                + str(self.codon_optimize_step)
+                + ") of total generations ("
+                + str(self.config.args.codon_iterations)
+                + ")\n"
+            )
+
+    def _update_mfe(self, energies):
+        for energy in energies:
+            if energy < self.mfe:
+                self.mfe = energy
 
     def _convert_to_p_list(self, a):
         """
@@ -154,21 +160,25 @@ class CodonOptimizer(ABC):
         Compute Minimum Free Energy (MFE) of RNA fold.
 
         """
-        folded_rna = QuantumSimAnnealer(nseq, self.config)
+        folded_rna = SimulatedAnnealer(nseq, self.config)
         return folded_rna.best_score
 
-    def _extend_output(self, sequences, energies, sec_struct):
-        self.optimization_process["sequences"].extend(sequences)
-        self.optimization_process["energies"].extend(energies)
+    def _write_output(self, sequences, energies, secondary_structure):
+        for i in range(len(energies)):
+            self.config.db_cursor.execute(
+                "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
+                (
+                    self.config.sim_key,
+                    i,
+                    self.codon_optimize_step,
+                    sequences[i],
+                    energies[i],
+                ),
+            )
+            self.config.db.commit()
         return
 
-    def _pickle_output(self):
-        output_file = open(self.config.args.output, "wb")
-        pickle.dump(self.optimization_process, output_file)
-        output_file.close()
-        return
-
-    def _read_pickle(self):
+    def _read_output(self):
         # read previous optimization and continue process.
         raise NotImplementedError()
 
@@ -210,34 +220,29 @@ class CodonOptimizer(ABC):
         Get lowest energy sequences from all sampled sequences
 
         """
-        self.mfe = np.min(self.optimization_process["energies"])
-        self.final_codons = [
-            self.optimization_process["sequences"][i]
-            for i in range(len(self.optimization_process["sequences"]))
-            if self.optimization_process["energies"][i] == self.mfe
-        ]
-        out_seq = open(self.config.args.output_sequences, "w+")
-        for codons in self.final_codons:
-            self._verify_dna(codons)
-            out_seq.write(codons + "\n")
-        out_seq.close()
+        # write min free energy to log and db
+        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;",
+            (self.mfe, self.config.seq),
+        )
+        self.config.db.commit()
 
+        # get number and list of degenerate min free energy sequences
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};"
+        )
+        num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
             "Number of degenerate minimum free energy sequences sampled: "
-            + str(len(self.final_codons))
+            + str(num_degen_sequences)
         )
-        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
-        self.config.log.info(
-            "Generation Size: " + str(self.optimization_process["generation_size"])
+        self.config.db_cursor.execute(
+            "INSERT INTO MFE_SEQUENCES (sequences) SELECT sequences FROM OUTPUTS WHERE energies = ?",
+            (self.mfe,),
         )
-        self.config.log.info(
-            "Number of Generations: "
-            + str(
-                len(self.optimization_process["energies"])
-                / self.optimization_process["generation_size"]
-            )
-        )
-        self.config.log.info("\n\n")
+        self.config.db.commit()
+        self.config.log.info("Finished parsing optimized sequences.")
 
     def _verify_target(self):
         """
@@ -252,6 +257,11 @@ class CodonOptimizer(ABC):
         self.config.log.info(
             "Target sequence folding energy: " + str(self.target_folded_energy)
         )
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET target_min_free_energy = ? WHERE target_sequence = ?;",
+            (self.target_folded_energy, self.config.args.target),
+        )
+        self.config.db.commit()
         self.config.log.info("\n")
 
     def _check_target(self):
@@ -259,11 +269,21 @@ class CodonOptimizer(ABC):
         Check if target codon sequence was sampled and if it was lowest energy
 
         """
-        if self.config.args.target in self.final_codons:
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM MFE_SEQUENCES WHERE sequences = '{self.config.args.target}';"
+        )
+        mfe_samples = self.config.db_cursor.fetchall()[0][0]
+        if mfe_samples > 0:
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-        elif self.config.args.target in self.optimization_process["sequences"]:
+            return # return early if condition is met to avoid unnecessary query
+
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
+        )
+        samples = self.config.db_cursor.fetchall()[0][0]
+        if mfe_samples == 0 and samples > 0:
             self.config.log.warning(
                 "The target codon sequence was sampled but was not the lowest free energy sequence."
             )
