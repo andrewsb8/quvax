@@ -21,7 +21,7 @@ def mock_optimizer():
     return opt
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def test_cleanup():
     """
     Deletes files produced by tests. Exception for Trajectory which handles the
@@ -30,9 +30,8 @@ def test_cleanup():
     """
     yield
     files = [
-        "quvax.qu",
+        "quvax.db",
         "quvax.log",
-        "sequences.txt",
         "test_felandscape_out.txt",
         "test_fegeneration_out.txt",
     ]

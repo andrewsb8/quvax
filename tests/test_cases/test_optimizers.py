@@ -25,8 +25,8 @@ def test_TFDE(caplog):
     TfDiffEv(parser)
     log_entry = (
         "src.params.design_parser",
-        20,  # 30 indicates WARNING, 20 indicates INFO
-        "Codon sequence translated properly.",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples
 
@@ -55,8 +55,8 @@ def test_RAND(caplog):
     RandomOptimizer(parser)
     log_entry = (
         "src.params.design_parser",
-        20,  # 30 indicates WARNING, 20 indicates INFO
-        "Codon sequence translated properly.",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples
 
@@ -85,7 +85,7 @@ def test_GA(caplog):
     GeneticAlgorithm(parser)
     log_entry = (
         "src.params.design_parser",
-        20,  # 30 indicates WARNING, 20 indicates INFO
-        "Codon sequence translated properly.",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples

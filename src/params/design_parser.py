@@ -6,6 +6,7 @@ import sys
 import logging
 import datetime
 from src.exceptions.exceptions import InvalidSequenceError
+import sqlite3
 
 
 class DesignParser(object):
@@ -39,13 +40,11 @@ class DesignParser(object):
     species : str
         String to identify which species to generate codon frequencies
     output : str
-        String to identify output file containing information about optimization process
+        String to identify output sqlite database file
     random_seed : int
         Sets random seed for all optimizers and packages
     target : str
         Optional input to include target codon sequence
-    output_sequences : str
-        Output file which lists output codon sequences with minimum free energy
 
     """
 
@@ -55,6 +54,7 @@ class DesignParser(object):
         self._logging()
         self._validate()
         self._log_args()
+        self._create_db()
 
     def _parse(self, args=None):
         """
@@ -154,9 +154,9 @@ class DesignParser(object):
         self.parser.add_argument(
             "-o",
             "--output",
-            default="quvax.qu",
+            default="quvax.db",
             type=str,
-            help="Specify output file. Includes sequences, folding energies, (TBA) secondary structure",
+            help="String to identify output sqlite database file. Default: quvax.db",
         )
         self.parser.add_argument(
             "-sd",
@@ -171,13 +171,6 @@ class DesignParser(object):
             default=None,
             type=str,
             help="Optional input to include target codon sequence",
-        )
-        self.parser.add_argument(
-            "-os",
-            "--output_sequences",
-            default="sequences.txt",
-            type=str,
-            help="Output file which lists output codon sequences with minimum free energy",
         )
 
         if args is None:
@@ -302,3 +295,37 @@ class DesignParser(object):
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
+
+    def _create_db(self):
+        self.log.info("Creating database " + self.args.output)
+        self.db = sqlite3.connect(self.args.output)
+        self.db_cursor = self.db.cursor()
+        # This will fail if a db already exists in this directory
+        self.db_cursor.execute(
+            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, number_generations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT);"
+        )
+        # f strings do not work with INSERT statements
+        self.db_cursor.execute(
+            "INSERT INTO SIM_DETAILS (protein_sequence, target_sequence, generation_size, number_generations, optimizer, random_seed) VALUES (?, ?, ?, ?, ?, ?);",
+            (
+                self.seq,
+                self.args.target,
+                self.args.n_trials,
+                self.args.codon_iterations,
+                self.args.codon_optimizer,
+                self.args.random_seed,
+            ),
+        )
+        self.db_cursor.execute(
+            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT);"
+        )
+        self.db_cursor.execute(
+            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}))"
+        )
+        self.db.commit()
+        # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences
+        self.db_cursor.execute(
+            f"SELECT sim_key FROM SIM_DETAILS WHERE protein_sequence = '{self.seq}';"
+        )
+        self.sim_key = self.db_cursor.fetchall()[0][0]
+        self.log.info("Created database " + self.args.output + "\n\n")

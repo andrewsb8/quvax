@@ -3,9 +3,13 @@ from src.params.design_parser import DesignParser
 from src.rna_folding.rna_folder import RNAFolder
 
 
-class QuantumSimAnnealer(RNAFolder):
+class SimulatedAnnealer(RNAFolder):
     """
-    Calculate the folded energy of a given codon sequence.
+    Find the mimimum energy folded structure of an RNA sequence using Simulated
+    Annealing. The Hamiltonian and problem formulation allow for the folding
+    energy determination to be run on quantum hardware. See Fox et al. PLoS,
+    2022, https://doi.org/10.1371/journal.pcbi.1010032.
+
 
     Parameters
     ----------

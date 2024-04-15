@@ -29,23 +29,23 @@ class GeneticAlgorithm(CodonOptimizer):
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
-        self._pickle_output()
 
     def _propagate_generations(self):
         # Initialize population
         members = self.initial_sequences
-        n_seqs = [self._reverse_translate(s) for s in members]
-        energies = [self._fold_rna(s) for s in n_seqs]
-        self._extend_output(n_seqs, energies, None)
+        self.n_seqs = [self._reverse_translate(s) for s in members]
+        self.energies = [self._fold_rna(s) for s in self.n_seqs]
+        self._write_output(self.n_seqs, self.energies, None)
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
-            self._update_codon_step()
             # Introduce mutations
             members = self._procreate(members)
-            n_seqs = [self._reverse_translate(s) for s in members]
-            energies = [self._fold_rna(s) for s in n_seqs]
-            self._extend_output(n_seqs, energies, None)
+            self.n_seqs = [self._reverse_translate(s) for s in members]
+            self.energies = [self._fold_rna(s) for s in self.n_seqs]
+            self._update_mfe(self.energies)
+            self._update_codon_step()
+            self._write_output(self.n_seqs, self.energies, None)
 
     def _procreate(self, eligible_members):
         """
