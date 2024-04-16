@@ -100,7 +100,7 @@ class DesignParser(object):
             "--codon_optimizer",
             default="TFDE",
             type=str,
-            help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE), Random Optimizer (RAND), Metropolis Algorithm (METRO)",
+            help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE), Random Optimizer (RAND)",
         )
         self.parser.add_argument(
             "-ms",
