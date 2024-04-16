@@ -141,7 +141,9 @@ class CodonOptimizer(ABC):
         for i in range(ntrials):
             chosen_indices = []
             for res in self.config.seq:
-                chosen_indices.append(random.randint(0.0, len(self.code_map[res]["codons"])-1))
+                chosen_indices.append(
+                    random.randint(0.0, len(self.code_map[res]["codons"]) - 1)
+                )
             initial_members.append(chosen_indices)
         return initial_members
 
@@ -267,7 +269,7 @@ class CodonOptimizer(ABC):
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-            return # return early if condition is met to avoid unnecessary query
+            return  # return early if condition is met to avoid unnecessary query
 
         self.config.db_cursor.execute(
             f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
