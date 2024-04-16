@@ -142,8 +142,7 @@ class CodonOptimizer(ABC):
             chosen_indices = []
             for res in self.config.seq:
                 chosen_indices.append(random.randint(0.0, len(self.code_map[res]["codons"])-1))
-            member = chosen_indices
-            initial_members.append(member)
+            initial_members.append(chosen_indices)
         return initial_members
 
     def _fold_rna(self, nseq):
