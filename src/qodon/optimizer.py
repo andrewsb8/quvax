@@ -36,15 +36,17 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
-        if self.config.args.target is not None:
-            self._verify_target()
-            self._fold_target()
         if not self.config.args.resume:
+            if self.config.args.target is not None:
+                self._verify_target()
+                self._fold_target()
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+            self.mfe = 1000000  # set min free energy to high number
         else:
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
-        self.mfe = 1000000  # set min free energy to high number
+            if self.config.args.target is not None:
+                self.target_folded_energy = self.config.target_folded_energy
 
     @abstractmethod
     def _optimize(self):

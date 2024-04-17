@@ -374,7 +374,6 @@ class DesignParser(object):
             f"SELECT * FROM SIM_DETAILS;"
         )
         data = self.db_cursor.fetchall()
-        print(data[0])
 
         #manually assigning inputs from database
         self.sim_key = data[0][0]
@@ -385,6 +384,7 @@ class DesignParser(object):
         self.args.codon_optimizer = data[0][6]
         self.args.random_seed = data[0][7]
         self.mfe = data[0][8]
+        self.target_folded_energy = data[0][9]
         self.args.solver = data[0][10]
         self.args.rna_iterations = data[0][11]
         self.args.min_stem_len = data[0][12]
