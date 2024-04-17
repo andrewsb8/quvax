@@ -41,6 +41,24 @@ def test_SameInitialSequences_NewSeed():
     assert opt.initial_sequences == opt2.initial_sequences
 
 
+def test_InitialSequences_DifferentSeeds():
+    """
+    Test to verify different initial codon sequences will be initialized in subsequent optimizations with different seeds
+
+    """
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-n",
+        "4",
+    ]
+    parser = DesignParser(testargs)
+    opt = MockOptimizer(parser)
+    parser.args.random_seed = 234524352
+    opt2 = MockOptimizer(parser)
+    assert opt.initial_sequences != opt2.initial_sequences
+
+
 def test_TfDiffEv_DefaultSeed():
     """
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed and Tensorflow Evolution Optimizer
