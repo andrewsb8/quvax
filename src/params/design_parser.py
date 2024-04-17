@@ -58,16 +58,16 @@ class DesignParser(object):
 
     @classmethod
     def _resume(cls, args=None):
-        cls._parse(cls, args) #this loads argument defaults which we may not want
-        #write to the same database
+        cls._parse(cls, args)  # this loads argument defaults which we may not want
+        # write to the same database
         cls.args.output = cls.args.input
         cls._logging(cls)
         cls._load_db(cls)
-        #cls._log_args(cls)
+        # cls._log_args(cls)
 
-        #get initial population from the final generation of previous optimization
+        # get initial population from the final generation of previous optimization
 
-        #profit??
+        # profit??
 
         return cls
 
@@ -87,7 +87,11 @@ class DesignParser(object):
             "--version", action="version", version=self.__version__
         )
         self.parser.add_argument(
-            "-i", "--input", required=True, type=str, help="Input fasta-format protein sequence (or SQLite database with --resume)"
+            "-i",
+            "--input",
+            required=True,
+            type=str,
+            help="Input fasta-format protein sequence (or SQLite database with --resume)",
         )
         self.parser.add_argument(
             "-c",
@@ -369,13 +373,11 @@ class DesignParser(object):
         self.db = sqlite3.connect(self.args.input)
         self.db_cursor = self.db.cursor()
 
-        #Only one simulation can be stored in the database, so no chance of picking wrong row
-        self.db_cursor.execute(
-            f"SELECT * FROM SIM_DETAILS;"
-        )
+        # Only one simulation can be stored in the database, so no chance of picking wrong row
+        self.db_cursor.execute(f"SELECT * FROM SIM_DETAILS;")
         data = self.db_cursor.fetchall()
 
-        #manually assigning inputs from database
+        # manually assigning inputs from database
         self.sim_key = data[0][0]
         self.seq = data[0][2]
         self.args.target = data[0][3]
@@ -393,7 +395,9 @@ class DesignParser(object):
         self.args.coeff_max_bond = data[0][15]
         self.args.coeff_stem_len = data[0][16]
 
-        #collect final generation of sequences
-        self.db_cursor.execute(f"SELECT sequences from OUTPUTS WHERE generation = {self.args.codon_iterations};")
+        # collect final generation of sequences
+        self.db_cursor.execute(
+            f"SELECT sequences from OUTPUTS WHERE generation = {self.args.codon_iterations};"
+        )
         sequences = self.db_cursor.fetchall()
         self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]

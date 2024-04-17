@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_codon_translation(mock_optimizer):
     """
     Test that conversion between indices and codon strings is correct

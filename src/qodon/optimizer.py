@@ -203,7 +203,10 @@ class CodonOptimizer(ABC):
 
         """
 
-        return [self.code_map[res]["codons"].index(sequence[i*3:(i*3)+3]) for i, res in enumerate(self.config.seq)]
+        return [
+            self.code_map[res]["codons"].index(sequence[i * 3 : (i * 3) + 3])
+            for i, res in enumerate(self.config.seq)
+        ]
 
     def _iterate(self, sequences):
         """
@@ -222,7 +225,6 @@ class CodonOptimizer(ABC):
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
-
 
     def _verify_dna(self, sequence):
         """

@@ -42,7 +42,6 @@ class GeneticAlgorithm(CodonOptimizer):
             self._update_codon_step()
             self._iterate(members)
 
-
     def _procreate(self, eligible_members):
         """
         Simulate procreation by randomly picking two genes
