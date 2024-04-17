@@ -39,9 +39,10 @@ class CodonOptimizer(ABC):
         if self.config.args.target is not None:
             self._verify_target()
             self._fold_target()
-        if self.config.args.resume == False:
+        if not self.config.args.resume:
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
         else:
+            self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
         self.mfe = 1000000  # set min free energy to high number
 
