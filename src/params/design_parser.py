@@ -361,7 +361,8 @@ class DesignParser(object):
     def _load_db(self):
         """
         Function to load information from previous use of design.py when the
-        --resume option is used
+        --resume option is used. This function assumes information for only a
+        single optimization is present in the input database
 
         """
         self.log.info("Loading info from database " + self.args.input)
@@ -374,3 +375,19 @@ class DesignParser(object):
         )
         data = self.db_cursor.fetchall()
         print(data[0])
+
+        #manually assigning inputs from database
+        self.sim_key = data[0][0]
+        self.seq = data[0][2]
+        self.args.target = data[0][3]
+        self.args.n_trials = data[0][4]
+        self.args.codon_iterations = data[0][5]
+        self.args.codon_optimizer = data[0][6]
+        self.args.random_seed = data[0][7]
+        self.args.solver = data[0][10]
+        self.args.rna_iterations = data[0][11]
+        self.args.min_stem_len = data[0][12]
+        self.args.min_loop_len = data[0][13]
+        self.args.species = data[0][14]
+        self.args.coeff_max_bond = data[0][15]
+        self.args.coeff_stem_len = data[0][16]
