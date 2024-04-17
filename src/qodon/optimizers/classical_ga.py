@@ -31,11 +31,11 @@ class GeneticAlgorithm(CodonOptimizer):
             self._check_target()
 
     def _propagate_generations(self):
-        # Initialize population
         members = self.initial_sequences
-        self.n_seqs = [self._reverse_translate(s) for s in members]
-        self.energies = [self._fold_rna(s) for s in self.n_seqs]
-        self._write_output(self.n_seqs, self.energies, None)
+        if not self.config.args.resume:
+            self.n_seqs = [self._reverse_translate(s) for s in members]
+            self.energies = [self._fold_rna(s) for s in self.n_seqs]
+            self._write_output(self.n_seqs, self.energies, None)
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
