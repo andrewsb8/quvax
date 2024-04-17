@@ -33,19 +33,15 @@ class GeneticAlgorithm(CodonOptimizer):
     def _propagate_generations(self):
         members = self.initial_sequences
         if not self.config.args.resume:
-            self.n_seqs = [self._reverse_translate(s) for s in members]
-            self.energies = [self._fold_rna(s) for s in self.n_seqs]
-            self._write_output(self.n_seqs, self.energies, None)
+            self._iterate(self.initial_sequences)
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
             members = self._procreate(members)
-            self.n_seqs = [self._reverse_translate(s) for s in members]
-            self.energies = [self._fold_rna(s) for s in self.n_seqs]
-            self._update_mfe(self.energies)
+            self._iterate(members)
             self._update_codon_step()
-            self._write_output(self.n_seqs, self.energies, None)
+
 
     def _procreate(self, eligible_members):
         """

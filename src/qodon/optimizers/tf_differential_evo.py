@@ -57,14 +57,8 @@ class TfDiffEv(CodonOptimizer):
 
         # Map continuous valued tensor to RNA sequence
         n_seqs = self._convert_to_ints(members)
-        self.n_seqs = [self._reverse_translate(s) for s in n_seqs]
-
-        # Use the imported scoring function to score all sequences.
-        self.energies = [self._fold_rna(s) for s in self.n_seqs]
-
-        self._update_mfe(self.energies)
+        self._iterate(n_seqs)
         self._update_codon_step()
-        self._write_output(self.n_seqs, self.energies, None)
 
         # Return TF object
         return tf.cast(self.energies, np.float32)

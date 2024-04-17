@@ -176,10 +176,6 @@ class CodonOptimizer(ABC):
             self.config.db.commit()
         return
 
-    def _read_output(self):
-        # read previous optimization and continue process.
-        raise NotImplementedError()
-
     def _get_num_codons(self, res):
         """
         Extract number of possible codons for each amino acid
@@ -199,6 +195,20 @@ class CodonOptimizer(ABC):
                 for i, res in enumerate(self.config.seq)
             ]
         )
+
+    def _iterate(self, sequences):
+        """
+        Function containing references to the steps taken in each codon
+        optimization iteration: convert codon integer sequences to codon
+        strings, calculate the folding energies of the sequences, writes each
+        to the database, and updates the min free energy.
+
+        """
+        self.n_seqs = [self._reverse_translate(s) for s in sequences]
+        self.energies = [self._fold_rna(s) for s in self.n_seqs]
+        self._update_mfe(self.energies)
+        self._write_output(self.n_seqs, self.energies, None)
+
 
     def _verify_dna(self, sequence):
         """
