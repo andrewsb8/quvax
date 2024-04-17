@@ -45,6 +45,7 @@ class CodonOptimizer(ABC):
         else:
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
+            print(self.initial_sequences)
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
 
@@ -183,7 +184,7 @@ class CodonOptimizer(ABC):
         """
         return len(self.code_map[res]["codons"])
 
-    def _reverse_translate(self, sequence):
+    def _convert_ints_to_codons(self, sequence):
         """
         Convert to nucleotide sequence from integer indices of code map
 
@@ -196,6 +197,14 @@ class CodonOptimizer(ABC):
             ]
         )
 
+    def _convert_codons_to_ints(self, sequence):
+        """
+        Convert to integer indices from nucleotide sequence of code map
+
+        """
+
+        return [self.code_map[res]["codons"].index(sequence[i*3:(i*3)+3]) for i, res in enumerate(self.config.seq)]
+
     def _iterate(self, sequences):
         """
         Function containing references to the steps taken in each codon
@@ -204,7 +213,7 @@ class CodonOptimizer(ABC):
         to the database, and updates the min free energy.
 
         """
-        self.n_seqs = [self._reverse_translate(s) for s in sequences]
+        self.n_seqs = [self._convert_ints_to_codons(s) for s in sequences]
         self.energies = [self._fold_rna(s) for s in self.n_seqs]
         self._update_mfe(self.energies)
         self._write_output(self.n_seqs, self.energies, None)

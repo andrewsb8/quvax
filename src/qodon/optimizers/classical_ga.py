@@ -29,16 +29,18 @@ class GeneticAlgorithm(CodonOptimizer):
         self._post_process()
 
     def _propagate_generations(self):
-        members = self.initial_sequences
         if not self.config.args.resume:
             self._iterate(self.initial_sequences)
+            members = self.initial_sequences
+        else:
+            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
             members = self._procreate(members)
-            self._iterate(members)
             self._update_codon_step()
+            self._iterate(members)
 
 
     def _procreate(self, eligible_members):
