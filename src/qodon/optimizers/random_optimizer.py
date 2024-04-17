@@ -27,6 +27,4 @@ class RandomOptimizer(CodonOptimizer):
             self._iterate(extra_sequences)
             self._update_codon_step()
 
-        self._get_optimized_sequences()
-        if self.config.args.target is not None:
-            self._check_target()
+        self._post_process()

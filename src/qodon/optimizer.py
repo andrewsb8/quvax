@@ -209,6 +209,11 @@ class CodonOptimizer(ABC):
         self._update_mfe(self.energies)
         self._write_output(self.n_seqs, self.energies, None)
 
+    def _post_process(self):
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
+
 
     def _verify_dna(self, sequence):
         """

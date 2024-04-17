@@ -26,9 +26,7 @@ class GeneticAlgorithm(CodonOptimizer):
 
         # Simulate evolution
         self._propagate_generations()
-        self._get_optimized_sequences()
-        if self.config.args.target is not None:
-            self._check_target()
+        self._post_process()
 
     def _propagate_generations(self):
         members = self.initial_sequences

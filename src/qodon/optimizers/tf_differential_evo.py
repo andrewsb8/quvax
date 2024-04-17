@@ -41,9 +41,7 @@ class TfDiffEv(CodonOptimizer):
             func_tolerance=-1,  # force tensorflow to do max_iterations
         )
 
-        self._get_optimized_sequences()
-        if self.config.args.target is not None:
-            self._check_target()
+        self._post_process()
 
     def _objective(self, members):
         """
