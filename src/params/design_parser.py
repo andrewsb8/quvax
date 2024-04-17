@@ -391,3 +391,8 @@ class DesignParser(object):
         self.args.species = data[0][14]
         self.args.coeff_max_bond = data[0][15]
         self.args.coeff_stem_len = data[0][16]
+
+        #collect final generation of sequences
+        self.db_cursor.execute(f"SELECT sequences from OUTPUTS WHERE generation = {self.args.codon_iterations};")
+        sequences = self.db_cursor.fetchall()
+        self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]

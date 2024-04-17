@@ -11,8 +11,8 @@ class TfDiffEv(CodonOptimizer):
 
     """
 
-    def __init__(self, config, initial_sequences = None):
-        super().__init__(config, initial_sequences)
+    def __init__(self, config):
+        super().__init__(config)
         tf.random.set_seed(self.config.args.random_seed)
         # tensorflow counts initial pop as first step but others don't
         # line below makes counting consistent among all optimizers

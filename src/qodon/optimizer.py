@@ -26,7 +26,7 @@ class CodonOptimizer(ABC):
 
     """
 
-    def __init__(self, config: DesignParser, initial_sequences: List):
+    def __init__(self, config: DesignParser):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.codon_optimize_step = 0
@@ -39,14 +39,10 @@ class CodonOptimizer(ABC):
         if self.config.args.target is not None:
             self._verify_target()
             self._fold_target()
-        #if --resume is used, initial sequences will be final generation from database
-        #if --resume is not used, initial_sequences will be randomly generated
-        if initial_sequences == None:
+        if self.config.args.resume == False:
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
         else:
-            #TODO: need to translate these from strings of nucleotides
-            # to integers for GA and TFDE algorithms
-            self.initial_sequences = initial_sequences
+            self.initial_sequences = self.config.initial_sequences
         self.mfe = 1000000  # set min free energy to high number
 
     @abstractmethod

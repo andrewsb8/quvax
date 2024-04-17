@@ -11,8 +11,8 @@ class GeneticAlgorithm(CodonOptimizer):
 
     """
 
-    def __init__(self, config, initial_sequences = None):
-        super().__init__(config, initial_sequences)
+    def __init__(self, config):
+        super().__init__(config)
         self._optimize()
 
     def __repr__(self):
