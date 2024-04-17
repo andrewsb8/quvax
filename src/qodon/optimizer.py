@@ -45,7 +45,6 @@ class CodonOptimizer(ABC):
         else:
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
-            print(self.initial_sequences)
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
 
@@ -163,13 +162,17 @@ class CodonOptimizer(ABC):
         return folded_rna.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
         for i in range(len(energies)):
             self.config.db_cursor.execute(
                 "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
                 (
                     self.config.sim_key,
                     i,
-                    self.codon_optimize_step,
+                    step,
                     sequences[i],
                     energies[i],
                 ),
@@ -222,6 +225,15 @@ class CodonOptimizer(ABC):
         self._write_output(self.n_seqs, self.energies, None)
 
     def _post_process(self):
+        if self.config.args.resume:
+            num = self.codon_optimize_step + self.config.generations_sampled
+        else:
+            num = self.codon_optimize_step
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET generations_sampled = ? WHERE protein_sequence = ?;",
+            (num, self.config.seq),
+        )
+        self.config.db.commit()
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
