@@ -65,6 +65,12 @@ class DesignParser(object):
         cls._load_db(cls)
         #cls._log_args(cls)
 
+        #get initial population from the final generation of previous optimization
+
+        #profit??
+
+        return cls
+
     def _parse(self, args=None):
         """
         Define command line arguments. Long options are used as variable names.
@@ -367,11 +373,4 @@ class DesignParser(object):
             f"SELECT * FROM SIM_DETAILS;"
         )
         data = self.db_cursor.fetchall()
-        #print(data)
-        self.args.codon_optimizer = "TFDE"
-
-        print(vars(self.args))
-
-        #get initial population from the final generation of previous optimization
-
-        #profit??
+        print(data[0])
