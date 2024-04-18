@@ -50,6 +50,8 @@ $ python design.py -i quvax.db --resume
 $ python analyze.py -i quvax.db -at trajectory
 ```
 
+Custom python scripts for analysis can also be written since all of the information is stored in a standard database format.
+
 For help (each will produce unique output):
 
 ```$ python design.py -h``` or ```$ python analyze.py -h```
