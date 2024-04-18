@@ -22,7 +22,7 @@ class Trajectory(Analysis):
 
     def _analyze(self):
         self.iterations = np.arange(
-            0, self.config.sim_details["number_generations"] + 1
+            0, self.config.sim_details["generations_sampled"] + 1
         )
 
         for m in range(self.config.sim_details["generation_size"]):

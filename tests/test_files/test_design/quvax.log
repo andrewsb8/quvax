@@ -1,5 +1,5 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-04-12 13:01:08.937072
+Execution Time : 2024-04-18 11:51:21.599469
 Command line: python design.py -i tests/test_files/test_sequences/spike_trim_20.fasta -n 3 -c 3 -r 1000 -co GA -ms 2 -ml 2
 
 
@@ -24,6 +24,7 @@ species : h_sapiens_9606
 output : quvax.db
 random_seed : 1
 target : None
+resume : False
 
 
 
@@ -34,6 +35,6 @@ Created database quvax.db
 Beginning codon optimization
 Number of Generations: (3) of total generations (3)
 
-Minimum energy of codon sequences: -36.0
-Number of degenerate minimum free energy sequences sampled: 4
+Minimum energy of codon sequences: -64.0
+Number of degenerate minimum free energy sequences sampled: 1
 Finished parsing optimized sequences.
