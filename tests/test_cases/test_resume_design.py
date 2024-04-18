@@ -1,3 +1,4 @@
+import shutil
 from src.params.design_parser import DesignParser
 
 
@@ -8,9 +9,12 @@ def test_resume(caplog):
     """
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
 
+    #copy database so test does not add information to test file
+    #it will be deleted after test is completed
+    shutil.copy("tests/test_files/test_design/quvax.db", "quvax.db")
     testargs = [
         "-i",
-        "tests/test_files/test_design/quvax.db",
+        "quvax.db",
         "--resume",
     ]
     config = DesignParser._resume(testargs)

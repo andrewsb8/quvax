@@ -395,3 +395,4 @@ class DesignParser(object):
         )
         sequences = self.db_cursor.fetchall()
         self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]
+        self.log.info("Loaded info from database " + self.args.input)
