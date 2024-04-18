@@ -54,20 +54,26 @@ class CodonOptimizer(ABC):
 
     def _update_codon_step(self):
         self.codon_optimize_step += 1
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+            total = self.config.args.codon_iterations + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
+            total = self.config.args.codon_iterations
         sys.stderr.write(
             "Codon optimization step ("
-            + str(self.codon_optimize_step)
+            + str(step)
             + ") of total steps ("
-            + str(self.config.args.codon_iterations)
+            + str(total)
             + ")\r"
         )
         if self.codon_optimize_step == self.config.args.codon_iterations:
             sys.stderr.write("\n")
             self.config.log.info(
                 "Number of Generations: ("
-                + str(self.codon_optimize_step)
+                + str(step)
                 + ") of total generations ("
-                + str(self.config.args.codon_iterations)
+                + str(total)
                 + ")\n"
             )
 
