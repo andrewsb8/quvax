@@ -13,6 +13,7 @@ class RandomOptimizer(CodonOptimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
+        self._post_process()
 
     def _optimize(self):
         """
@@ -26,5 +27,3 @@ class RandomOptimizer(CodonOptimizer):
             extra_sequences = self._generate_sequences(self.config.args.n_trials)
             self._update_codon_step()
             self._iterate(extra_sequences)
-
-        self._post_process()

@@ -18,6 +18,7 @@ class TfDiffEv(CodonOptimizer):
         # line below makes counting consistent among all optimizers
         self.codon_optimize_step -= 1
         self._optimize()
+        self._post_process()
 
     def _optimize(self):
         """
@@ -44,8 +45,6 @@ class TfDiffEv(CodonOptimizer):
             crossover_prob=0.1,
             func_tolerance=-1,  # force tensorflow to do max_iterations
         )
-
-        self._post_process()
 
     def _objective(self, members):
         """

@@ -14,6 +14,7 @@ class GeneticAlgorithm(CodonOptimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
+        self._post_process()
 
     def __repr__(self):
         return "Classical genetic algorithm for codon optimization."
@@ -23,12 +24,6 @@ class GeneticAlgorithm(CodonOptimizer):
         Main method for codon optimization
 
         """
-
-        # Simulate evolution
-        self._propagate_generations()
-        self._post_process()
-
-    def _propagate_generations(self):
         if not self.config.args.resume:
             self._iterate(self.initial_sequences)
             members = self.initial_sequences
