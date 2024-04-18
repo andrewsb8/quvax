@@ -3,7 +3,7 @@
 
 ## Getting Started
 
-Install your preferred version of conda (Anaconda or Miniconda). Create Conda environment:
+Clone this repository. Install your preferred version of conda (Anaconda or Miniconda). Create Conda environment:
 
 ```
 $ conda create -n quvax python=3.11
