@@ -22,20 +22,32 @@ $ conda install --file requirements.md -c conda-forge
 
 *The latter currently does not work.
 
-### After Setup
+## Using QuVax
 
 QuVax has two primary functions: codon sequence and folding optimization and a small analysis suite. Optimization is executed with ```design.py``` and analyses with ```analyze.py```.
 
-Example execution of ```design.py```:
+### Optimization of mRNA sequence for a given protein sequence with ```design.py```
+
+QuVax treats this problem as a bilevel optimization problem or a nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence. The folding energies are then determined according to a Hamiltonian. Changes are then proposed to the mRNA sequences in the population and the folding energies are recalculated. This process is repeated for a user-defined number of iterations. Example execution of ```design.py```:
 
 ```
 $ python design.py -i examples/spike_trim.fasta
 ```
 
+### Continuing an Optimization
+
+An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified. You can still specify other options for ```design.py```, but they will be overwritten by option values read by the input database. The input database file will be used as the output file.
+
+```
+$ python design.py -i quvax.db --resume
+```
+
+### Analyzing Optimizations
+
 ```analyze.py``` then takes in the output of ```design.py```, which is simply a SQLite3 database with default extension ```.db``` (this can be changed on command line if desired). The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.) and can be read by the analysis modules of QuVax. Example execution of ```analyze.py```:
 
 ```
-$ python analyze.py -i quvax.db
+$ python analyze.py -i quvax.db -at trajectory
 ```
 
 For help (each will produce unique output):

@@ -59,11 +59,9 @@ class DesignParser(object):
     @classmethod
     def _resume(cls, args=None):
         cls._parse(cls, args)  # this loads argument defaults which we may not want
-        # write to the same database
-        cls.args.output = cls.args.input
         cls._logging(cls)
         cls._load_db(cls)
-        # cls._log_args(cls)
+        cls._log_args(cls)
 
         # get initial population from the final generation of previous optimization
 
