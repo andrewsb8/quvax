@@ -1,5 +1,6 @@
 from src.params.design_parser import DesignParser
 
+
 def test_resume(caplog):
     """
     Test to verify successful execution of resuming optimization

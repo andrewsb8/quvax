@@ -227,9 +227,9 @@ class CodonOptimizer(ABC):
     def _post_process(self):
         if self.config.args.resume:
             num = self.codon_optimize_step + self.config.generations_sampled
-            #below is the equivalent of TRUNCATE in MySQL DB, SQLite has
-            #different syntax. Clear table to avoid duplicate degenerate
-            #sequences
+            # below is the equivalent of TRUNCATE in MySQL DB, SQLite has
+            # different syntax. Clear table to avoid duplicate degenerate
+            # sequences
             self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
         else:
             num = self.codon_optimize_step
