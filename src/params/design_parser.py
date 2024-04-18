@@ -62,11 +62,6 @@ class DesignParser(object):
         cls._logging(cls)
         cls._load_db(cls)
         cls._log_args(cls)
-
-        # get initial population from the final generation of previous optimization
-
-        # profit??
-
         return cls
 
     def _parse(self, args=None):
