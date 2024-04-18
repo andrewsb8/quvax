@@ -28,7 +28,7 @@ QuVax has two primary functions: codon sequence and folding optimization and a s
 
 ### Optimization of mRNA sequence for a given protein sequence with ```design.py```
 
-QuVax treats this problem as a bilevel optimization problem or a nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence. The folding energies are then determined according to a Hamiltonian [1]. Changes are then proposed to the mRNA sequences in the population and the folding energies are recalculated. This process is repeated for a user-defined number of iterations. Example execution of ```design.py```:
+QuVax treats this problem as a bilevel optimization problem or a nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence in FASTA file format. The folding energies are then determined according to a Hamiltonian [1]. Changes are then proposed to the mRNA sequences in the population and the folding energies are recalculated. This process is repeated for a user-defined number of iterations. Example execution of ```design.py```:
 
 ```
 $ python design.py -i examples/spike_trim.fasta
