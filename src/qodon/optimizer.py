@@ -139,20 +139,12 @@ class CodonOptimizer(ABC):
     def _generate_sequences(self, ntrials) -> List:
         initial_members = []
         for i in range(ntrials):
-            d_sequence = ""
             chosen_indices = []
             for res in self.config.seq:
-                random_prob = random.uniform(0.0, 1.0)
-                reference_chances = self.code_map[res]["probs"]
-                passing_indices = []
-                for chance in reference_chances:
-                    if chance > random_prob:
-                        passing_indices.append(reference_chances.index(chance))
-                chosen_index = passing_indices[0]
-                chosen_indices.append(chosen_index)
-                d_sequence += self.code_map[res]["codons"][chosen_index]
-            member = chosen_indices
-            initial_members.append(member)
+                chosen_indices.append(
+                    random.randint(0.0, len(self.code_map[res]["codons"]) - 1)
+                )
+            initial_members.append(chosen_indices)
         return initial_members
 
     def _fold_rna(self, nseq):
@@ -277,7 +269,7 @@ class CodonOptimizer(ABC):
             self.config.log.info(
                 "The target codon sequence is in the list of minimum free energy sequences!"
             )
-            return # return early if condition is met to avoid unnecessary query
+            return  # return early if condition is met to avoid unnecessary query
 
         self.config.db_cursor.execute(
             f"SELECT COUNT(sequences) FROM OUTPUTS WHERE sequences = '{self.config.args.target}';"
