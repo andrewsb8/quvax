@@ -244,9 +244,19 @@ class CodonOptimizer(ABC):
             (num, self.config.seq),
         )
         self.config.db.commit()
+        self._get_number_unique_sequences()
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
+
+    def _get_number_unique_sequences(self):
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
+        self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
+        num = self.config.db_cursor.fetchall()[0][0]
+        self.config.log.info("Number of unique sequences sampled: " + str(num) + " of possible " + str((step+1)*self.config.args.n_trials))
 
     def _verify_dna(self, sequence):
         """
