@@ -35,11 +35,10 @@ class MetropolisOptimizer(CodonOptimizer):
 
         """
     
-        for i in range(self.config.args.codon_iterations):
-            for s in n_seqs:
-                starting_sequence = n_seq[s]
+#        for i in range(self.config.args.codon_iterations):
+#            for s in n_seqs:
+#                starting_sequence = n_seq[s]
                 
                 #now propose a change in codon sequence. Stuck here rn. What function/new code would I use to just change one codon? I am thinking possibly using _construct_codon_table, but not sure how to access the codon mappings. Might be some info in _generate_sequences that I can use.
 
-                 
-
+                
