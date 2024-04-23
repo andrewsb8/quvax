@@ -259,8 +259,13 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step
         self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
         num = self.config.db_cursor.fetchall()[0][0]
-        #step+1 to account for initial randomly generated sequences
-        self.config.log.info("Number of unique sequences sampled: " + str(num) + " of possible " + str((step+1)*self.config.args.n_trials))
+        # step+1 to account for initial randomly generated sequences
+        self.config.log.info(
+            "Number of unique sequences sampled: "
+            + str(num)
+            + " of possible "
+            + str((step + 1) * self.config.args.n_trials)
+        )
 
     def _verify_dna(self, sequence):
         """

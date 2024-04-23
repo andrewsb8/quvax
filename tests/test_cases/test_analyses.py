@@ -60,6 +60,7 @@ def test_fe_landscape():
         )
     ) == True
 
+
 def test_codon_trajectory():
     """
     Test CodonTrajectory analysis produces correct output

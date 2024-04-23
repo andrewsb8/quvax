@@ -10,8 +10,8 @@ def test_resume(caplog):
     """
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
 
-    #copy database so test does not add information to test file
-    #it will be deleted after test is completed
+    # copy database so test does not add information to test file
+    # it will be deleted after test is completed
     shutil.copy("tests/test_files/test_design/quvax.db", "quvax.db")
     testargs = [
         "-i",
@@ -27,7 +27,7 @@ def test_resume(caplog):
     )
     assert log_entry in caplog.record_tuples
 
-@pytest.mark.skip
+
 def test_resume_compare(caplog):
     """
     Test to verify that --resume will produce the same trajectory as an
@@ -35,3 +35,20 @@ def test_resume_compare(caplog):
 
     """
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+
+    #first optimization
+    testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-co", "GA", "-n", "2", "-c", "2", "-o", "first.db"]
+    config = DesignParser(testargs)
+    opt = GeneticAlgorithm(config)
+
+    #second optimization
+    testargs2 = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-co", "GA", "-n", "2", "-c", "1", "-o", "second.db"]
+    config2 = DesignParser(testargs2)
+    opt2 = GeneticAlgorithm(config2)
+
+    #resume second optimization
+    testargs3 = ["-i", "second.db", "--resume"]
+    config3 = DesignParser._resume(testargs3)
+    opt3 = GeneticAlgorithm(config3)
+
+    assert opt.n_seqs == opt3.n_seqs

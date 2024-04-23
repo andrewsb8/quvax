@@ -20,9 +20,7 @@ class CodonTrajectory(Analysis):
         self._analyze()
 
     def _analyze(self):
-        self.iterations = np.arange(
-            0, self.config.sim_details["generations_sampled"]
-        )
+        self.iterations = np.arange(0, self.config.sim_details["generations_sampled"])
 
         for m in range(self.config.sim_details["generation_size"]):
             self.config.db_cursor.execute(
