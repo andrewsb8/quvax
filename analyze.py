@@ -16,6 +16,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.fe_trajectory import FETrajectory
 
         FETrajectory(config)
+    elif config.args.analysis_type == "codon_trajectory":
+        from src.analysis.analyses.codon_trajectory import CodonTrajectory
+
+        CodonTrajectory(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
