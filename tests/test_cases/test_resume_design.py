@@ -1,4 +1,5 @@
 import shutil
+import pytest
 from src.params.design_parser import DesignParser
 
 
@@ -25,3 +26,12 @@ def test_resume(caplog):
         "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples
+
+@pytest.mark.skip
+def test_resume_compare(caplog):
+    """
+    Test to verify that --resume will produce the same trajectory as an
+    optimization that is done with a single execution of design.py
+
+    """
+    from src.qodon.optimizers.classical_ga import GeneticAlgorithm

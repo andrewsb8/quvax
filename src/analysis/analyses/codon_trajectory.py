@@ -31,18 +31,7 @@ class CodonTrajectory(Analysis):
             self.data = self.config.db_cursor.fetchall()
             self.sequences = [dat[0] for dat in self.data]
 
-            self.codon_diff = [
-                sum(
-                    [
-                        self._calc_codon_diff(
-                            self.sequences[j][i * 3 : (i * 3) + 3],
-                            self.sequences[j + 1][i * 3 : (i * 3) + 3],
-                        )
-                        for i in range(int(len(self.sequences[0]) / 3))
-                    ]
-                )
-                for j in range(len(self.sequences) - 1)
-            ]
+            self.codon_diff = self._codon_diff_list(self.sequences)
 
             file = self.config.args.output + "-" + str(m)
             self._print_output_2D(file, [self.iterations, self.codon_diff])

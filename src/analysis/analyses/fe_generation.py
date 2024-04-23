@@ -30,18 +30,7 @@ class FreeEnergyGeneration(Analysis):
             self.sequences = [dat[0] for dat in data]
             self.energies = [dat[1] for dat in data]
 
-            self.codon_diff = [
-                sum(
-                    [
-                        self._calc_codon_diff(
-                            self.sequences[j][i * 3 : (i * 3) + 3],
-                            self.sequences[j + 1][i * 3 : (i * 3) + 3],
-                        )
-                        for i in range(int(len(self.sequences[0]) / 3))
-                    ]
-                )
-                for j in range(len(self.sequences) - 1)
-            ]
+            self.codon_diff = self._codon_diff_list(self.sequences)
             self.energy_diff = [
                 self._calc_energy_diff(self.energies[i], self.energies[i + 1])
                 for i in range(len(self.energies) - 1)

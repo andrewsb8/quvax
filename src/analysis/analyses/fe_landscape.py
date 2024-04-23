@@ -29,18 +29,7 @@ class FreeEnergyLandscape(Analysis):
         self.energies = [dat[1] for dat in data]
         self.mfe_sequence = self.sequences[np.argmin(self.energies)]
 
-        self.codon_diff = [
-            sum(
-                [
-                    self._calc_codon_diff(
-                        self.mfe_sequence[i * 3 : (i * 3) + 3],
-                        self.sequences[j][i * 3 : (i * 3) + 3],
-                    )
-                    for i in range(int(len(self.sequences[0]) / 3))
-                ]
-            )
-            for j in range(len(self.sequences))
-        ]
+        self.codon_diff = self._codon_diff_list(self.sequences, self.mfe_sequence)
         self.energy_diff = [
             self._calc_energy_diff(self.config.sim_details["min_free_energy"], energy)
             for energy in self.energies
