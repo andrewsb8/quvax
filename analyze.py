@@ -12,10 +12,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.fe_generation import FreeEnergyGeneration
 
         FreeEnergyGeneration(config)
-    elif config.args.analysis_type == "trajectory":
-        from src.analysis.analyses.trajectory import Trajectory
+    elif config.args.analysis_type == "fe_trajectory":
+        from src.analysis.analyses.fe_trajectory import FETrajectory
 
-        Trajectory(config)
+        FETrajectory(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."

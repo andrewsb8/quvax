@@ -2,9 +2,9 @@ from src.analysis.analysis import Analysis
 import numpy as np
 
 
-class Trajectory(Analysis):
+class FETrajectory(Analysis):
     """
-    Plotting the free energy changes as a function of codon optimization step
+    Plotting the folding free energies as a function of codon optimization step
     relative to the initial sequence of the population. This analysis will
     produce a number of output files equal to the population size (n_trials in
     design.py).

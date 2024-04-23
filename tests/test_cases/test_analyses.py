@@ -6,21 +6,21 @@ import filecmp
 
 def test_trajectory():
     """
-    Test Trajectory analysis produces correct output
+    Test FETrajectory analysis produces correct output
 
     """
-    from src.analysis.analyses.trajectory import Trajectory
+    from src.analysis.analyses.fe_trajectory import FETrajectory
 
     testargs = [
         "-i",
         "tests/test_files/test_analysis/quvax.db",
         "-at",
-        "trajectory",
+        "fe_trajectory",
         "-o",
         "test_traj_out.txt",
     ]
     config = AnalysisParser(testargs)
-    analysis = Trajectory(config)
+    analysis = FETrajectory(config)
 
     for i in range(analysis.config.sim_details["generation_size"]):
         assert (
