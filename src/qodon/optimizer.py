@@ -42,11 +42,13 @@ class CodonOptimizer(ABC):
                 self._fold_target()
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
             self.mfe = 1000000  # set min free energy to high number
+            print([self._convert_ints_to_codons(s) for s in self.initial_sequences])
         else:
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
+            print(self.initial_sequences)
 
     @abstractmethod
     def _optimize(self):
@@ -173,6 +175,7 @@ class CodonOptimizer(ABC):
         else:
             step = self.codon_optimize_step
         for i in range(len(energies)):
+            print("write output: ", sequences[i])
             self.config.db_cursor.execute(
                 "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
                 (
@@ -256,6 +259,7 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step
         self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
         num = self.config.db_cursor.fetchall()[0][0]
+        #step+1 to account for initial randomly generated sequences
         self.config.log.info("Number of unique sequences sampled: " + str(num) + " of possible " + str((step+1)*self.config.args.n_trials))
 
     def _verify_dna(self, sequence):
