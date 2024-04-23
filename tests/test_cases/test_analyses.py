@@ -4,7 +4,7 @@ import os
 import filecmp
 
 
-def test_trajectory():
+def test_fe_trajectory():
     """
     Test FETrajectory analysis produces correct output
 
@@ -26,7 +26,7 @@ def test_trajectory():
         assert (
             filecmp.cmp(
                 "test_traj_out.txt-" + str(i),
-                "tests/test_files/test_analysis/test_trajectory_output/analysis_out.txt-"
+                "tests/test_files/test_analysis/test_fe_trajectory_output/analysis_out.txt-"
                 + str(i),
             )
             == True
@@ -59,6 +59,35 @@ def test_fe_landscape():
             "tests/test_files/test_analysis/test_fe_landscape_output/analysis_out.txt",
         )
     ) == True
+
+def test_codon_trajectory():
+    """
+    Test CodonTrajectory analysis produces correct output
+
+    """
+    from src.analysis.analyses.codon_trajectory import CodonTrajectory
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_analysis/quvax.db",
+        "-at",
+        "codon_trajectory",
+        "-o",
+        "test_traj_out.txt",
+    ]
+    config = AnalysisParser(testargs)
+    analysis = CodonTrajectory(config)
+
+    for i in range(analysis.config.sim_details["generation_size"]):
+        assert (
+            filecmp.cmp(
+                "test_traj_out.txt-" + str(i),
+                "tests/test_files/test_analysis/test_codon_trajectory_output/analysis_out.txt-"
+                + str(i),
+            )
+            == True
+        )
+        os.remove("test_traj_out.txt-" + str(i))
 
 
 def test_fe_generation():
