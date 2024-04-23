@@ -21,7 +21,7 @@ class CodonTrajectory(Analysis):
 
     def _analyze(self):
         self.iterations = np.arange(
-            0, self.config.sim_details["number_generations"] + 1
+            0, self.config.sim_details["generations_sampled"]
         )
 
         for m in range(self.config.sim_details["generation_size"]):
