@@ -1,0 +1,24 @@
+Program Version : QuVax v0.0.1
+Execution Time : 2024-01-25 13:18:38.989701
+Command line: python analysis.py -at trajectory -i spt20_TFDE.qu -o trajectory-9.txt -l trajectory.log
+
+
+Warnings and Errors:
+
+
+
+List of Parameters:
+input : spt20_TFDE.qu
+analysis_type : trajectory
+log_file_name : trajectory.log
+output : trajectory-9.txt
+random_seed : 1
+
+
+Input Information:
+Protein Sequence : MFVFLVLLPLVSSQCVNLTT
+Generation Size : 10
+Number of Generations : 143.0
+Minimum Energy Sampled : -144.0
+
+

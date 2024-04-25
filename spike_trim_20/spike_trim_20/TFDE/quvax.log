@@ -1,0 +1,19 @@
+Program Version : QuVax v0.0.1
+Execution Time : 2024-01-19 11:16:14.996818
+Command line: python analysis.py -i spt20_TFDE.qu -at fe-landscape -o spt20_2D.txt
+
+
+Warnings and Errors:
+
+
+
+List of Parameters:
+Protein Sequence : MFVFLVLLPLVSSQCVNLTT
+input : spt20_TFDE.qu
+analysis_type : fe-landscape
+log_file_name : quvax.log
+output : spt20_2D.txt
+random_seed : 1
+
+
+
