@@ -398,13 +398,10 @@ class DesignParser(object):
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
 
-        print(self.generations_sampled)
-
         # collect final generation of sequences
         self.db_cursor.execute(
             f"SELECT sequences from OUTPUTS WHERE generation = {self.generations_sampled};"
         )
         sequences = self.db_cursor.fetchall()
         self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]
-        print(self.initial_sequences)
         self.log.info("Loaded info from database " + self.args.input)
