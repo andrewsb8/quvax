@@ -36,17 +36,39 @@ def test_resume_compare(caplog):
     """
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
 
-    #first optimization
-    testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-co", "GA", "-n", "2", "-c", "2", "-o", "first.db"]
+    # first optimization
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GAG.fasta",
+        "-co",
+        "GA",
+        "-n",
+        "2",
+        "-c",
+        "2",
+        "-o",
+        "first.db",
+    ]
     config = DesignParser(testargs)
     opt = GeneticAlgorithm(config)
 
-    #second optimization
-    testargs2 = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-co", "GA", "-n", "2", "-c", "1", "-o", "second.db"]
+    # second optimization
+    testargs2 = [
+        "-i",
+        "tests/test_files/test_sequences/GAG.fasta",
+        "-co",
+        "GA",
+        "-n",
+        "2",
+        "-c",
+        "1",
+        "-o",
+        "second.db",
+    ]
     config2 = DesignParser(testargs2)
     opt2 = GeneticAlgorithm(config2)
 
-    #resume second optimization
+    # resume second optimization
     testargs3 = ["-i", "second.db", "--resume"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)

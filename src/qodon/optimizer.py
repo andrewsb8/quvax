@@ -42,13 +42,12 @@ class CodonOptimizer(ABC):
                 self._fold_target()
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
             self.mfe = 1000000  # set min free energy to high number
-            print([self._convert_ints_to_codons(s) for s in self.initial_sequences])
         else:
+            self._set_random_state()
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
-            print(self.initial_sequences)
 
     @abstractmethod
     def _optimize(self):
@@ -175,7 +174,6 @@ class CodonOptimizer(ABC):
         else:
             step = self.codon_optimize_step
         for i in range(len(energies)):
-            print("write output: ", sequences[i])
             self.config.db_cursor.execute(
                 "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
                 (
@@ -241,16 +239,34 @@ class CodonOptimizer(ABC):
             # sequences
             self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
         else:
+            # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
             "UPDATE SIM_DETAILS SET generations_sampled = ? WHERE protein_sequence = ?;",
             (num, self.config.seq),
         )
         self.config.db.commit()
+        self._save_random_state()
         self._get_number_unique_sequences()
         self._get_optimized_sequences()
         if self.config.args.target is not None:
             self._check_target()
+
+    def _set_random_state(self):
+        """
+        Funciton to restore the random number generator to the state it was in
+        at the end of the previous execution of design.py. The file name was
+        retrieved from the database containing the simulation details.
+
+        """
+        file = open(self.config.args.state_file, "rb")
+        state = pickle.load(file)
+        random.setstate(state)
+
+    def _save_random_state(self):
+        file = open(self.config.args.state_file, "wb")
+        pickle.dump(random.getstate(), file)
+        file.close()
 
     def _get_number_unique_sequences(self):
         if self.config.args.resume:
