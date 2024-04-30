@@ -5,7 +5,6 @@ from src.params.design_parser import DesignParser
 if __name__ == "__main__":
     if "--resume" in sys.argv:
         config = DesignParser._resume()
-        # exit(1)
     else:
         config = DesignParser()
 
