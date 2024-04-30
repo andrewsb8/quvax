@@ -2,6 +2,7 @@ from src.qodon.optimizer import CodonOptimizer
 import math
 import random
 import numpy as np
+from copy import deepcopy
 
 class MetropolisOptimizer(CodonOptimizer):
 
@@ -29,80 +30,100 @@ class MetropolisOptimizer(CodonOptimizer):
         energies = [self._fold_rna(s) for s in n_seqs] #getting the folding energies of these sequences
         self._write_output(n_seqs, energies, None)
  
-        print("original seq:", self.initial_sequences[1])
-        print("perturbed seq:", self._perturb_dna(self.initial_sequences[1])
         """
         
-        All of this is taken from the random optimizer script so far.
-
+    
         """
-        
-        energy_array = np.zeros((self.config.args.n_trials,self.config.args.codon_iterations)) #initializing array that stores energy progression per iteration for each trial.
 
-        for j, s in enumerate(self.initial_sequences):
-            current_sequence = s
-            for i in range(self.config.args.codon_iterations):
+
+        #initializing energy array
+        energy_array = np.zeros(self.config.args.n_trials)
+        #initializing the population
+        members = self.initial_sequences
+        #initializing accepted and rejected counters
+        accepted = 0
+        rejected = 0
+           
+        #testing:
+        print(members[0])
+        print(self._perturb_dna(members[0],3))
+     
+        for i in range(self.config.args.codon_iterations):
+            #generating the random number of changes we will make at this step                                                 
+            num_changes = random.randint(1,int(len(members[0])//4))
+            print("Number of changes for codon step ",i, ": ", num_changes)
+            for j, sequence in enumerate(members):    
                 #first we want to propose a change in codon with our perturb function
-                proposed_sequence = self._perturb_dna(current_sequence)
-                current_nucleo = self._reverse_translate(current_sequence) #in terms of nucleotides so it can be folded
-                proposed_nucleo = self._reverse_translate(proposed_sequence)
-                print("current indexes: ", current_sequence)
-                print("proposed indexes: ", proposed_sequence)
-                print("current sequence: ", current_nucleo)
-                print("proposed sequence: ", proposed_nucleo)
+                proposed_members = members[j].copy()
+                proposed_members = self._perturb_dna(proposed_members, num_changes)    
+                print("current indexes: ", members[j])
+                print("proposed indexes: ", proposed_members)
                 #Now, we want to get the energy of the fold for both sequences
-                current_E = self._fold_rna(current_nucleo)
-                print("current: ", i,current_E)
-                proposed_E = self._fold_rna(proposed_nucleo)
-                print("proposed: ", i,proposed_E)
+                current_E = self._fold_rna(self._reverse_translate(members[j]))
+                proposed_E = self._fold_rna(self._reverse_translate(proposed_members))
                 #If the new energy is lower than the old energy, we will accept the proposed sequence.
-                if proposed_E < current_E:
-                    current_sequence = proposed_sequence
-                    energy_array[j][i] = proposed_E
+                if proposed_E <= current_E:
+                    members[j] = proposed_members
+                    energy_array[j] = proposed_E
+                    accepted += 1
                 #Otherwise, we need to generate a probability
                 else: 
                     dE = proposed_E - current_E #energy difference. This will always be positive.
-                    T = 300
-                    kb = 120 #The values of T and kb are arbitrary because the folding energy is not in units of joules
+                    T = 200
+                    kb = .1 #The values of T and kb are arbitrary because the folding energy is not in units of joules
                     Beta = 1/(kb*T)
                     Prob = math.e**(-Beta*dE)
                     number = random.random()
                     #Accept the change at the rate given by the probability
                     if Prob >= number:
-                        current_sequence = proposed_sequence
-                        energy_array[j][i] = proposed_E
+                        members[j] = proposed_members
+                        energy_array[j] = proposed_E
+                        accepted += 1
                     #Rejects the change at 1-Prob
                     else:
-                        current_sequence = current_sequence
-                        energy_array[j][i] = current_E
-        print(energy_array)
+                        members[j] = members[j]
+                        energy_array[j] = current_E
+                        rejected += 1
+            print("Iteration number, :", i, " Energy Array: ", energy_array)
+        print("Accepted: ", accepted)
+        print("Rejected: ", rejected) 
         return energy_array #this is an array that shows how the energy progresses
 
-    def _perturb_dna(self, old_genes: list):
+    def _perturb_dna(self, old_genes: list, num_changes):
         """
 
         Function that randomly changes one codon in the input sequence. 
         
-        Inputs the amino acid sequence and the codon indexes (old_genes).
+        Inputs the amino acid sequence, the codon indexes (old_genes), and the number of changes to be made.
 
-        Returns changed codon indexes.
+        Returns changed codon indexes (same format as initial_sequences).
 
         """
         #first, randomly select an index in the sequence
         sequence = self.config.seq #this is a string of amino acids
-        random_index = random.randint(0,len(sequence)-1)
-        #Define what amino acid is being changed
-        change_res = sequence[random_index]
-        #Determine the old codon number so that we can ensure it is actually changed
-        old_codon = old_genes[random_index]
-        new_codon = old_codon
+        indeces = []
+        i = 0
+        while i < num_changes:
+            random_index = random.randint(0,len(sequence)-1)
+            if random_index in indeces:
+                i+=0
+            else:
+                indeces.append(random_index)
+                i+=1
+        print("indeces: " , indeces)
+        for k in range(0,len(indeces)):
+            #Define what amino acid is being changed
+            change_res = sequence[indeces[k]]
+            #Determine the old codon number so that we can ensure it is actually changed
+            old_codon = old_genes[indeces[k]]
+            new_codon = deepcopy(old_codon)
         #Use the code map to randomly change the codon
-        i = 1
-        while new_codon == old_codon:
-            num_codons = len(self.code_map[change_res]["codons"])
-            old_genes[random_index] = random.randint(0,num_codons)
-            new_codon = old_genes[random_index]
-        new_genes = old_genes
-        return new_genes
+            while new_codon == old_codon:
+                num_codons = len(self.code_map[change_res]["codons"])
+                old_genes[indeces[k]] = random.randint(0,num_codons)
+                new_codon = old_genes[indeces[k]]
+                
+        return old_genes
+
         
-        
+    
