@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
         FreeEnergyGeneration(config)
     elif config.args.analysis_type == "fe_trajectory":
-        from src.analysis.analyses.fe_trajectory import FETrajectory
+        from src.analysis.analyses.fe_trajectory import FreeEnergyTrajectory
 
-        FETrajectory(config)
+        FreeEnergyTrajectory(config)
     elif config.args.analysis_type == "codon_trajectory":
         from src.analysis.analyses.codon_trajectory import CodonTrajectory
 

@@ -9,7 +9,7 @@ def test_fe_trajectory():
     Test FETrajectory analysis produces correct output
 
     """
-    from src.analysis.analyses.fe_trajectory import FETrajectory
+    from src.analysis.analyses.fe_trajectory import FreeEnergyTrajectory
 
     testargs = [
         "-i",
@@ -20,7 +20,7 @@ def test_fe_trajectory():
         "test_traj_out.txt",
     ]
     config = AnalysisParser(testargs)
-    analysis = FETrajectory(config)
+    analysis = FreeEnergyTrajectory(config)
 
     for i in range(analysis.config.sim_details["generation_size"]):
         assert (

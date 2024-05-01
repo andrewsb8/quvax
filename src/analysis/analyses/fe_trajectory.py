@@ -2,7 +2,7 @@ from src.analysis.analysis import Analysis
 import numpy as np
 
 
-class FETrajectory(Analysis):
+class FreeEnergyTrajectory(Analysis):
     """
     Plotting the folding free energies as a function of codon optimization step.
     This analysis will produce a number of output files equal to the population

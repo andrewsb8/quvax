@@ -34,6 +34,8 @@ QuVax treats this problem as a bilevel optimization problem or a nested optimiza
 $ python design.py -i examples/spike_trim.fasta
 ```
 
+You can see command line options and their defaults in the log file or through the help option: ```$ python design.py -h```
+
 ### Continuing an Optimization
 
 An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified.
@@ -42,21 +44,17 @@ An option to continue from the end of a previous execution of ```design.py``` is
 $ python design.py -i quvax.db --resume
 ```
 
-Most for ```design.py``` are read from the database. The input database file will be used as the output file. You can use ```$ python design.py --resume -h``` to see the available options to specify when resuming an optimization.
+Most options for ```design.py``` are read from the database. The input database file will be used as the output file. You can use ```$ python design.py --resume -h``` to see the available options a user can specify when resuming an optimization.
 
 ### Analyzing Optimizations
 
-```analyze.py``` then takes in the output of ```design.py```, which is simply a SQLite3 database with default extension ```.db``` (this can be changed on command line if desired). The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.) and can be read by the analysis modules of QuVax. Example execution of ```analyze.py```:
+The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.). Custom python scripts can be written to analyze an optimization process since all of the information is stored in a standard SQLite database format. However, QuVax includes some analysis modules in ```analyze.py```. Example execution of ```analyze.py```:
 
 ```
 $ python analyze.py -i quvax.db -at trajectory
 ```
 
-Custom python scripts for analysis can also be written since all of the information is stored in a standard database format.
-
-For help (each will produce unique output):
-
-```$ python design.py -h``` or ```$ python analyze.py -h```
+For analysis options: ```$ python analyze.py -h```
 
 Testing:
 
@@ -73,7 +71,6 @@ argparse==1.4.0
 biopython==1.81
 black==23.12.1
 dwave-neal==0.6.0
-flake8==6.1.0
 pandas==2.0.3
 pytest-cov==4.1.0
 python-codon-tables==0.1.12
