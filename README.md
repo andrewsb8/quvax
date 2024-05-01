@@ -36,11 +36,13 @@ $ python design.py -i examples/spike_trim.fasta
 
 ### Continuing an Optimization
 
-An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified. You can still specify other options for ```design.py```, but they will be overwritten by option values read by the input database. The input database file will be used as the output file.
+An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified.
 
 ```
 $ python design.py -i quvax.db --resume
 ```
+
+Most for ```design.py``` are read from the database. The input database file will be used as the output file. You can use ```$ python design.py --resume -h``` to see the available options to specify when resuming an optimization.
 
 ### Analyzing Optimizations
 
