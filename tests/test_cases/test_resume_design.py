@@ -45,7 +45,7 @@ def test_resume_compare(caplog):
         "-n",
         "2",
         "-c",
-        "2",
+        "10",
         "-o",
         "first.db",
     ]
@@ -61,7 +61,7 @@ def test_resume_compare(caplog):
         "-n",
         "2",
         "-c",
-        "1",
+        "5",
         "-o",
         "second.db",
     ]
