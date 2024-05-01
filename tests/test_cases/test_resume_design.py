@@ -40,8 +40,6 @@ def test_resume_compare(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-co",
-        "GA",
         "-n",
         "2",
         "-c",
@@ -56,8 +54,6 @@ def test_resume_compare(caplog):
     testargs2 = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-co",
-        "GA",
         "-n",
         "2",
         "-c",
