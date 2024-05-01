@@ -58,7 +58,7 @@ class DesignParser(object):
 
     @classmethod
     def _resume(cls, args=None):
-        cls._parse(cls, args)  # this loads argument defaults which we may not want
+        cls._parse_resume(cls, args)
         cls._logging(cls)
         cls._load_db(cls)
         cls._log_args(cls)
@@ -187,14 +187,14 @@ class DesignParser(object):
         self.parser.add_argument(
             "--resume",
             action="store_true",
-            help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag",
+            help=argparse.SUPPRESS,
         )
         self.parser.add_argument(
             "-st",
             "--state_file",
             default="quvax.state",
             type=str,
-            help="File to save the state of the pseudo random number generator",
+            help="File to save (or load with --resume) the state of the pseudo random number generator",
         )
 
         if args is None:
@@ -362,6 +362,53 @@ class DesignParser(object):
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
         self.log.info("Created database " + self.args.output + "\n\n")
+
+    def _parse_resume(self, args=None):
+        """
+        Define command line arguments. Long options are used as variable names.
+        """
+        self.__version__ = "QuVax v0.0.1"
+        self.prog = "design.py"
+
+        self.parser = argparse.ArgumentParser(
+            prog=self.prog,
+            description="QuVax: mRNA design guided by folding potential",
+            epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
+        )
+        self.parser.add_argument(
+            "--version", action="version", version=self.__version__
+        )
+        self.parser.add_argument(
+            "-i",
+            "--input",
+            required=True,
+            type=str,
+            help="Input fasta-format protein sequence (or SQLite database with --resume)",
+        )
+        self.parser.add_argument(
+            "-l",
+            "--log_file_name",
+            default="quvax.log",
+            type=str,
+            help="Log file for recording certain output, warnings, and errors",
+        )
+        self.parser.add_argument(
+            "-st",
+            "--state_file",
+            default="quvax.state",
+            type=str,
+            help="File to save (or load with --resume) the state of the pseudo random number generator",
+        )
+        self.parser.add_argument(
+            "--resume",
+            action="store_true",
+            help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag and an input random state file is required for useful results",
+        )
+
+        if args is None:
+            self.args = self.parser.parse_args()
+        else:
+            self.args = self.parser.parse_args(args)
 
     def _load_db(self):
         """
