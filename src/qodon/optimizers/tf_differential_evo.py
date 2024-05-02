@@ -18,6 +18,7 @@ class TfDiffEv(CodonOptimizer):
         # line below makes counting consistent among all optimizers
         self.codon_optimize_step -= 1
         self._optimize()
+        self._post_process()
 
     def _optimize(self):
         """
@@ -26,24 +27,24 @@ class TfDiffEv(CodonOptimizer):
 
         """
 
-        self.initial_members = tf.convert_to_tensor(
-            ([_ for _ in self.initial_sequences]), np.float32
-        )
+        if self.config.args.resume:
+            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
+            members = tf.convert_to_tensor(([_ for _ in members]), np.float32)
+        else:
+            members = tf.convert_to_tensor(
+                ([_ for _ in self.initial_sequences]), np.float32
+            )
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.
         tfp.optimizer.differential_evolution_minimize(
             self._objective,
-            initial_population=self.initial_members,
+            initial_population=members,
             max_iterations=self.config.args.codon_iterations,
             differential_weight=0.01,
             crossover_prob=0.1,
             func_tolerance=-1,  # force tensorflow to do max_iterations
         )
-
-        self._get_optimized_sequences()
-        if self.config.args.target is not None:
-            self._check_target()
 
     def _objective(self, members):
         """
@@ -55,16 +56,10 @@ class TfDiffEv(CodonOptimizer):
 
         """
 
-        # Map continuous valued tensor to RNA sequence
+        # Map continuous valued tensor to integers associated with RNA sequence
         n_seqs = self._convert_to_ints(members)
-        self.n_seqs = [self._reverse_translate(s) for s in n_seqs]
-
-        # Use the imported scoring function to score all sequences.
-        self.energies = [self._fold_rna(s) for s in self.n_seqs]
-
-        self._update_mfe(self.energies)
         self._update_codon_step()
-        self._write_output(self.n_seqs, self.energies, None)
+        self._iterate(n_seqs)
 
         # Return TF object
         return tf.cast(self.energies, np.float32)

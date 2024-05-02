@@ -50,11 +50,19 @@ class DesignParser(object):
 
     def __init__(self, args=None):
         self._parse(args)
-        self._load_input()
         self._logging()
+        self._load_input()
         self._validate()
         self._log_args()
         self._create_db()
+
+    @classmethod
+    def _resume(cls, args=None):
+        cls._parse_resume(cls, args)
+        cls._logging(cls)
+        cls._load_db(cls)
+        cls._log_args(cls)
+        return cls
 
     def _parse(self, args=None):
         """
@@ -72,7 +80,11 @@ class DesignParser(object):
             "--version", action="version", version=self.__version__
         )
         self.parser.add_argument(
-            "-i", "--input", required=True, type=str, help="Input sequence"
+            "-i",
+            "--input",
+            required=True,
+            type=str,
+            help="Input fasta-format protein sequence (or SQLite database with --resume)",
         )
         self.parser.add_argument(
             "-c",
@@ -119,9 +131,9 @@ class DesignParser(object):
         self.parser.add_argument(
             "-s",
             "--solver",
-            default="hybrid",
+            default="SA",
             type=str,
-            help="Choice of solver for RNA folding. Options: hybrid",
+            help="Choice of solver for RNA folding. Options: SA (Simulated Annealing)",
         )
         self.parser.add_argument(
             "-cB",
@@ -171,6 +183,18 @@ class DesignParser(object):
             default=None,
             type=str,
             help="Optional input to include target codon sequence",
+        )
+        self.parser.add_argument(
+            "--resume",
+            action="store_true",
+            help=argparse.SUPPRESS,
+        )
+        self.parser.add_argument(
+            "-st",
+            "--state_file",
+            default="quvax.state",
+            type=str,
+            help="File to save (or load with --resume) the state of the pseudo random number generator",
         )
 
         if args is None:
@@ -302,18 +326,27 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         # This will fail if a db already exists in this directory
         self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, number_generations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT);"
+            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100));"
         )
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_sequence, target_sequence, generation_size, number_generations, optimizer, random_seed) VALUES (?, ?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             (
+                self.args.input,
                 self.seq,
                 self.args.target,
                 self.args.n_trials,
                 self.args.codon_iterations,
                 self.args.codon_optimizer,
                 self.args.random_seed,
+                self.args.solver,
+                self.args.rna_iterations,
+                self.args.min_stem_len,
+                self.args.min_loop_len,
+                self.args.species,
+                self.args.coeff_max_bond,
+                self.args.coeff_stem_len,
+                self.args.state_file,
             ),
         )
         self.db_cursor.execute(
@@ -329,3 +362,93 @@ class DesignParser(object):
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
         self.log.info("Created database " + self.args.output + "\n\n")
+
+    def _parse_resume(self, args=None):
+        """
+        Define command line arguments. Long options are used as variable names.
+        """
+        self.__version__ = "QuVax v0.0.1"
+        self.prog = "design.py"
+
+        self.parser = argparse.ArgumentParser(
+            prog=self.prog,
+            description="QuVax: mRNA design guided by folding potential",
+            epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
+        )
+        self.parser.add_argument(
+            "--version", action="version", version=self.__version__
+        )
+        self.parser.add_argument(
+            "-i",
+            "--input",
+            required=True,
+            type=str,
+            help="Input fasta-format protein sequence (or SQLite database with --resume)",
+        )
+        self.parser.add_argument(
+            "-l",
+            "--log_file_name",
+            default="quvax.log",
+            type=str,
+            help="Log file for recording certain output, warnings, and errors",
+        )
+        self.parser.add_argument(
+            "-st",
+            "--state_file",
+            default="quvax.state",
+            type=str,
+            help="File to save (or load with --resume) the state of the pseudo random number generator",
+        )
+        self.parser.add_argument(
+            "--resume",
+            action="store_true",
+            help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag and an input random state file is required for useful results",
+        )
+
+        if args is None:
+            self.args = self.parser.parse_args()
+        else:
+            self.args = self.parser.parse_args(args)
+
+    def _load_db(self):
+        """
+        Function to load information from previous use of design.py when the
+        --resume option is used. This function assumes information for only a
+        single optimization is present in the input database
+
+        """
+        self.log.info("Loading info from database " + self.args.input)
+        self.db = sqlite3.connect(self.args.input)
+        self.db_cursor = self.db.cursor()
+
+        # Only one simulation can be stored in the database, so no chance of picking wrong row
+        self.db_cursor.execute(f"SELECT * FROM SIM_DETAILS;")
+        data = self.db_cursor.fetchall()
+
+        # manually assigning inputs from database
+        self.sim_key = data[0][0]
+        self.seq = data[0][2]
+        self.args.target = data[0][3]
+        self.args.n_trials = data[0][4]
+        self.args.codon_iterations = data[0][5]
+        self.args.codon_optimizer = data[0][6]
+        self.args.random_seed = data[0][7]
+        self.mfe = data[0][8]
+        self.target_folded_energy = data[0][9]
+        self.args.solver = data[0][10]
+        self.args.rna_iterations = data[0][11]
+        self.args.min_stem_len = data[0][12]
+        self.args.min_loop_len = data[0][13]
+        self.args.species = data[0][14]
+        self.args.coeff_max_bond = data[0][15]
+        self.args.coeff_stem_len = data[0][16]
+        self.generations_sampled = data[0][17]
+        self.args.state_file = data[0][18]
+
+        # collect final generation of sequences
+        self.db_cursor.execute(
+            f"SELECT sequences from OUTPUTS WHERE generation = {self.generations_sampled};"
+        )
+        sequences = self.db_cursor.fetchall()
+        self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]
+        self.log.info("Loaded info from database " + self.args.input)

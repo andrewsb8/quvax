@@ -1,8 +1,12 @@
+import sys
 from src.params.design_parser import DesignParser
 
 
 if __name__ == "__main__":
-    config = DesignParser()
+    if "--resume" in sys.argv:
+        config = DesignParser._resume()
+    else:
+        config = DesignParser()
 
     if config.args.codon_optimizer == "TFDE":
         from src.qodon.optimizers.tf_differential_evo import TfDiffEv

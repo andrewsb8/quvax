@@ -14,6 +14,7 @@ class GeneticAlgorithm(CodonOptimizer):
     def __init__(self, config):
         super().__init__(config)
         self._optimize()
+        self._post_process()
 
     def __repr__(self):
         return "Classical genetic algorithm for codon optimization."
@@ -23,29 +24,18 @@ class GeneticAlgorithm(CodonOptimizer):
         Main method for codon optimization
 
         """
-
-        # Simulate evolution
-        self._propagate_generations()
-        self._get_optimized_sequences()
-        if self.config.args.target is not None:
-            self._check_target()
-
-    def _propagate_generations(self):
-        # Initialize population
-        members = self.initial_sequences
-        self.n_seqs = [self._reverse_translate(s) for s in members]
-        self.energies = [self._fold_rna(s) for s in self.n_seqs]
-        self._write_output(self.n_seqs, self.energies, None)
+        if not self.config.args.resume:
+            self._iterate(self.initial_sequences)
+            members = self.initial_sequences
+        else:
+            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
             members = self._procreate(members)
-            self.n_seqs = [self._reverse_translate(s) for s in members]
-            self.energies = [self._fold_rna(s) for s in self.n_seqs]
-            self._update_mfe(self.energies)
             self._update_codon_step()
-            self._write_output(self.n_seqs, self.energies, None)
+            self._iterate(members)
 
     def _procreate(self, eligible_members):
         """

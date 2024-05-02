@@ -79,7 +79,7 @@ def test_TfDiffEv_DefaultSeed():
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_TfDiffEv_NewSeed():
@@ -104,7 +104,7 @@ def test_TfDiffEv_NewSeed():
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 @pytest.mark.skip
@@ -158,7 +158,7 @@ def test_TfDiffEv_LongerSequence():
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
     opt2 = TfDiffEv(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_GA_DefaultSeed():
@@ -183,7 +183,7 @@ def test_GA_DefaultSeed():
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_GA_NewSeed():
@@ -208,7 +208,7 @@ def test_GA_NewSeed():
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_GA_OneIteration():
@@ -233,7 +233,7 @@ def test_GA_OneIteration():
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_GA_LongerSequence():
@@ -258,7 +258,7 @@ def test_GA_LongerSequence():
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
     opt2 = GeneticAlgorithm(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_RAND_DefaultSeed():
@@ -283,7 +283,7 @@ def test_RAND_DefaultSeed():
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_RAND_NewSeed():
@@ -308,7 +308,7 @@ def test_RAND_NewSeed():
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_RAND_OneIteration():
@@ -333,7 +333,7 @@ def test_RAND_OneIteration():
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
 
 
 def test_RAND_LongerSequence():
@@ -358,4 +358,4 @@ def test_RAND_LongerSequence():
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
-    assert opt.n_seqs == opt2.n_seqs
+    assert opt.list_seqs == opt2.list_seqs
