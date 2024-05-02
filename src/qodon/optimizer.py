@@ -226,10 +226,10 @@ class CodonOptimizer(ABC):
         to the database, and updates the min free energy.
 
         """
-        self.n_seqs = [self._convert_ints_to_codons(s) for s in sequences]
-        self.energies = [self._fold_rna(s) for s in self.n_seqs]
+        self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
+        self.energies = [self._fold_rna(s) for s in self.list_seqs]
         self._update_mfe(self.energies)
-        self._write_output(self.n_seqs, self.energies, None)
+        self._write_output(self.list_seqs, self.energies, None)
 
     def _post_process(self):
         if self.config.args.resume:

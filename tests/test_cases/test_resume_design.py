@@ -69,4 +69,4 @@ def test_resume_compare(caplog):
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
 
-    assert opt.n_seqs == opt3.n_seqs
+    assert opt.list_seqs == opt3.list_seqs
