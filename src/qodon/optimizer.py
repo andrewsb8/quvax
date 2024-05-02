@@ -36,6 +36,7 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
+        self.folder = SimulatedAnnealer(self.config)
         if not self.config.args.resume:
             if self.config.args.target is not None:
                 self._verify_target()
@@ -165,8 +166,8 @@ class CodonOptimizer(ABC):
         Compute Minimum Free Energy (MFE) of RNA fold.
 
         """
-        folded_rna = SimulatedAnnealer(nseq, self.config)
-        return folded_rna.best_score
+        self.folder._fold(nseq)
+        return self.folder.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
         if self.config.args.resume:

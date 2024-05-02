@@ -38,15 +38,8 @@ class SimulatedAnnealer(RNAFolder):
 
     """
 
-    def __init__(self, nseq, config: DesignParser):
+    def __init__(self, config: DesignParser):
         self.config = config
-        self.nseq = nseq  # specify nseq here to avoid confusion with self.config.seq
-        self.n = len(self.nseq)
-
-        self.stems = []
-        self.h = dict()
-        self.J = dict()
-        self._pairs = []
         self.interactions = [
             ("A", "U"),
             ("U", "A"),
@@ -58,13 +51,19 @@ class SimulatedAnnealer(RNAFolder):
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
-        self.execute()
 
-    def execute(self):
+    def _fold(self, sequence):
+        self.nseq = sequence
+        self.n = len(self.nseq)
+        self.stems = []
+        self.h = dict()
+        self.J = dict()
+        self._pairs = []
         self._gen_stems()
         self._compute_h_and_J()
+        self._compute_dwave_sa()
 
-    def compute_dwave_sa(self):
+    def _compute_dwave_sa(self):
         import neal
 
         sampler = neal.SimulatedAnnealingSampler()
@@ -196,5 +195,3 @@ class SimulatedAnnealer(RNAFolder):
 
         self.h = h
         self.J = J
-
-        self.compute_dwave_sa()
