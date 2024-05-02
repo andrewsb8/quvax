@@ -43,7 +43,7 @@ class CodonOptimizer(ABC):
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
             self.mfe = 1000000  # set min free energy to high number
         else:
-            self._set_random_state()
+            self._load_random_state()
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
             if self.config.args.target is not None:
@@ -252,7 +252,7 @@ class CodonOptimizer(ABC):
         if self.config.args.target is not None:
             self._check_target()
 
-    def _set_random_state(self):
+    def _load_random_state(self):
         """
         Funciton to restore the random number generator to the state it was in
         at the end of the previous execution of design.py. The file name was
