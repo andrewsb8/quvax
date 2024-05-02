@@ -262,6 +262,7 @@ class CodonOptimizer(ABC):
         file = open(self.config.args.state_file, "rb")
         state = pickle.load(file)
         random.setstate(state)
+        file.close()
 
     def _save_random_state(self):
         file = open(self.config.args.state_file, "wb")
