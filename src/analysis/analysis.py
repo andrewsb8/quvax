@@ -51,5 +51,33 @@ class Analysis(ABC):
                 return 1
         return 0
 
+    def _codon_diff_list(self, sequences, ref_sequence=None):
+        if ref_sequence:
+            return [
+                sum(
+                    [
+                        self._calc_codon_diff(
+                            ref_sequence[i * 3 : (i * 3) + 3],
+                            sequences[j][i * 3 : (i * 3) + 3],
+                        )
+                        for i in range(int(len(sequences[0]) / 3))
+                    ]
+                )
+                for j in range(len(sequences))
+            ]
+        else:
+            return [
+                sum(
+                    [
+                        self._calc_codon_diff(
+                            sequences[j][i * 3 : (i * 3) + 3],
+                            sequences[j + 1][i * 3 : (i * 3) + 3],
+                        )
+                        for i in range(int(len(sequences[0]) / 3))
+                    ]
+                )
+                for j in range(len(sequences) - 1)
+            ]
+
     def _calc_energy_diff(self, ref_energy, energy):
         return energy - ref_energy

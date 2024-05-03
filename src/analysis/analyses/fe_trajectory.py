@@ -2,12 +2,11 @@ from src.analysis.analysis import Analysis
 import numpy as np
 
 
-class Trajectory(Analysis):
+class FreeEnergyTrajectory(Analysis):
     """
-    Plotting the free energy changes as a function of codon optimization step
-    relative to the initial sequence of the population. This analysis will
-    produce a number of output files equal to the population size (n_trials in
-    design.py).
+    Plotting the folding free energies as a function of codon optimization step.
+    This analysis will produce a number of output files equal to the population
+    size (n_trials in design.py).
 
     Parameters
     ----------
@@ -22,7 +21,7 @@ class Trajectory(Analysis):
 
     def _analyze(self):
         self.iterations = np.arange(
-            0, self.config.sim_details["number_generations"] + 1
+            0, self.config.sim_details["generations_sampled"] + 1
         )
 
         for m in range(self.config.sim_details["generation_size"]):
@@ -30,7 +29,7 @@ class Trajectory(Analysis):
                 f"SELECT energies from OUTPUTS WHERE population_key = {m};"
             )
             self.data = self.config.db_cursor.fetchall()
-            self.data = [dat[0] for dat in self.data]
+            self.energies = [dat[0] for dat in self.data]
 
             file = self.config.args.output + "-" + str(m)
-            self._print_output_2D(file, [self.iterations, self.data])
+            self._print_output_2D(file, [self.iterations, self.energies])

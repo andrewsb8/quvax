@@ -36,11 +36,18 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
-        if self.config.args.target is not None:
-            self._verify_target()
-            self._fold_target()
-        self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-        self.mfe = 1000000  # set min free energy to high number
+        if not self.config.args.resume:
+            if self.config.args.target is not None:
+                self._verify_target()
+                self._fold_target()
+            self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+            self.mfe = 1000000  # set min free energy to high number
+        else:
+            self._load_random_state()
+            self.mfe = self.config.mfe
+            self.initial_sequences = self.config.initial_sequences
+            if self.config.args.target is not None:
+                self.target_folded_energy = self.config.target_folded_energy
 
     @abstractmethod
     def _optimize(self):
@@ -48,20 +55,26 @@ class CodonOptimizer(ABC):
 
     def _update_codon_step(self):
         self.codon_optimize_step += 1
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+            total = self.config.args.codon_iterations + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
+            total = self.config.args.codon_iterations
         sys.stderr.write(
             "Codon optimization step ("
-            + str(self.codon_optimize_step)
+            + str(step)
             + ") of total steps ("
-            + str(self.config.args.codon_iterations)
+            + str(total)
             + ")\r"
         )
         if self.codon_optimize_step == self.config.args.codon_iterations:
             sys.stderr.write("\n")
             self.config.log.info(
                 "Number of Generations: ("
-                + str(self.codon_optimize_step)
+                + str(step)
                 + ") of total generations ("
-                + str(self.config.args.codon_iterations)
+                + str(total)
                 + ")\n"
             )
 
@@ -156,23 +169,23 @@ class CodonOptimizer(ABC):
         return folded_rna.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
         for i in range(len(energies)):
             self.config.db_cursor.execute(
                 "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
                 (
                     self.config.sim_key,
                     i,
-                    self.codon_optimize_step,
+                    step,
                     sequences[i],
                     energies[i],
                 ),
             )
             self.config.db.commit()
         return
-
-    def _read_output(self):
-        # read previous optimization and continue process.
-        raise NotImplementedError()
 
     def _get_num_codons(self, res):
         """
@@ -181,7 +194,7 @@ class CodonOptimizer(ABC):
         """
         return len(self.code_map[res]["codons"])
 
-    def _reverse_translate(self, sequence):
+    def _convert_ints_to_codons(self, sequence):
         """
         Convert to nucleotide sequence from integer indices of code map
 
@@ -192,6 +205,83 @@ class CodonOptimizer(ABC):
                 self.code_map[res]["codons"][sequence[i] % self._get_num_codons(res)]
                 for i, res in enumerate(self.config.seq)
             ]
+        )
+
+    def _convert_codons_to_ints(self, sequence):
+        """
+        Convert to integer indices from nucleotide sequence of code map
+
+        """
+
+        return [
+            self.code_map[res]["codons"].index(sequence[i * 3 : (i * 3) + 3])
+            for i, res in enumerate(self.config.seq)
+        ]
+
+    def _iterate(self, sequences):
+        """
+        Function containing references to the steps taken in each codon
+        optimization iteration: convert codon integer sequences to codon
+        strings, calculate the folding energies of the sequences, writes each
+        to the database, and updates the min free energy.
+
+        """
+        self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
+        self.energies = [self._fold_rna(s) for s in self.list_seqs]
+        self._update_mfe(self.energies)
+        self._write_output(self.list_seqs, self.energies, None)
+
+    def _post_process(self):
+        if self.config.args.resume:
+            num = self.codon_optimize_step + self.config.generations_sampled
+            # below is the equivalent of TRUNCATE in MySQL DB, SQLite has
+            # different syntax. Clear table to avoid duplicate degenerate
+            # sequences
+            self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
+        else:
+            # add one to account for initial sequences
+            num = self.codon_optimize_step
+        self.config.db_cursor.execute(
+            "UPDATE SIM_DETAILS SET generations_sampled = ? WHERE protein_sequence = ?;",
+            (num, self.config.seq),
+        )
+        self.config.db.commit()
+        self._save_random_state()
+        self._get_number_unique_sequences()
+        self._get_optimized_sequences()
+        if self.config.args.target is not None:
+            self._check_target()
+
+    def _load_random_state(self):
+        """
+        Funciton to restore the random number generator to the state it was in
+        at the end of the previous execution of design.py. The file name was
+        retrieved from the database containing the simulation details.
+
+        """
+        file = open(self.config.args.state_file, "rb")
+        state = pickle.load(file)
+        random.setstate(state)
+        file.close()
+
+    def _save_random_state(self):
+        file = open(self.config.args.state_file, "wb")
+        pickle.dump(random.getstate(), file)
+        file.close()
+
+    def _get_number_unique_sequences(self):
+        if self.config.args.resume:
+            step = self.codon_optimize_step + self.config.generations_sampled
+        else:
+            step = self.codon_optimize_step
+        self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
+        num = self.config.db_cursor.fetchall()[0][0]
+        # step+1 to account for initial randomly generated sequences
+        self.config.log.info(
+            "Number of unique sequences sampled: "
+            + str(num)
+            + " of possible "
+            + str((step + 1) * self.config.args.n_trials)
         )
 
     def _verify_dna(self, sequence):
