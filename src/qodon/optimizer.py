@@ -36,7 +36,7 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
-        self.folder = SimulatedAnnealer(self.config)
+        self.folder = self._determine_folder()
         if not self.config.args.resume:
             if self.config.args.target is not None:
                 self._verify_target()
@@ -160,6 +160,12 @@ class CodonOptimizer(ABC):
                 )
             initial_members.append(chosen_indices)
         return initial_members
+
+    def _determine_folder(self):
+        if self.config.args.solver == "SA":
+            return SimulatedAnnealer(self.config)
+        else:
+            raise NotImplementedError("Please use option -s SA")
 
     def _fold_rna(self, nseq):
         """
