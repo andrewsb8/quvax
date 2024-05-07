@@ -1,38 +1,25 @@
-from rna_fold import RNAFold
+from src.rna_folding.rna_folder import RNAFolder
 import numpy as np
 import random
 import itertools
 import copy
 
 
-class MC(object):
-    def __init__(self, seq):
-        ## Initialized with RNA sequence
-        self.seq = seq
-
-        ## Use RNAFold Class. Stem list and pairs compiled on instantiation
-        ## also computes all one-body and two body interactions up front.
-        # self.rna_ss = RNAFold(seq, min_stem_len=6, min_loop_len=4)
-        self.rna_ss = RNAFold(seq, min_stem_len=3, min_loop_len=3)
-
+class MC(RNAFolder):
+    def __init__(self, config):
+        super().__init__(config)
         self.T0 = 1000.0
         self.T = self.T0
-
         ## Acceptance Ratio
         self.accept = 0
 
-    def __repr__(self):
-        return "Basic MC with annealing"
-
-    def execute(self):
-        pass
-
-    def check(self):
-        pass
+    def _fold(self, sequence):
+        self._fold_prep(sequence)
+        self._cdo_mc()
 
     def _add_pair(self):
         ## Grab a stem at random
-        rand_idx = random.randint(0, len(self.rna_ss.stems) - 1)
+        rand_idx = random.randint(0, len(self.stems) - 1)
 
         ## Get the longest stem
         # rand_idx = self._get_largest_stem(rand_idx)
@@ -93,7 +80,7 @@ class MC(object):
             return
 
         rand_idx_del = random.randint(0, len(self.stem_idx) - 1)
-        rand_idx_add = random.randint(0, len(self.rna_ss.stems) - 1)
+        rand_idx_add = random.randint(0, len(self.stems) - 1)
 
         stems = copy.copy(self.stem_idx)
 
@@ -136,8 +123,8 @@ class MC(object):
         stems = copy.copy(self.stem_idx)
 
         try:
-            start, stop, length = self.rna_ss.stems[rand_idx]
-            stems[rand_idx] = self.rna_ss.stems.index((start, stop, length + 1))
+            start, stop, length = self.stems[rand_idx]
+            stems[rand_idx] = self.stems.index((start, stop, length + 1))
             newscore = self._calc_score(stems)
         except:
             ## Can't elongate stem based on pair list
@@ -168,8 +155,8 @@ class MC(object):
         stems = copy.copy(self.stem_idx)
 
         try:
-            start, stop, length = self.rna_ss.stems[rand_idx]
-            stems[rand_idx] = self.rna_ss.stems.index((start, stop, length - 1))
+            start, stop, length = self.stems[rand_idx]
+            stems[rand_idx] = self.stems.index((start, stop, length - 1))
             newscore = self._calc_score(stems)
         except:
             ## Can't shorten stem based on pair list
@@ -193,12 +180,12 @@ class MC(object):
         """Given a stem index, get the largest stem from that start/stop group
         and return its corresponding index"""
 
-        start, stop, length = self.rna_ss.stems[stem_idx]
+        start, stop, length = self.stems[stem_idx]
 
-        while (start, stop, length) in self.rna_ss.stems:
+        while (start, stop, length) in self.stems:
             length = length + 1
 
-        return self.rna_ss.stems.index((start, stop, length - 1))
+        return self.stems.index((start, stop, length - 1))
 
     def _generate_init_ss_guess(self, N_stems=4):
         """Generate an initial plausable RNA starting point from random
@@ -206,7 +193,7 @@ class MC(object):
         be guessed by GC content...
         """
 
-        self.stem_idx = random.sample(range(0, len(self.rna_ss.stems)), N_stems)
+        self.stem_idx = random.sample(range(0, len(self.stems)), N_stems)
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):
@@ -215,8 +202,8 @@ class MC(object):
         """
 
         idx.sort()
-        score = sum([self.rna_ss.h[x] for x in idx])
-        score = score + sum([self.rna_ss.J[x] for x in itertools.combinations(idx, 2)])
+        score = sum([self.h[x] for x in idx])
+        score = score + sum([self.J[x] for x in itertools.combinations(idx, 2)])
 
         return score
 
@@ -267,19 +254,10 @@ class MC(object):
                 f"Accept Ratio: {(self.accept_add + self.accept_del + self.accept_swap) / float(nsteps)}"
             )
             print(f"Stems: {self.stem_idx}")
-            print([self.rna_ss.stems[x] for x in self.stem_idx])
+            print([self.stems[x] for x in self.stem_idx])
 
             for x in self.stem_idx:
-                print(self.rna_ss.h[x])
+                print(self.h[x])
             for x in itertools.combinations(self.stem_idx, 2):
                 if x[0] < x[1]:
-                    print(self.rna_ss.J[x])
-
-
-if __name__ == "__main__":
-    # seq = 'ACGCGGGUACUGCGAUAGUG'
-    ## BCRV1
-    seq = "UAUAUACUAGGUUGGCAUUUUGAGCGCAUCUUACUCAAAUCCUAGUAUUUCCAUUAAUAUCUAAUGAUAUUAAUGAUGCCUCUUAAUAUAAGAGAUGC"
-
-    rna_mc = MC(seq)
-    rna_mc.do_mc(nsteps=100000, niter=100, T0=2000)
+                    print(self.J[x])

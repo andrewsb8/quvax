@@ -1,4 +1,3 @@
-from src.params.design_parser import DesignParser
 from src.rna_folding.rna_folder import RNAFolder
 
 
@@ -14,30 +13,14 @@ class SimulatedAnnealer(RNAFolder):
     ----------
     config : Parser
         Object containing user inputs
-    nseq : list
-        codon sequence for RNA folded energy calculation
-    n : int
-        length of codon sequence
-    stems : list
-        List of stems formed in folded RNA structure
-    h : dictionary
-        Matrix for first term in folding Hamiltonian
-    J : dictionary
-        Matrix for second term in folding Hamiltonian
-    interactions : list
-        List of base pair interaction types
-    pairs : list
-        List of base pair interactions in the sequence
-    twobody_penalty : int
-        Energetic penalty
-    pseudo_factor : float
-        description
+    stems_used : list
+        List of stems in minimum energy folded structure
     best_score : float
         Lowest energy output from simulated annealer for RNA folding
 
     """
 
-    def __init__(self, config: DesignParser):
+    def __init__(self, config):
         super().__init__(config)
 
     def _fold(self, sequence):

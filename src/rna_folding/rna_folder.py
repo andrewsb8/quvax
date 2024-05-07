@@ -9,7 +9,24 @@ class RNAFolder(ABC):
 
     Parameters
     ----------
-
+    nseq : list
+        codon sequence for RNA folded energy calculation
+    n : int
+        length of codon sequence
+    stems : list
+        List of possible stems in folded RNA structure
+    h : dictionary
+        Matrix for first term in folding Hamiltonian
+    J : dictionary
+        Matrix for second term in folding Hamiltonian
+    interactions : list
+        List of base pair interaction types
+    pairs : list
+        List of base pair interactions in the sequence
+    twobody_penalty : int
+        Energetic penalty
+    pseudo_factor : float
+        description
 
     """
 
