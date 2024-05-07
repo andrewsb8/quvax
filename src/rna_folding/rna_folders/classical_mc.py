@@ -15,7 +15,6 @@ class MC(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        print(self.stems)
         if len(self.stems) > 0:
             self._do_mc()
 
@@ -194,8 +193,6 @@ class MC(RNAFolder):
         selection of stem pair list. Number of initial stems can probably
         be guessed by GC content...
         """
-
-        print(len(self.stems)) #currently zero
 
         self.stem_idx = random.sample(range(0, len(self.stems)), len(self.stems))
         self.score = self._calc_score(self.stem_idx)
