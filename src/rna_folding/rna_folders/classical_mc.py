@@ -15,7 +15,7 @@ class MC(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        self._cdo_mc()
+        self._do_mc()
 
     def _add_pair(self):
         ## Grab a stem at random
@@ -193,6 +193,8 @@ class MC(RNAFolder):
         be guessed by GC content...
         """
 
+        print(len(self.stems)) #currently zero
+
         self.stem_idx = random.sample(range(0, len(self.stems)), N_stems)
         self.score = self._calc_score(self.stem_idx)
 
@@ -207,7 +209,7 @@ class MC(RNAFolder):
 
         return score
 
-    def do_mc(self, nsteps=100, niter=10, T0=1.0):
+    def _do_mc(self, nsteps=100, niter=10, T0=1.0):
         """Do some simple MC"""
 
         onethird: float = 1 / 3.0
