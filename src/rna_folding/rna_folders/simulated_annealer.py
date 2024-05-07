@@ -25,7 +25,8 @@ class SimulatedAnnealer(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        self._compute_dwave_sa()
+        if len(self.stems) > 0:
+            self._compute_dwave_sa()
 
     def _compute_dwave_sa(self):
         import neal

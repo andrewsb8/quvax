@@ -15,7 +15,9 @@ class MC(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        self._do_mc()
+        print(self.stems)
+        if len(self.stems) > 0:
+            self._do_mc()
 
     def _add_pair(self):
         ## Grab a stem at random
@@ -187,7 +189,7 @@ class MC(RNAFolder):
 
         return self.stems.index((start, stop, length - 1))
 
-    def _generate_init_ss_guess(self, N_stems=4):
+    def _generate_init_ss_guess(self):
         """Generate an initial plausable RNA starting point from random
         selection of stem pair list. Number of initial stems can probably
         be guessed by GC content...
@@ -195,7 +197,7 @@ class MC(RNAFolder):
 
         print(len(self.stems)) #currently zero
 
-        self.stem_idx = random.sample(range(0, len(self.stems)), N_stems)
+        self.stem_idx = random.sample(range(0, len(self.stems)), len(self.stems))
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):

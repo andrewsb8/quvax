@@ -55,7 +55,6 @@ class RNAFolder(ABC):
         self._compute_h_and_J()
 
     def _gen_stems(self):
-        print(self.nseq)
         for i in range(
             self.n - 2 * self.config.args.min_stem_len - self.config.args.min_loop_len
         ):
@@ -78,7 +77,6 @@ class RNAFolder(ABC):
                             self._pairs.append((i + 1, j + 1, k + 1))
                     else:
                         break
-        print(self._pairs)
         self.stems = self._pairs
 
     @staticmethod
