@@ -246,7 +246,11 @@ class MC(RNAFolder):
                     ## Attempt swap of stem pair from population
                     self._swap_pair()
 
-            print("*****DONE*****")
+            # self.best_score is returned
+            self.best_score = self.score
+
+            #might end up logging this information because it may be a useful debugging tool
+            """print("*****DONE*****")
             print(f"Score: {self.score}")
             print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
             print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
@@ -261,4 +265,4 @@ class MC(RNAFolder):
                 print(self.h[x])
             for x in itertools.combinations(self.stem_idx, 2):
                 if x[0] < x[1]:
-                    print(self.J[x])
+                    print(self.J[x])"""
