@@ -17,6 +17,7 @@ class MC(RNAFolder):
         self._fold_prep(sequence)
         if len(self.stems) > 0:
             self._do_mc()
+            #self._log_mc_stats()
 
     def _add_pair(self):
         ## Grab a stem at random
@@ -249,20 +250,21 @@ class MC(RNAFolder):
             # self.best_score is returned
             self.best_score = self.score
 
-            #might end up logging this information because it may be a useful debugging tool
-            """print("*****DONE*****")
-            print(f"Score: {self.score}")
-            print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
-            print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
-            print(f"Accept Ratio Swap: {self.accept_swap / float(nsteps)}")
-            print(
-                f"Accept Ratio: {(self.accept_add + self.accept_del + self.accept_swap) / float(nsteps)}"
-            )
-            print(f"Stems: {self.stem_idx}")
-            print([self.stems[x] for x in self.stem_idx])
+    def _log_mc_stats(self):
+        #might end up logging this information because it may be a useful debugging tool
+        print("*****DONE*****")
+        print(f"Score: {self.score}")
+        print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
+        print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
+        print(f"Accept Ratio Swap: {self.accept_swap / float(nsteps)}")
+        print(
+            f"Accept Ratio: {(self.accept_add + self.accept_del + self.accept_swap) / float(nsteps)}"
+        )
+        print(f"Stems: {self.stem_idx}")
+        print([self.stems[x] for x in self.stem_idx])
 
-            for x in self.stem_idx:
-                print(self.h[x])
-            for x in itertools.combinations(self.stem_idx, 2):
-                if x[0] < x[1]:
-                    print(self.J[x])"""
+        for x in self.stem_idx:
+            print(self.h[x])
+        for x in itertools.combinations(self.stem_idx, 2):
+            if x[0] < x[1]:
+                print(self.J[x])
