@@ -3,6 +3,7 @@ import numpy as np
 import random
 import itertools
 import copy
+import math
 
 
 class MC(RNAFolder):
@@ -50,8 +51,9 @@ class MC(RNAFolder):
             pass
 
     def _del_pair(self):
-        ## Can't delete if we don't have stems
-        if len(self.stem_idx) == 0:
+
+        # can't delete from set of zero
+        if len(self.stem_idx) < 1:
             return
 
         ## delete a stem pair
@@ -77,8 +79,9 @@ class MC(RNAFolder):
             pass
 
     def _swap_pair(self):
-        ## Can't delete if we don't have stems
-        if len(self.stem_idx) == 0:
+
+        # need at least two stems to swap
+        if len(self.stem_idx) < 2:
             return
 
         rand_idx_del = random.randint(0, len(self.stem_idx) - 1)
@@ -112,14 +115,10 @@ class MC(RNAFolder):
             self.accept_swap = self.accept_swap + 1
 
         else:
-            pass
+            pass #why pass instead of return?
 
     def _elongate_stem(self):
         """See if we can elongate a stem"""
-
-        ## Can't do anything if we don't have stems
-        if len(self.stem_idx) == 0:
-            return
 
         rand_idx = random.randint(0, len(self.stem_idx) - 1)
         stems = copy.copy(self.stem_idx)
@@ -149,11 +148,7 @@ class MC(RNAFolder):
     def _shorten_stem(self):
         """See if we can shorten a stem"""
 
-        ## Can't do anything if we don't have stems
-        if len(self.stem_idx) == 0:
-            return
-
-        rand_idx = random.randint(0, len(self.stem_idx) - 1)
+        rand_idx = random.randint(1, len(self.stem_idx) - 1)
         stems = copy.copy(self.stem_idx)
 
         try:
@@ -195,7 +190,7 @@ class MC(RNAFolder):
         be guessed by GC content...
         """
 
-        self.stem_idx = random.sample(range(0, len(self.stems)), len(self.stems))
+        self.stem_idx = random.sample(range(1, len(self.stems)), math.floor(len(self.stems)/5))
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):
