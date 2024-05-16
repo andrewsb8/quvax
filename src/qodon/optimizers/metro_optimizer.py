@@ -41,8 +41,7 @@ class MetropolisOptimizer(CodonOptimizer):
 
         for i in range(self.config.args.codon_iterations):
             #generating the random number of changes we will make at this step                                                 
-            num_changes = random.randint(1,7)
-            avg_changes += num_changes/(self.config.args.codon_iterations)
+            num_changes = 1
             for j, sequence in enumerate(members):    
                 #first propose a change in codon with our perturb function
                 proposed_members = members[j].copy()
@@ -74,7 +73,6 @@ class MetropolisOptimizer(CodonOptimizer):
                         rejected += 1
             self._update_codon_step()
             self._iterate(members)
-        print("Average number of codons changed: ", avg_changes)
         print("Amount accepted: ", accepted)
         print("Amount rejected: ", rejected)
         print("energies: ", energies)
