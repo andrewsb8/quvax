@@ -248,13 +248,14 @@ class MC(RNAFolder):
             # self.best_score is returned to optimizer
             self.best_score = self.score
 
+    #unused
     def _log_mc_stats(self):
         """
         May want to log these statistics but the output would be very long by
         default which could affect the usefulness of the log file with this folder.
 
         """
-        
+
         print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
         print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
         print(f"Accept Ratio Swap: {self.accept_swap / float(nsteps)}")
