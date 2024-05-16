@@ -52,6 +52,7 @@ class RNAFolder(ABC):
         self.J = dict()
         self._pairs = []
         self._gen_stems()
+        self.len_stem_list = len(self.stems)
         self._compute_h_and_J()
 
     def _gen_stems(self):
@@ -148,8 +149,8 @@ class RNAFolder(ABC):
 
         # Replace couplings with 'infinite' energies for clashes. Adjust couplings
         # in cases of pseudoknots.
-        for i in range(len(self.stems)):
-            for j in range(i + 1, len(self.stems)):
+        for i in range(self.len_stem_list):
+            for j in range(i + 1, self.len_stem_list):
                 # If there's overlap, add large penalty and continue
                 overlap = self._detect_stem_overlap(self.stems[i], self.stems[j])
                 if overlap:
@@ -162,7 +163,7 @@ class RNAFolder(ABC):
                 if is_pseudo:
                     J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
 
-        if len(self.stems) == 0:
+        if self.len_stem_list == 0:
             J = {(0, 1): 0}
 
         self.h = h

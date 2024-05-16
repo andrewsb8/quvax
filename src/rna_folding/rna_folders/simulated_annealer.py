@@ -25,7 +25,7 @@ class SimulatedAnnealer(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        if len(self.stems) > 0:
+        if self.len_stem_list > 0:
             self._compute_dwave_sa()
 
     def _compute_dwave_sa(self):
@@ -35,7 +35,7 @@ class SimulatedAnnealer(RNAFolder):
         h2 = {(k, k): v for k, v in self.h.items()}
         Q = self.J
         Q.update(h2)
-        if len(self.stems) > 100:
+        if self.len_stem_list > 100:
             self.config.args.rna_iterations = self.config.args.rna_iterations * 2
         sampleset = sampler.sample_qubo(
             Q, num_reads=10, num_sweeps=self.config.args.rna_iterations

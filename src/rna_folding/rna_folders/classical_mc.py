@@ -9,20 +9,16 @@ import math
 class MC(RNAFolder):
     def __init__(self, config):
         super().__init__(config)
-        self.T0 = 1000.0
-        self.T = self.T0
-        ## Acceptance Ratio
-        self.accept = 0
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        if len(self.stems) > 0:
+        if self.len_stem_list > 0:
             self._do_mc()
             #self._log_mc_stats()
 
     def _add_pair(self):
         ## Grab a stem at random
-        rand_idx = random.randint(0, len(self.stems) - 1)
+        rand_idx = random.randint(0, self.len_stem_list - 1)
 
         ## Get the longest stem
         # rand_idx = self._get_largest_stem(rand_idx)
@@ -85,7 +81,7 @@ class MC(RNAFolder):
             return
 
         rand_idx_del = random.randint(0, len(self.stem_idx) - 1)
-        rand_idx_add = random.randint(0, len(self.stems) - 1)
+        rand_idx_add = random.randint(0, self.len_stem_list - 1)
 
         stems = copy.copy(self.stem_idx)
 
@@ -117,6 +113,7 @@ class MC(RNAFolder):
         else:
             pass #why pass instead of return?
 
+    #unused
     def _elongate_stem(self):
         """See if we can elongate a stem"""
 
@@ -145,6 +142,7 @@ class MC(RNAFolder):
         else:
             pass
 
+    #unused
     def _shorten_stem(self):
         """See if we can shorten a stem"""
 
@@ -185,17 +183,25 @@ class MC(RNAFolder):
         return self.stems.index((start, stop, length - 1))
 
     def _generate_init_ss_guess(self):
-        """Generate an initial plausable RNA starting point from random
-        selection of stem pair list. Number of initial stems can probably
-        be guessed by GC content...
+        """
+        Generate an initial plausable RNA starting point from random
+        selection of stem pair list. Sample size is set to math.floor(self.len_stem_list/5)
+        to avoid small subset of stems for larger sequences. 5 was an arbitrary
+        choice.
+
+        TODO: Number of initial stems can probably be guessed by GC content.
+
         """
 
-        self.stem_idx = random.sample(range(1, len(self.stems)), math.floor(len(self.stems)/5))
+        self.stem_idx = random.sample(range(1, self.len_stem_list), math.floor(self.len_stem_list/5))
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):
-        """Calculate the score for the current list of stems
+        """
+        Calculate the score for the current list of stems
+
         TODO: This can be made cheaper with array broadcasting and smarter slicing
+
         """
 
         idx.sort()
@@ -204,13 +210,13 @@ class MC(RNAFolder):
 
         return score
 
-    def _do_mc(self, nsteps=100, niter=10, T0=1.0):
+    def _do_mc(self, nsteps=100, T0=1.0):
         """Do some simple MC"""
 
         onethird: float = 1 / 3.0
         twothird: float = 2 / 3.0
 
-        for inter in range(niter):
+        for inter in range(self.config.args.rna_iterations):
             ## Acceptance Ratio
             self.accept_add = 0
             self.accept_del = 0
@@ -225,7 +231,6 @@ class MC(RNAFolder):
             for i in range(nsteps):
                 ## Cool the system exponentially for now because it's easy
                 self.T = self.T0 * np.exp(-i / nsteps)
-                # self.T = self.T0
 
                 ## Choose a swap, insertion or deletion based on rando
                 random_chance = random.uniform(0.0, 1.0)
@@ -233,22 +238,23 @@ class MC(RNAFolder):
                 if random_chance <= onethird:
                     ## Attempt addition of stem pair
                     self._add_pair()
-                    # self._elongate_stem()
                 elif onethird < random_chance <= twothird:
                     ## Attempt removal of stem pair
                     self._del_pair()
-                    # self._shorten_stem()
                 else:
                     ## Attempt swap of stem pair from population
                     self._swap_pair()
 
-            # self.best_score is returned
+            # self.best_score is returned to optimizer
             self.best_score = self.score
 
     def _log_mc_stats(self):
-        #might end up logging this information because it may be a useful debugging tool
-        print("*****DONE*****")
-        print(f"Score: {self.score}")
+        """
+        May want to log these statistics but the output would be very long by
+        default which could affect the usefulness of the log file with this folder.
+
+        """
+        
         print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
         print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
         print(f"Accept Ratio Swap: {self.accept_swap / float(nsteps)}")
