@@ -26,39 +26,34 @@ class MetropolisOptimizer(CodonOptimizer):
         Method for codon optimization using metropolis algorithm
         
         """
-        list_seqs = [self._reverse_translate(s) for s in self.initial_sequences]
+        list_seqs = [self._convert_ints_to_codons(s) for s in self.initial_sequences]
         energies = [self._fold_rna(s) for s in list_seqs] #getting the folding energies of these sequences
-        self._write_output(n_seqs, energies, None)
- 
-        """
-        
-    
-        """
 
-
-        #initializing energy array
-        energy_array = np.zeros(self.config.args.n_trials)
-        #initializing the population
-        members = self.initial_sequences
+        if not self.config.args.resume:
+            self._iterate(self.initial_sequences)
+            members = self.initial_sequences
+        else:
+            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
         #initializing accepted and rejected counters
         accepted = 0
         rejected = 0
-           
-        print("original seq: ", members)
+        avg_changes = 0
+
         for i in range(self.config.args.codon_iterations):
             #generating the random number of changes we will make at this step                                                 
-            num_changes = random.randint(1,int(len(members[0])//4))
+            num_changes = random.randint(1,7)
+            avg_changes += num_changes/(self.config.args.codon_iterations)
             for j, sequence in enumerate(members):    
                 #first propose a change in codon with our perturb function
                 proposed_members = members[j].copy()
                 proposed_members = self._perturb_dna(proposed_members, num_changes)    
                 #Get the energy of the fold for both sequences
-                current_E = self._fold_rna(self._reverse_translate(members[j]))
-                proposed_E = self._fold_rna(self._reverse_translate(proposed_members))
+                current_E = self._fold_rna(self._convert_ints_to_codons(members[j]))
+                proposed_E = self._fold_rna(self._convert_ints_to_codons(proposed_members))
                 #If the new energy is lower than the old energy, we will accept the proposed sequence.
                 if proposed_E <= current_E:
                     members[j] = proposed_members
-                    energy_array[j] = proposed_E
+                    energies[j] = proposed_E
                     accepted += 1
                 #Otherwise, we need to generate a probability
                 else: 
@@ -70,19 +65,19 @@ class MetropolisOptimizer(CodonOptimizer):
                     #Accept the change at the rate given by the probability
                     if Prob >= random.uniform(0.0, 1.0):
                         members[j] = proposed_members
-                        energy_array[j] = proposed_E
+                        energies[j] = proposed_E
                         accepted += 1
                     #Rejects the change if not
                     else:
                         members[j] = members[j]
-                        energy_array[j] = current_E
+                        energies[j] = current_E
                         rejected += 1
-            self.update_codon_step()
+            self._update_codon_step()
+            self._iterate(members)
+        print("Average number of codons changed: ", avg_changes)
         print("Amount accepted: ", accepted)
         print("Amount rejected: ", rejected)
-        print("Final Sequence: ", members)
-        print("energies: ", energy_array)
-        return energy_array #this is an array that shows how the energy progresses
+        print("energies: ", energies)
 
     def _perturb_dna(self, old_genes: list, num_changes):
         """
