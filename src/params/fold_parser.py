@@ -47,7 +47,7 @@ class FoldParser(object):
         Define command line arguments. Long options are used as variable names.
         """
         self.__version__ = "QuVax v0.0.1"
-        self.prog = "design.py"
+        self.prog = "fold.py"
 
         self.parser = argparse.ArgumentParser(
             prog=self.prog,
