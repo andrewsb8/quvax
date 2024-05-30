@@ -45,6 +45,9 @@ class DesignParser(object):
         Sets random seed for all optimizers and packages
     target : str
         Optional input to include target codon sequence
+    state_file : str
+        Output (or optional input file with --resume, see -h) to set random seed
+        state
 
     """
 
