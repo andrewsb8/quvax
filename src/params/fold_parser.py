@@ -65,6 +65,13 @@ class FoldParser(object):
             help="Input codon sequence string",
         )
         self.parser.add_argument(
+            "-r",
+            "--rna_iterations",
+            default=10000,
+            type=int,
+            help="Number of RNA folding (inner loop) iterations",
+        )
+        self.parser.add_argument(
             "-ms",
             "--min_stem_len",
             default=3,
@@ -156,7 +163,7 @@ class FoldParser(object):
 
         self.seq = self.seq.upper()
 
-        aas = "ACDEFGHIKLMNPQRSTVWY"
+        aas = "CDEFHIKLMNPQRSTVWY"
 
         if any(_ in aas for _ in self.seq):
             raise InvalidSequenceError(
