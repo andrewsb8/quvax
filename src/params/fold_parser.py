@@ -163,12 +163,16 @@ class FoldParser(object):
 
         self.seq = self.seq.upper()
 
-        aas = "CDEFHIKLMNPQRSTVWY"
+        aas = "DEFHIKLMNPQRSTVWY"
 
         if any(_ in aas for _ in self.seq):
             raise InvalidSequenceError(
                 "At least one character in the input sequence is invalid. Is this a DNA (T nucleotide) or protein sequence?"
             )
+
+        # Could have a protein sequence of only glycine, cysteine, and alanine
+        if set(self.seq).issubset(set("GCA")):
+            self.log.warning("Input codon sequence looks like an protein sequence!")
 
         seq_reshape = [
             [self.seq[i : i + 3]]
@@ -210,7 +214,6 @@ class FoldParser(object):
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
-        self.log.info("Protein Sequence : " + self.seq)
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))

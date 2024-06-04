@@ -7,14 +7,15 @@ if __name__ == "__main__":
     if config.args.solver == "SA":
         from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
-        #after MC folder PR is merged, will not need to specify a sequence
-        fold = SimulatedAnnealer(config.seq, config)
+        fold = SimulatedAnnealer(config)
+    if config.args.solver == "MC":
+        from src.rna_folding.rna_folders.classical_mc import MC
+
+        fold = MC(config)
     else:
         config.log.error(
             "Please select a valid folder. See python fold.py -h for details."
         )
 
-    #after MC folder PR is merged, can do the following
-    #fold._fold(fold.config.seq)
-    #print(fold.best_score)
-    #eventually secondary structure
+    fold._fold(fold.config.seq)
+    fold.config.log.info("Folding energy of input codon sequence: " + str(fold.best_score))
