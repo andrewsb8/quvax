@@ -8,10 +8,8 @@ import math
 
 class MC(RNAFolder):
     """
-    Find the mimimum energy folded structure of an RNA sequence using Simulated
-    Annealing. The Hamiltonian and problem formulation allow for the folding
-    energy determination to be run on quantum hardware. See Fox et al. PLoS,
-    2022, https://doi.org/10.1371/journal.pcbi.1010032.
+    Find the mimimum energy folded structure of an RNA sequence using classical
+    Monte Carlo. See Fox et al. PLoS, 2022, https://doi.org/10.1371/journal.pcbi.1010032.
 
 
     Parameters
