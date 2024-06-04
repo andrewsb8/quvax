@@ -8,7 +8,7 @@ if __name__ == "__main__":
         from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
         fold = SimulatedAnnealer(config)
-    if config.args.solver == "MC":
+    elif config.args.solver == "MC":
         from src.rna_folding.rna_folders.classical_mc import MC
 
         fold = MC(config)
@@ -19,3 +19,8 @@ if __name__ == "__main__":
 
     fold._fold(fold.config.seq)
     fold.config.log.info("Folding energy of input codon sequence: " + str(fold.best_score))
+
+    output = open(fold.config.args.output, "w")
+    output.write("> Folded energy: " + str(fold.best_score) + "\n")
+    output.write(fold.config.seq)
+    #output.write(secondary structure)

@@ -127,6 +127,13 @@ class FoldParser(object):
             type=int,
             help="Random seed for sequence generation, optimization, and folding",
         )
+        self.parser.add_argument(
+            "-o",
+            "--output",
+            default="quvax.fasta",
+            type=str,
+            help="String to name output fasta file. Includes energy, sequence, and secondary structure. Default: quvax.fasta",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
