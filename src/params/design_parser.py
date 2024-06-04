@@ -136,7 +136,7 @@ class DesignParser(object):
             "--solver",
             default="SA",
             type=str,
-            help="Choice of solver for RNA folding. Options: SA (Simulated Annealing)",
+            help="Choice of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo)",
         )
         self.parser.add_argument(
             "-cB",

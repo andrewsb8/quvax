@@ -1,5 +1,6 @@
 from src.params.design_parser import DesignParser
 from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
+from src.rna_folding.rna_folders.classical_mc import MC
 from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
@@ -36,6 +37,7 @@ class CodonOptimizer(ABC):
             self.codon_scores,
             self.code_map,
         ) = self._construct_codon_table()
+        self.folder = self._determine_folder()
         if not self.config.args.resume:
             if self.config.args.target is not None:
                 self._verify_target()
@@ -160,13 +162,23 @@ class CodonOptimizer(ABC):
             initial_members.append(chosen_indices)
         return initial_members
 
+    def _determine_folder(self):
+        if self.config.args.solver == "SA":
+            return SimulatedAnnealer(self.config)
+        elif self.config.args.solver == "MC":
+            return MC(self.config)
+        else:
+            raise NotImplementedError(
+                "Invalid RNA folding solver. Use -h for available options."
+            )
+
     def _fold_rna(self, nseq):
         """
         Compute Minimum Free Energy (MFE) of RNA fold.
 
         """
-        folded_rna = SimulatedAnnealer(nseq, self.config)
-        return folded_rna.best_score
+        self.folder._fold(nseq)
+        return self.folder.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
         if self.config.args.resume:
