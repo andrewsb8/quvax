@@ -30,7 +30,6 @@ class MC(RNAFolder):
         self._fold_prep(sequence)
         if self.len_stem_list > 0:
             self._do_mc()
-            # self._log_mc_stats()
 
     def _add_pair(self):
         ## Grab a stem at random
@@ -59,9 +58,6 @@ class MC(RNAFolder):
             self.score = newscore
             self.accept_add = self.accept_add + 1
 
-        else:
-            pass
-
     def _del_pair(self):
         # can't delete from set of zero
         if len(self.stem_idx) < 1:
@@ -85,9 +81,6 @@ class MC(RNAFolder):
             self.stem_idx = stems
             self.score = newscore
             self.accept_del = self.accept_del + 1
-
-        else:
-            pass
 
     def _swap_pair(self):
         # need at least two stems to swap
@@ -123,67 +116,6 @@ class MC(RNAFolder):
             self.stem_idx = stems
             self.score = newscore
             self.accept_swap = self.accept_swap + 1
-
-        else:
-            pass  # why pass instead of return?
-
-    # unused
-    def _elongate_stem(self):
-        """See if we can elongate a stem"""
-
-        rand_idx = random.randint(0, len(self.stem_idx) - 1)
-        stems = copy.copy(self.stem_idx)
-
-        try:
-            start, stop, length = self.stems[rand_idx]
-            stems[rand_idx] = self.stems.index((start, stop, length + 1))
-            newscore = self._calc_score(stems)
-        except:
-            ## Can't elongate stem based on pair list
-            return
-
-        ## How'd we do?
-        if newscore < self.score:
-            self.stem_idx = stems
-            self.score = newscore
-            # self.accept_swap = self.accept_swap + 1
-
-        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
-            self.stem_idx = stems
-            self.score = newscore
-            # self.accept_swap = self.accept_swap + 1
-
-        else:
-            pass
-
-    # unused
-    def _shorten_stem(self):
-        """See if we can shorten a stem"""
-
-        rand_idx = random.randint(1, len(self.stem_idx) - 1)
-        stems = copy.copy(self.stem_idx)
-
-        try:
-            start, stop, length = self.stems[rand_idx]
-            stems[rand_idx] = self.stems.index((start, stop, length - 1))
-            newscore = self._calc_score(stems)
-        except:
-            ## Can't shorten stem based on pair list
-            return
-
-        ## How'd we do?
-        if newscore < self.score:
-            self.stem_idx = stems
-            self.score = newscore
-            # self.accept_swap = self.accept_swap + 1
-
-        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
-            self.stem_idx = stems
-            self.score = newscore
-            # self.accept_swap = self.accept_swap + 1
-
-        else:
-            pass
 
     def _get_largest_stem(self, stem_idx: int):
         """Given a stem index, get the largest stem from that start/stop group
@@ -263,26 +195,3 @@ class MC(RNAFolder):
 
             # self.best_score is returned to optimizer
             self.best_score = self.score
-
-    # unused
-    def _log_mc_stats(self):
-        """
-        May want to log these statistics but the output would be very long by
-        default which could affect the usefulness of the log file with this folder.
-
-        """
-
-        print(f"Accept Ratio Add:  {self.accept_add  / float(nsteps)}")
-        print(f"Accept Ratio Del:  {self.accept_del  / float(nsteps)}")
-        print(f"Accept Ratio Swap: {self.accept_swap / float(nsteps)}")
-        print(
-            f"Accept Ratio: {(self.accept_add + self.accept_del + self.accept_swap) / float(nsteps)}"
-        )
-        print(f"Stems: {self.stem_idx}")
-        print([self.stems[x] for x in self.stem_idx])
-
-        for x in self.stem_idx:
-            print(self.h[x])
-        for x in itertools.combinations(self.stem_idx, 2):
-            if x[0] < x[1]:
-                print(self.J[x])
