@@ -8,3 +8,4 @@ rna_folding/__pycache__
 /*.txt
 /*.db
 /analysis_out.txt-*
+/*.state
