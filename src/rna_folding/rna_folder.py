@@ -15,6 +15,8 @@ class RNAFolder(ABC):
         length of codon sequence
     stems : list
         List of possible stems in folded RNA structure
+    len_stem_list : int
+        Length of list of stems
     h : dictionary
         Matrix for first term in folding Hamiltonian
     J : dictionary

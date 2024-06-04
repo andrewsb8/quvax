@@ -168,7 +168,9 @@ class CodonOptimizer(ABC):
         elif self.config.args.solver == "MC":
             return MC(self.config)
         else:
-            raise NotImplementedError("Invalid RNA folding solver. Use -h for available options.")
+            raise NotImplementedError(
+                "Invalid RNA folding solver. Use -h for available options."
+            )
 
     def _fold_rna(self, nseq):
         """

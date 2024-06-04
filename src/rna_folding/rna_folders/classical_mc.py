@@ -7,6 +7,24 @@ import math
 
 
 class MC(RNAFolder):
+    """
+    Find the mimimum energy folded structure of an RNA sequence using Simulated
+    Annealing. The Hamiltonian and problem formulation allow for the folding
+    energy determination to be run on quantum hardware. See Fox et al. PLoS,
+    2022, https://doi.org/10.1371/journal.pcbi.1010032.
+
+
+    Parameters
+    ----------
+    config : Parser
+        Object containing user inputs
+    stems_idx : list
+        List of stems in current folding state of RNA
+    best_score : float
+        Lowest energy output from simulated annealer for RNA folding
+
+    """
+
     def __init__(self, config):
         super().__init__(config)
 
@@ -14,7 +32,7 @@ class MC(RNAFolder):
         self._fold_prep(sequence)
         if self.len_stem_list > 0:
             self._do_mc()
-            #self._log_mc_stats()
+            # self._log_mc_stats()
 
     def _add_pair(self):
         ## Grab a stem at random
@@ -47,7 +65,6 @@ class MC(RNAFolder):
             pass
 
     def _del_pair(self):
-
         # can't delete from set of zero
         if len(self.stem_idx) < 1:
             return
@@ -75,7 +92,6 @@ class MC(RNAFolder):
             pass
 
     def _swap_pair(self):
-
         # need at least two stems to swap
         if len(self.stem_idx) < 2:
             return
@@ -111,9 +127,9 @@ class MC(RNAFolder):
             self.accept_swap = self.accept_swap + 1
 
         else:
-            pass #why pass instead of return?
+            pass  # why pass instead of return?
 
-    #unused
+    # unused
     def _elongate_stem(self):
         """See if we can elongate a stem"""
 
@@ -142,7 +158,7 @@ class MC(RNAFolder):
         else:
             pass
 
-    #unused
+    # unused
     def _shorten_stem(self):
         """See if we can shorten a stem"""
 
@@ -193,7 +209,9 @@ class MC(RNAFolder):
 
         """
 
-        self.stem_idx = random.sample(range(1, self.len_stem_list), math.floor(self.len_stem_list/5))
+        self.stem_idx = random.sample(
+            range(1, self.len_stem_list), math.floor(self.len_stem_list / 5)
+        )
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):
@@ -248,7 +266,7 @@ class MC(RNAFolder):
             # self.best_score is returned to optimizer
             self.best_score = self.score
 
-    #unused
+    # unused
     def _log_mc_stats(self):
         """
         May want to log these statistics but the output would be very long by
