@@ -15,5 +15,21 @@ def test_hairpin_dot_bracket():
     # manually assign stem
     stem = [(4, 18, 4)]
     folder = MockFolder(None)
-    folder._stems_to_dot_bracket(19, stem)
+    folder._stems_to_dot_bracket(len(sequence), stem)
+    assert ref_sec_struct == folder.dot_bracket
+
+def test_pseudoknot_dot_bracket():
+    """
+    Test that correct dot-bracket secondary structure works with pseudoknots
+
+    Test case taken from here: https://rnavlab.utep.edu/static/PKB_files/PKB104
+
+    """
+    sequence = "UCGUUGACAAGUACGAAAUCUUGUUA"
+    ref_sec_struct = ".(((.[[[[[[.)))....]]]]]]."
+
+    # manually assign stems
+    stems = [(2, 15, 3), (6, 25, 6)]
+    folder = MockFolder(None)
+    folder._stems_to_dot_bracket(len(sequence), stems)
     assert ref_sec_struct == folder.dot_bracket
