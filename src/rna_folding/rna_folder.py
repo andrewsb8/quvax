@@ -61,7 +61,7 @@ class RNAFolder(ABC):
         """
         Generates a list of tuples with three entries:
         - first two elements are sequence indices of a base pair identifying the stem
-        - thrid element is the length of the stem
+        - third element is the length of the stem
 
         Can generate all base pair indices in a stem by calling _stem_to_pair_list
         Ex:
