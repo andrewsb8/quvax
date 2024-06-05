@@ -71,6 +71,7 @@ def test_resume_compare(caplog):
 
     assert opt.list_seqs == opt3.list_seqs
 
+
 def test_resume_compare_MC(caplog):
     """
     Test to verify that --resume will produce the same trajectory as an

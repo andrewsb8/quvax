@@ -22,6 +22,7 @@ def mock_optimizer():
     opt = MockOptimizer(parser)
     return opt
 
+
 class MockFolder(RNAFolder):
     def __init__(self, config):
         super().__init__(config)

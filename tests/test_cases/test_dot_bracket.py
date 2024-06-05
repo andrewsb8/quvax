@@ -12,7 +12,7 @@ def test_hairpin_dot_bracket():
     sequence = "AUAGCUCAGUGGUAGAGCA"
     ref_sec_struct = "...((((.......))))."
 
-    #manually assign stem
+    # manually assign stem
     stem = [(4, 18, 4)]
     folder = MockFolder(None)
     folder._stems_to_dot_bracket(19, stem)

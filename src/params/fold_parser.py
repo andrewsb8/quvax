@@ -143,7 +143,7 @@ class FoldParser(object):
             self.args = self.parser.parse_args(args)
 
     def _load_input(self):
-        #Folders take sequence string so no need to convert
+        # Folders take sequence string so no need to convert
         self.seq = self.args.input
 
     def _logging(self):
@@ -183,10 +183,7 @@ class FoldParser(object):
         if set(self.seq).issubset(set("GCA")):
             self.log.warning("Input codon sequence looks like an protein sequence!")
 
-        seq_reshape = [
-            [self.seq[i : i + 3]]
-            for i in range(0, len(self.seq), 3)
-        ]
+        seq_reshape = [[self.seq[i : i + 3]] for i in range(0, len(self.seq), 3)]
 
         if (
             any("UAA" in codon for codon in seq_reshape)

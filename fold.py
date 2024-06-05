@@ -20,7 +20,9 @@ if __name__ == "__main__":
         )
 
     fold._fold(fold.config.seq)
-    fold.config.log.info("Folding energy of input codon sequence: " + str(fold.best_score))
+    fold.config.log.info(
+        "Folding energy of input codon sequence: " + str(fold.best_score)
+    )
     fold.config.log.info("Folded secondary structure: " + str(fold.dot_bracket))
 
     output = open(fold.config.args.output, "w")

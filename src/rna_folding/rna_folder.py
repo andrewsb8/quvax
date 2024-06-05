@@ -195,7 +195,7 @@ class RNAFolder(ABC):
         for stem in stems:
             stem_pair_list = self._stem_to_pair_list(stem)
             for i in range(len(stem_pair_list)):
-                dot_bracket[stem_pair_list[i][0]-1] = '('
-                dot_bracket[stem_pair_list[i][1]-1] = ')'
+                dot_bracket[stem_pair_list[i][0] - 1] = "("
+                dot_bracket[stem_pair_list[i][1] - 1] = ")"
 
         self.dot_bracket = "".join(dot_bracket)
