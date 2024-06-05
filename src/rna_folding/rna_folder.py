@@ -58,6 +58,19 @@ class RNAFolder(ABC):
         self._compute_h_and_J()
 
     def _gen_stems(self):
+        """
+        Generates a list of tuples with three entries:
+        - first two elements are sequence indices of a base pair identifying the stem
+        - thrid element is the length of the stem
+
+        Can generate all base pair indices in a stem by calling _stem_to_pair_list
+        Ex:
+        - self.stems[0] -> (1, 13, 3)
+        - _stem_to_pair_list(self.stems[0]) -> [(1, 13), (2, 12), (3, 11)]
+        - Above shows the list of indices of three base pairs comprising the stem
+
+        """
+
         for i in range(
             self.n - 2 * self.config.args.min_stem_len - self.config.args.min_loop_len
         ):
@@ -88,7 +101,8 @@ class RNAFolder(ABC):
         pair_list = []
         for ci in range(stem[2]):
             pair_list.append((stem[0] + ci, stem[1] - ci))
-        #print("pair list ", pair_list)
+        if stem == (1, 13, 3):
+            print(pair_list)
         return pair_list
 
     def _detect_stem_overlap(self, stem1, stem2):
@@ -172,3 +186,8 @@ class RNAFolder(ABC):
 
         self.h = h
         self.J = J
+
+    def _stems_to_dot_bracket(self, sequence, stems):
+        """Function to convert a list of stems in a sequence to a dot-bracket
+        notation"""
+        return

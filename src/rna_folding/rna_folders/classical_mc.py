@@ -169,4 +169,4 @@ class MC(RNAFolder):
 
             # self.best_score is returned to optimizer
             self.best_score = self.score
-        print(self.stem_idx)
+        self.stems_used = [self.stems[s] for s in self.stem_idx]
