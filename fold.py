@@ -1,8 +1,10 @@
+import random
 from src.params.fold_parser import FoldParser
 
 
 if __name__ == "__main__":
     config = FoldParser()
+    random.seed(config.args.random_seed)
 
     if config.args.solver == "SA":
         from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
