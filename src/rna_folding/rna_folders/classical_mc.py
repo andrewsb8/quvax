@@ -31,6 +31,8 @@ class MC(RNAFolder):
         if self.len_stem_list > 0:
             self._do_mc()
             self._stems_to_dot_bracket(self.n, self.stems_used)
+        else:
+            self._stems_to_dot_bracket(self.n, [])
 
     def _add_pair(self):
         ## Grab a stem at random

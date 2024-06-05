@@ -353,10 +353,10 @@ class DesignParser(object):
             ),
         )
         self.db_cursor.execute(
-            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT);"
+            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT, secondary_structure VARCHAR({len(self.seq)*3}));"
         )
         self.db_cursor.execute(
-            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}))"
+            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences

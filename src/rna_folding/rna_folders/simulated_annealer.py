@@ -28,6 +28,8 @@ class SimulatedAnnealer(RNAFolder):
         if self.len_stem_list > 0:
             self._compute_dwave_sa()
             self._stems_to_dot_bracket(self.n, self.stems_used)
+        else:
+            self._stems_to_dot_bracket(self.n, [])
 
     def _compute_dwave_sa(self):
         import neal
