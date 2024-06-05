@@ -81,12 +81,14 @@ class RNAFolder(ABC):
                     else:
                         break
         self.stems = self._pairs
+        print(self.stems)
 
     @staticmethod
     def _stem_to_pair_list(stem):
         pair_list = []
         for ci in range(stem[2]):
             pair_list.append((stem[0] + ci, stem[1] - ci))
+        #print("pair list ", pair_list)
         return pair_list
 
     def _detect_stem_overlap(self, stem1, stem2):

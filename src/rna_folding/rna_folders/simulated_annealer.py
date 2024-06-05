@@ -46,3 +46,4 @@ class SimulatedAnnealer(RNAFolder):
             if it in [k for k, v in sampleset.first.sample.items() if v == 1]
         ]
         self.best_score = sampleset.first.energy
+        print(self.stems_used)

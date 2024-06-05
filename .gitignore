@@ -10,3 +10,4 @@ rna_folding/__pycache__
 /analysis_out.txt-*
 /*.state
 /*.fasta
+/*.dot
