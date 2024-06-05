@@ -94,15 +94,12 @@ class RNAFolder(ABC):
                     else:
                         break
         self.stems = self._pairs
-        print(self.stems)
 
     @staticmethod
     def _stem_to_pair_list(stem):
         pair_list = []
         for ci in range(stem[2]):
             pair_list.append((stem[0] + ci, stem[1] - ci))
-        if stem == (1, 13, 3):
-            print(pair_list)
         return pair_list
 
     def _detect_stem_overlap(self, stem1, stem2):
@@ -187,7 +184,18 @@ class RNAFolder(ABC):
         self.h = h
         self.J = J
 
-    def _stems_to_dot_bracket(self, sequence, stems):
-        """Function to convert a list of stems in a sequence to a dot-bracket
-        notation"""
-        return
+    def _stems_to_dot_bracket(self, sequence_len, stems):
+        """
+        Function to convert a list of stems in a sequence to a dot-bracket
+        notation. No pseudoknots implemented yet.
+
+        """
+
+        dot_bracket = ["." for i in range(sequence_len)]
+        for stem in stems:
+            stem_pair_list = self._stem_to_pair_list(stem)
+            for i in range(len(stem_pair_list)):
+                dot_bracket[stem_pair_list[i][0]] = '('
+                dot_bracket[stem_pair_list[i][1]] = ')'
+
+        self.dot_bracket = "".join(dot_bracket)
