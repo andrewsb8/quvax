@@ -32,6 +32,8 @@ class FoldParser(object):
         String to identify which species to generate codon frequencies
     random_seed : int
         Sets random seed for all optimizers and packages
+    output : str
+        File name to store folding energy, codon sequence, and secondary structure
 
     """
 
@@ -130,9 +132,9 @@ class FoldParser(object):
         self.parser.add_argument(
             "-o",
             "--output",
-            default="quvax.fasta",
+            default="quvax.dot",
             type=str,
-            help="String to name output fasta file. Includes energy, sequence, and secondary structure. Default: quvax.fasta",
+            help="String to name output dot-bracket file. Includes energy, sequence, and secondary structure. Default: quvax.dot",
         )
 
         if args is None:
