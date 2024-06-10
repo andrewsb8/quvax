@@ -22,7 +22,6 @@ class MetropolisOptimizer(CodonOptimizer):
 
     def _optimize(self):
         """
-
         Method for codon optimization using metropolis algorithm
 
         """
@@ -36,10 +35,12 @@ class MetropolisOptimizer(CodonOptimizer):
         accepted = 0
         rejected = 0
         avg_changes = 0
+        #number of proposed changes
+        num_changes = 1
+        #beta = 1/kT
+        beta = 1
 
         for i in range(self.config.args.codon_iterations):
-            #generating the random number of changes we will make at this step
-            num_changes = 1
             for j, sequence in enumerate(members):
                 #first propose a change in codon with our perturb function
                 proposed_members = self._perturb_dna(members[j], num_changes)
@@ -52,22 +53,15 @@ class MetropolisOptimizer(CodonOptimizer):
                     energies[j] = proposed_E
                     accepted += 1
                 #Otherwise, we need to generate a probability
+                elif math.e**(-beta*(proposed_E - current_E)) >= random.uniform(0.0, 1.0):
+                    members[j] = proposed_members
+                    energies[j] = proposed_E
+                    accepted += 1
+                #Rejects the change if not
                 else:
-                    dE = proposed_E - current_E
-                    T = 150
-                    kb = .1 #The values of T and kb are arbitrary because the folding energy is not in units of joules
-                    Beta = 1/(kb*T)
-                    Prob = math.e**(-Beta*dE)
-                    #Accept the change at the rate given by the probability
-                    if Prob >= random.uniform(0.0, 1.0):
-                        members[j] = proposed_members
-                        energies[j] = proposed_E
-                        accepted += 1
-                    #Rejects the change if not
-                    else:
-                        members[j] = members[j]
-                        energies[j] = current_E
-                        rejected += 1
+                    members[j] = members[j]
+                    energies[j] = current_E
+                    rejected += 1
             self._update_codon_step()
             self._iterate(members)
         print("Amount accepted: ", accepted)
