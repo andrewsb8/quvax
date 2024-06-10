@@ -70,3 +70,50 @@ def test_resume_compare(caplog):
     opt3 = GeneticAlgorithm(config3)
 
     assert opt.list_seqs == opt3.list_seqs
+
+def test_resume_compare_MC(caplog):
+    """
+    Test to verify that --resume will produce the same trajectory as an
+    optimization that is done with a single execution of design.py
+
+    """
+    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+
+    # first optimization
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GAG.fasta",
+        "-n",
+        "2",
+        "-c",
+        "10",
+        "-o",
+        "first.db",
+        "-s",
+        "MC",
+    ]
+    config = DesignParser(testargs)
+    opt = GeneticAlgorithm(config)
+
+    # second optimization
+    testargs2 = [
+        "-i",
+        "tests/test_files/test_sequences/GAG.fasta",
+        "-n",
+        "2",
+        "-c",
+        "5",
+        "-o",
+        "second.db",
+        "-s",
+        "MC",
+    ]
+    config2 = DesignParser(testargs2)
+    opt2 = GeneticAlgorithm(config2)
+
+    # resume second optimization
+    testargs3 = ["-i", "second.db", "--resume"]
+    config3 = DesignParser._resume(testargs3)
+    opt3 = GeneticAlgorithm(config3)
+
+    assert opt.list_seqs == opt3.list_seqs
