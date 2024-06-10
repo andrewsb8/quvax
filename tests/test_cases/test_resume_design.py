@@ -13,6 +13,7 @@ def test_resume(caplog):
     # copy database so test does not add information to test file
     # it will be deleted after test is completed
     shutil.copy("tests/test_files/test_design/quvax.db", "quvax.db")
+    shutil.copy("tests/test_files/test_design/quvax.state", "quvax.state")
     testargs = [
         "-i",
         "quvax.db",
