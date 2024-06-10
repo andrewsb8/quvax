@@ -11,7 +11,7 @@ def test_target_detected(mock_optimizer, caplog):
 
     """
     mock_optimizer.config.args.target = (
-        "ATGTTCGTTTTCCTCGTGCTATTGCCGTTGGTTTCGTCTCAATGTGTGAATTTAACTACA"
+        "AUGUUCGUGUUCCUAGUAUUGUUACCACUU"
     )
     mock_optimizer.config.db = sqlite3.connect("tests/test_files/test_design/quvax.db")
     mock_optimizer.config.db_cursor = mock_optimizer.config.db.cursor()
@@ -32,7 +32,7 @@ def test_target_detected_not_mfe(mock_optimizer, caplog):
 
     """
     mock_optimizer.config.args.target = (
-        "ATGTTCGTGTTCCTCGTTCTTCTCCCCCTTGTATCCAGTCAGTGTGTAAATCTGACCACA"
+        "AUGUUCGUGUUCCUUGUUUUGUUGCCUCUC"
     )
     mock_optimizer.config.db = sqlite3.connect("tests/test_files/test_design/quvax.db")
     mock_optimizer.config.db_cursor = mock_optimizer.config.db.cursor()

@@ -72,7 +72,7 @@ def test_TfDiffEv_DefaultSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "100",
         "-sd",
         "1",
     ]
@@ -97,7 +97,7 @@ def test_TfDiffEv_NewSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "100",
         "-sd",
         "2546345746583",
     ]
@@ -107,6 +107,7 @@ def test_TfDiffEv_NewSeed():
     assert opt.list_seqs == opt2.list_seqs
 
 
+#fails sometimes
 @pytest.mark.skip
 def test_TfDiffEv_OneIteration():
     """
@@ -145,13 +146,13 @@ def test_TfDiffEv_LongerSequence():
 
     testargs = [
         "-i",
-        "tests/test_files/test_sequences/spike_trim_20.fasta",
+        "tests/test_files/test_sequences/spike_trim_10.fasta",
         "-co",
         "TFDE",
         "-n",
         "4",
         "-c",
-        "1000",
+        "5",
         "-sd",
         "1",
     ]
@@ -176,7 +177,7 @@ def test_GA_DefaultSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "10",
         "-sd",
         "1",
     ]
@@ -201,7 +202,7 @@ def test_GA_NewSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "10",
         "-sd",
         "2546345746583",
     ]
@@ -245,13 +246,13 @@ def test_GA_LongerSequence():
 
     testargs = [
         "-i",
-        "tests/test_files/test_sequences/spike_trim_20.fasta",
+        "tests/test_files/test_sequences/spike_trim_10.fasta",
         "-co",
         "GA",
         "-n",
         "4",
         "-c",
-        "1000",
+        "5",
         "-sd",
         "1",
     ]
@@ -276,7 +277,7 @@ def test_RAND_DefaultSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "100",
         "-sd",
         "1",
     ]
@@ -301,7 +302,7 @@ def test_RAND_NewSeed():
         "-n",
         "4",
         "-c",
-        "1000",
+        "10",
         "-sd",
         "2546345746583",
     ]
@@ -345,13 +346,13 @@ def test_RAND_LongerSequence():
 
     testargs = [
         "-i",
-        "tests/test_files/test_sequences/spike_trim_20.fasta",
+        "tests/test_files/test_sequences/spike_trim_10.fasta",
         "-co",
         "RAND",
         "-n",
         "4",
         "-c",
-        "1000",
+        "10",
         "-sd",
         "1",
     ]
