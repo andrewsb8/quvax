@@ -247,7 +247,7 @@ class DesignParser(object):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
 
         if self.args.target is not None:
-            cs = "GCATU"
+            cs = "GCAU"
 
             if any(_ not in cs for _ in self.args.target):
                 raise InvalidSequenceError("Target is not a codon sequence!")
