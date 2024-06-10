@@ -230,7 +230,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.seq)
         ]
 
-    def _iterate(self, sequences):
+    def _iterate(self, sequences, energies = None):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon
@@ -239,7 +239,10 @@ class CodonOptimizer(ABC):
 
         """
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
-        self.energies = [self._fold_rna(s) for s in self.list_seqs]
+        if energies is None:
+            self.energies = [self._fold_rna(s) for s in self.list_seqs]
+        else:
+            self.energies = energies
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, None)
 
