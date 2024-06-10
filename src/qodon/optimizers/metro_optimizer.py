@@ -2,7 +2,6 @@ from src.qodon.optimizer import CodonOptimizer
 import math
 import random
 import numpy as np
-from copy import deepcopy
 
 class MetropolisOptimizer(CodonOptimizer):
 
@@ -79,7 +78,7 @@ class MetropolisOptimizer(CodonOptimizer):
             change_res = self.config.seq[indices[k]]
             #Determine the old codon number so that we can ensure it is actually changed
             old_codon = old_genes[indices[k]]
-            new_codon = deepcopy(old_codon)
+            new_codon = old_codon
             num_codons = len(self.code_map[change_res]["codons"])
             #Use the code map to randomly change the codon
             while new_codon == old_codon:
