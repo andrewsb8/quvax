@@ -178,7 +178,6 @@ class CodonOptimizer(ABC):
 
         """
         self.folder._fold(nseq)
-        return self.folder.best_score
 
     def _write_output(self, sequences, energies, secondary_structure):
         if self.config.args.resume:
@@ -187,13 +186,14 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step
         for i in range(len(energies)):
             self.config.db_cursor.execute(
-                "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies) VALUES(?, ?, ?, ?, ?);",
+                "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies, secondary_structure) VALUES(?, ?, ?, ?, ?, ?);",
                 (
                     self.config.sim_key,
                     i,
                     step,
                     sequences[i],
                     energies[i],
+                    secondary_structure[i],
                 ),
             )
             self.config.db.commit()
@@ -239,12 +239,21 @@ class CodonOptimizer(ABC):
 
         """
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
+<<<<<<< HEAD
         if energies is None:
             self.energies = [self._fold_rna(s) for s in self.list_seqs]
         else:
             self.energies = energies
+=======
+        self.energies = []
+        self.sec_structs = []
+        for s in self.list_seqs:
+            self._fold_rna(s)
+            self.energies.append(self.folder.best_score)
+            self.sec_structs.append(self.folder.dot_bracket)
+>>>>>>> main
         self._update_mfe(self.energies)
-        self._write_output(self.list_seqs, self.energies, None)
+        self._write_output(self.list_seqs, self.energies, self.sec_structs)
 
     def _post_process(self):
         if self.config.args.resume:
@@ -335,7 +344,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            "INSERT INTO MFE_SEQUENCES (sequences) SELECT sequences FROM OUTPUTS WHERE energies = ?",
+            "INSERT INTO MFE_SEQUENCES (sequences, secondary_structure) SELECT sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
             (self.mfe,),
         )
         self.config.db.commit()

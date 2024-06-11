@@ -45,6 +45,9 @@ class DesignParser(object):
         Sets random seed for all optimizers and packages
     target : str
         Optional input to include target codon sequence
+    state_file : str
+        Output (or optional input file with --resume, see -h) to set random seed
+        state
 
     """
 
@@ -244,7 +247,7 @@ class DesignParser(object):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
 
         if self.args.target is not None:
-            cs = "GCATU"
+            cs = "GCAU"
 
             if any(_ not in cs for _ in self.args.target):
                 raise InvalidSequenceError("Target is not a codon sequence!")
@@ -350,10 +353,10 @@ class DesignParser(object):
             ),
         )
         self.db_cursor.execute(
-            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT);"
+            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT, secondary_structure VARCHAR({len(self.seq)*3}));"
         )
         self.db_cursor.execute(
-            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}))"
+            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences

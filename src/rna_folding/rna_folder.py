@@ -58,6 +58,19 @@ class RNAFolder(ABC):
         self._compute_h_and_J()
 
     def _gen_stems(self):
+        """
+        Generates a list of tuples with three entries:
+        - first two elements are sequence indices of a base pair identifying the stem
+        - third element is the length of the stem
+
+        Can generate all base pair indices in a stem by calling _stem_to_pair_list
+        Ex:
+        - self.stems[0] -> (1, 13, 3)
+        - _stem_to_pair_list(self.stems[0]) -> [(1, 13), (2, 12), (3, 11)]
+        - Above shows the list of indices of three base pairs comprising the stem
+
+        """
+
         for i in range(
             self.n - 2 * self.config.args.min_stem_len - self.config.args.min_loop_len
         ):
@@ -170,3 +183,28 @@ class RNAFolder(ABC):
 
         self.h = h
         self.J = J
+
+    def _stems_to_dot_bracket(self, sequence_len, stems):
+        """
+        Function to convert a list of stems in a sequence to a dot-bracket
+        notation.
+
+        """
+
+        dot_bracket = ["." for i in range(sequence_len)]
+        for stem in stems:
+            stem_pair_list = self._stem_to_pair_list(stem)
+            for i in range(len(stem_pair_list)):
+                dot_bracket[stem_pair_list[i][0] - 1] = "("
+                dot_bracket[stem_pair_list[i][1] - 1] = ")"
+
+        # check for pseudoknots. pseudoknot cannot be detected if there is only one stem
+        for i in range(len(stems)):
+            for j in range(i + 1, len(stems)):
+                if self._is_pseudo(stems[i], stems[j]):
+                    stem_pair_list = self._stem_to_pair_list(stems[j])
+                    for k in range(len(stem_pair_list)):
+                        dot_bracket[stem_pair_list[k][0] - 1] = "["
+                        dot_bracket[stem_pair_list[k][1] - 1] = "]"
+
+        self.dot_bracket = "".join(dot_bracket)
