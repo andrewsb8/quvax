@@ -29,3 +29,4 @@ if __name__ == "__main__":
     output.write("> Folded energy: " + str(fold.best_score) + "\n")
     output.write(fold.config.seq + "\n")
     output.write(fold.dot_bracket + "\n")
+    output.close()
