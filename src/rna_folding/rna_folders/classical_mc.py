@@ -30,62 +30,36 @@ class MC(RNAFolder):
         self._fold_prep(sequence)
         if self.len_stem_list > 0:
             self._do_mc()
+            self._stems_to_dot_bracket(self.n, self.stems_used)
+        else:
+            self._stems_to_dot_bracket(self.n, [])
 
     def _add_pair(self):
         ## Grab a stem at random
         rand_idx = random.randint(0, self.len_stem_list - 1)
 
-        ## Get the longest stem
-        # rand_idx = self._get_largest_stem(rand_idx)
-
         if rand_idx in self.stem_idx:
-            return
+            return self.stem_idx
 
         stems = copy.copy(self.stem_idx)
         stems.append(rand_idx)
-
-        ## Score the new set of interactions
-        newscore = self._calc_score(stems)
-
-        ## How'd we do?
-        if newscore < self.score:
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_add = self.accept_add + 1
-
-        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_add = self.accept_add + 1
+        return stems
 
     def _del_pair(self):
         # can't delete from set of zero
         if len(self.stem_idx) < 1:
-            return
+            return self.stem_idx
 
         ## delete a stem pair
         rand_idx = random.randint(0, len(self.stem_idx) - 1)
         stems = copy.copy(self.stem_idx)
         del stems[rand_idx]
-
-        ## Score the new set of interactions
-        newscore = self._calc_score(stems)
-
-        ## How'd we do?
-        if newscore < self.score:
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_del = self.accept_del + 1
-
-        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_del = self.accept_del + 1
+        return stems
 
     def _swap_pair(self):
         # need at least two stems to swap
         if len(self.stem_idx) < 2:
-            return
+            return self.stem_idx
 
         rand_idx_del = random.randint(0, len(self.stem_idx) - 1)
         rand_idx_add = random.randint(0, self.len_stem_list - 1)
@@ -96,26 +70,11 @@ class MC(RNAFolder):
         del stems[rand_idx_del]
 
         ## Grab a stem at random
-        # rand_idx_add = self._get_largest_stem(rand_idx_add)
-
         if rand_idx_add in self.stem_idx:
-            return
+            return self.stem_idx
 
         stems.append(rand_idx_add)
-
-        ## Score the new set of interactions
-        newscore = self._calc_score(stems)
-
-        ## How'd we do?
-        if newscore < self.score:
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_swap = self.accept_swap + 1
-
-        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
-            self.stem_idx = stems
-            self.score = newscore
-            self.accept_swap = self.accept_swap + 1
+        return stems
 
     def _get_largest_stem(self, stem_idx: int):
         """Given a stem index, get the largest stem from that start/stop group
@@ -158,6 +117,21 @@ class MC(RNAFolder):
 
         return score
 
+    def _update_stems(self, stems):
+        ## Score the new set of interactions
+        newscore = self._calc_score(stems)
+
+        ## How'd we do?
+        if newscore < self.score:
+            self.stem_idx = stems
+            self.score = newscore
+            self.accept_swap = self.accept_swap + 1
+
+        elif np.exp(-1 * (newscore - self.score) / self.T) > random.uniform(0.0, 1.0):
+            self.stem_idx = stems
+            self.score = newscore
+            self.accept_swap = self.accept_swap + 1
+
     def _do_mc(self, nsteps=100, T0=1.0):
         """Do some simple MC"""
 
@@ -185,13 +159,17 @@ class MC(RNAFolder):
 
                 if random_chance <= onethird:
                     ## Attempt addition of stem pair
-                    self._add_pair()
+                    stems = self._add_pair()
                 elif onethird < random_chance <= twothird:
                     ## Attempt removal of stem pair
-                    self._del_pair()
+                    stems = self._del_pair()
                 else:
                     ## Attempt swap of stem pair from population
-                    self._swap_pair()
+                    stems = self._swap_pair()
+
+                if stems != self.stem_idx:
+                    self._update_stems(stems)
 
             # self.best_score is returned to optimizer
             self.best_score = self.score
+        self.stems_used = [self.stems[s] for s in self.stem_idx]

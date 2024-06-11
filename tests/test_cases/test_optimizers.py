@@ -90,6 +90,7 @@ def test_GA(caplog):
     )
     assert log_entry in caplog.record_tuples
 
+
 def test_GA_MCSolver(caplog):
     """
     Test Genetic Algorithm Optimizer runs correctly

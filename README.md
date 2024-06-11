@@ -48,15 +48,33 @@ Most options for ```design.py``` are read from the database. The input database 
 
 ### Analyzing Optimizations
 
-The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.). Custom python scripts can be written to analyze an optimization process since all of the information is stored in a standard SQLite database format. However, QuVax includes some analysis modules in ```analyze.py```. Example execution of ```analyze.py```:
+The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.). Custom python or SQL scripts can be written to analyze an optimization process since all of the information is stored in a standard SQLite database format. However, QuVax includes some analysis modules in ```analyze.py```. Example execution of ```analyze.py```:
 
 ```
-$ python analyze.py -i quvax.db -at trajectory
+$ python analyze.py -i quvax.db -at fe_trajectory
 ```
 
 For analysis options: ```$ python analyze.py -h```
 
-Testing:
+### Folding Individual Codon Sequences
+
+If you have a codon sequence in mind for folding optimization alone, you can use ```fold.py``` to do this.
+
+```python fold.py -i GGGAAACUGGAAGGCGGGGCGAGCUGCAGCCCCAGUGAAUCAAAUGCAGC```
+
+Currently, the simulated annealer (```-s SA```) and the Monte Carlo (```-s MC```) are available for RNA folding and both can be used here. The output is a dot-bracket file (default: quvax.dot) which has the following format
+
+```
+\> Folded energy: -81.0
+GGGAAACUGGAAGGCGGGGCGAGCUGCAGCCCCAGUGAAUCAAAUGCAGC
+.....(((((............[[[[[[...)))))........]]]]]]
+```
+
+Where the final line is the folded secondary structure in dot-bracket notation. For more folding options: ```$ python fold.py -h```
+
+## Testing
+
+To run tests:
 
 ```$ coverage run -m pytest``` or ```$ pytest```
 
@@ -64,7 +82,7 @@ Test python files are in ```tests/test_cases```. For running a specific set of t
 
 ```pytest -k "test file name without .py"```
 
-### List of Dependencies in requirements.md
+## List of Dependencies in requirements.md
 
 ```
 argparse==1.4.0
