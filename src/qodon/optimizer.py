@@ -178,7 +178,6 @@ class CodonOptimizer(ABC):
 
         """
         self.folder._fold(nseq)
-        return self.folder.best_score, self.folder.dot_bracket
 
     def _write_output(self, sequences, energies, secondary_structure):
         if self.config.args.resume:
@@ -243,9 +242,9 @@ class CodonOptimizer(ABC):
         self.energies = []
         self.sec_structs = []
         for s in self.list_seqs:
-            energy, sec_struct = self._fold_rna(s)
-            self.energies.append(energy)
-            self.sec_structs.append(sec_struct)
+            self._fold_rna(s)
+            self.energies.append(self.folder.best_score)
+            self.sec_structs.append(self.folder.dot_bracket)
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
 
