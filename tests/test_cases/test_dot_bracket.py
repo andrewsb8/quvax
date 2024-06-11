@@ -2,6 +2,21 @@ import pytest
 from tests.conftest import MockFolder
 
 
+def test_no_stem_dot_bracket():
+    """
+    Test that the dot bracket function will produce a list of dots if no stems
+    are provided
+
+    """
+    sequence = "AUAGCUCAGUGGUAGAGCA"
+    ref_sec_struct = "..................."
+
+    stem = []
+    folder = MockFolder(None)
+    folder._stems_to_dot_bracket(len(sequence), stem)
+    assert ref_sec_struct == folder.dot_bracket
+
+
 def test_hairpin_dot_bracket():
     """
     Test that correct dot-bracket secondary structure works
