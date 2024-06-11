@@ -38,27 +38,30 @@ class MetropolisOptimizer(CodonOptimizer):
         #beta = 1/kT
         beta = 1
         energies = self.energies
+        sec_structs = self.sec_structs
 
         for i in range(self.config.args.codon_iterations):
             for j, sequence in enumerate(members):
                 #first propose a change in codon with our perturb function
                 proposed_members = self._perturb_dna(sequence, num_changes)
-                proposed_E = self._fold_rna(self._convert_ints_to_codons(proposed_members))
+                self._fold_rna(self._convert_ints_to_codons(proposed_members))
                 #If the new energy is lower than the old energy, we will accept the proposed sequence.
-                if proposed_E <= energies[j]:
+                if self.folder.best_score <= energies[j]:
                     members[j] = proposed_members
-                    energies[j] = proposed_E
+                    energies[j] = self.folder.best_score
+                    sec_structs[j] = self.folder.dot_bracket
                     accepted += 1
                 #Otherwise, we need to generate a probability
-                elif math.e**(-beta*(proposed_E - energies[j])) >= random.uniform(0.0, 1.0):
+                elif math.e**(-beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
                     members[j] = proposed_members
-                    energies[j] = proposed_E
+                    energies[j] = self.folder.best_score
+                    sec_structs[j] = self.folder.dot_bracket
                     accepted += 1
                 #Rejects the change if not, no reassignment necessary
                 else:
                     rejected += 1
             self._update_codon_step()
-            self._iterate(members, energies) #pass energies to _iterate to avoid refolding
+            self._iterate(members, energies, sec_structs) #pass energies and ss to _iterate to avoid refolding
         self.config.log.info("Amount accepted: " + str(accepted))
         self.config.log.info("Amount rejected: " + str(rejected))
 
