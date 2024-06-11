@@ -18,6 +18,9 @@ if __name__ == "__main__":
         config.log.error(
             "Please select a valid folder. See python fold.py -h for details."
         )
+        raise NotImplementedError(
+            "Please select a valid folder. See python fold.py -h for details."
+        )
 
     fold._fold(fold.config.seq)
     fold.config.log.info(

@@ -18,6 +18,7 @@ def test_hairpin_dot_bracket():
     folder._stems_to_dot_bracket(len(sequence), stem)
     assert ref_sec_struct == folder.dot_bracket
 
+
 def test_pseudoknot_dot_bracket():
     """
     Test that correct dot-bracket secondary structure works with pseudoknots

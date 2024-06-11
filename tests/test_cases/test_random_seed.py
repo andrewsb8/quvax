@@ -107,7 +107,7 @@ def test_TfDiffEv_NewSeed():
     assert opt.list_seqs == opt2.list_seqs
 
 
-#fails sometimes
+# fails sometimes
 @pytest.mark.skip
 def test_TfDiffEv_OneIteration():
     """

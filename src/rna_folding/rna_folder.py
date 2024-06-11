@@ -198,9 +198,9 @@ class RNAFolder(ABC):
                 dot_bracket[stem_pair_list[i][0] - 1] = "("
                 dot_bracket[stem_pair_list[i][1] - 1] = ")"
 
-        #check for pseudoknots. pseudoknot cannot be detected if there is only one stem
+        # check for pseudoknots. pseudoknot cannot be detected if there is only one stem
         for i in range(len(stems)):
-            for j in range(i+1, len(stems)):
+            for j in range(i + 1, len(stems)):
                 if self._is_pseudo(stems[i], stems[j]):
                     stem_pair_list = self._stem_to_pair_list(stems[j])
                     for k in range(len(stem_pair_list)):
