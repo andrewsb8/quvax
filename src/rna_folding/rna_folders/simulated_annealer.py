@@ -1,4 +1,5 @@
 from src.rna_folding.rna_folder import RNAFolder
+from dwave.samplers import SimulatedAnnealingSampler
 
 
 class SimulatedAnnealer(RNAFolder):
@@ -22,6 +23,7 @@ class SimulatedAnnealer(RNAFolder):
 
     def __init__(self, config):
         super().__init__(config)
+        self.sampler = SimulatedAnnealingSampler()
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
@@ -32,15 +34,10 @@ class SimulatedAnnealer(RNAFolder):
             self._stems_to_dot_bracket(self.n, [])
 
     def _compute_dwave_sa(self):
-        import neal
-
-        sampler = neal.SimulatedAnnealingSampler()
         h2 = {(k, k): v for k, v in self.h.items()}
         Q = self.J
         Q.update(h2)
-        if self.len_stem_list > 100:
-            self.config.args.rna_iterations = self.config.args.rna_iterations * 2
-        sampleset = sampler.sample_qubo(
+        sampleset = self.sampler.sample_qubo(
             Q, num_reads=10, num_sweeps=self.config.args.rna_iterations
         )
         self.stems_used = [
