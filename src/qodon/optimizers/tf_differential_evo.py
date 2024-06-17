@@ -58,7 +58,6 @@ class TfDiffEv(CodonOptimizer):
 
         # Map continuous valued tensor to integers associated with RNA sequence
         n_seqs = self._convert_to_ints(members)
-        self._update_codon_step()
         self._iterate(n_seqs)
 
         # Return TF object

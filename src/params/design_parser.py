@@ -188,6 +188,13 @@ class DesignParser(object):
             help="Optional input to include target codon sequence",
         )
         self.parser.add_argument(
+            "-ci",
+            "--checkpoint_interval",
+            default=10,
+            type=int,
+            help="Frequency at which optimization details are updated: random state, min free energy, and generations sampled",
+        )
+        self.parser.add_argument(
             "--resume",
             action="store_true",
             help=argparse.SUPPRESS,
@@ -315,6 +322,24 @@ class DesignParser(object):
             """
             )
 
+        if self.args.checkpoint_interval < 1:
+            raise ValueError(
+                """
+            --checkpoint_interval must be at least 1!
+
+            """
+            )
+
+        if self.args.checkpoint_interval > self.args.codon_iterations:
+            self.log.warning(
+                """
+            Checkpoint interval is larger than the number of optimization steps!
+            If you are running many steps, you might want to lower the
+            checkpoint interval.
+
+            """
+            )
+
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
         self.log.info("Protein Sequence : " + self.seq)
@@ -329,11 +354,11 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         # This will fail if a db already exists in this directory
         self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100));"
+            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT);"
         )
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             (
                 self.args.input,
                 self.seq,
@@ -350,6 +375,7 @@ class DesignParser(object):
                 self.args.coeff_max_bond,
                 self.args.coeff_stem_len,
                 self.args.state_file,
+                self.args.checkpoint_interval,
             ),
         )
         self.db_cursor.execute(
@@ -387,6 +413,13 @@ class DesignParser(object):
             required=True,
             type=str,
             help="Input fasta-format protein sequence (or SQLite database with --resume)",
+        )
+        self.parser.add_argument(
+            "-e",
+            "--extend",
+            default=0,
+            type=int,
+            help="Option to extend optimization by integer number of steps",
         )
         self.parser.add_argument(
             "-l",
@@ -447,6 +480,22 @@ class DesignParser(object):
         self.args.coeff_stem_len = data[0][16]
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
+        self.args.checkpoint_interval = data[0][19]
+
+        #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
+        self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
+        #if original number of steps have been completed, and user extends the optimization
+        if self.args.codon_iterations == 0 and self.args.extend != 0:
+            self.log.info("Extending optimization by " + str(self.args.extend) + " steps")
+            self.args.codon_iterations += self.args.extend
+            self.db_cursor.execute(
+                "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
+                (self.args.codon_iterations + self.generations_sampled, self.seq),
+            )
+            self.db.commit()
+        elif self.args.codon_iterations == 0 and self.args.extend == 0:
+            raise ValueError("Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details.")
+
 
         # collect final generation of sequences
         self.db_cursor.execute(
