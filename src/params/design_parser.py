@@ -483,7 +483,6 @@ class DesignParser(object):
         self.args.checkpoint_interval = data[0][19]
 
         #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
-        #+1 accounts for original randomly generated sequences
         self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
         #if original number of steps have been completed, and user extends the optimization
         if self.args.codon_iterations == 0 and self.args.extend != 0:
