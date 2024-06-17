@@ -58,18 +58,19 @@ class CodonOptimizer(ABC):
     def _update_codon_step(self):
         self.codon_optimize_step += 1
         if self.config.args.resume:
-            step = self.codon_optimize_step + self.config.generations_sampled
-            total = self.config.args.codon_iterations + self.config.generations_sampled
+            step = self.codon_optimize_step + self.config.generations_sampled - 1
+            total = self.config.args.codon_iterations + self.config.generations_sampled - 1
         else:
             step = self.codon_optimize_step
             total = self.config.args.codon_iterations
-        sys.stderr.write(
-            "Codon optimization step ("
-            + str(step)
-            + ") of total steps ("
-            + str(total)
-            + ")\r"
-        )
+        if self.codon_optimize_step <= self.config.args.codon_iterations:
+            sys.stderr.write(
+                "Codon optimization step ("
+                + str(step)
+                + ") of total steps ("
+                + str(total)
+                + ")\r"
+            )
         if self.codon_optimize_step == self.config.args.codon_iterations:
             sys.stderr.write("\n")
             self.config.log.info(
@@ -249,10 +250,7 @@ class CodonOptimizer(ABC):
             self.sec_structs.append(self.folder.dot_bracket)
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
-        if (
-            self.codon_optimize_step % self.config.args.checkpoint_interval == 0
-            and self.codon_optimize_step != self.config.args.codon_iterations
-        ):
+        if self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
             self.config.log.info("Writing checkpoint:")
             self._post_process()
             self.config.log.info("")
