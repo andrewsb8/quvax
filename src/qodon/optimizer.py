@@ -238,6 +238,8 @@ class CodonOptimizer(ABC):
         to the database, and updates the min free energy.
 
         """
+
+        self._update_codon_step()
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
         self.energies = []
         self.sec_structs = []

@@ -34,7 +34,6 @@ class GeneticAlgorithm(CodonOptimizer):
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
             members = self._procreate(members)
-            self._update_codon_step()
             self._iterate(members)
 
     def _procreate(self, eligible_members):
