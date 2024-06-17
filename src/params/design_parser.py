@@ -491,7 +491,7 @@ class DesignParser(object):
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
                 "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
-                (self.args.codon_iterations + self.generations_sampled, self.seq),
+                (self.args.codon_iterations + self.generations_sampled - 1, self.seq),
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
