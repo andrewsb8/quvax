@@ -55,22 +55,22 @@ class CodonOptimizer(ABC):
     def _optimize(self):
         pass
 
-    def _update_codon_step(self):
-        self.codon_optimize_step += 1
+    def _update_codon_step(self, update_counter=True):
+        if update_counter:
+            self.codon_optimize_step += 1
         if self.config.args.resume:
-            step = self.codon_optimize_step + self.config.generations_sampled - 1
-            total = self.config.args.codon_iterations + self.config.generations_sampled - 1
+            step = self.codon_optimize_step + self.config.generations_sampled
+            total = self.config.args.codon_iterations + self.config.generations_sampled
         else:
             step = self.codon_optimize_step
             total = self.config.args.codon_iterations
-        if self.codon_optimize_step <= self.config.args.codon_iterations:
-            sys.stderr.write(
-                "Codon optimization step ("
-                + str(step)
-                + ") of total steps ("
-                + str(total)
-                + ")\r"
-            )
+        sys.stderr.write(
+            "Codon optimization step ("
+            + str(step)
+            + ") of total steps ("
+            + str(total)
+            + ")\r"
+        )
         if self.codon_optimize_step == self.config.args.codon_iterations:
             sys.stderr.write("\n")
             self.config.log.info(
@@ -231,7 +231,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.seq)
         ]
 
-    def _iterate(self, sequences):
+    def _iterate(self, sequences, update_counter=True):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon
@@ -240,7 +240,7 @@ class CodonOptimizer(ABC):
 
         """
 
-        self._update_codon_step()
+        self._update_codon_step(update_counter)
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
         self.energies = []
         self.sec_structs = []
@@ -250,7 +250,7 @@ class CodonOptimizer(ABC):
             self.sec_structs.append(self.folder.dot_bracket)
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
-        if self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
+        if self.codon_optimize_step != 0 and self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
             self.config.log.info("Writing checkpoint:")
             self._post_process()
             self.config.log.info("")
@@ -298,14 +298,15 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step + self.config.generations_sampled
         else:
             step = self.codon_optimize_step
+        print(step)
         self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
         num = self.config.db_cursor.fetchall()[0][0]
-        # step+1 to account for initial randomly generated sequences
+        # "+ self.config.args.n_trials" to account for initial randomly generated sequences
         self.config.log.info(
             "Number of unique sequences sampled: "
             + str(num)
             + " of possible "
-            + str((step + 1) * self.config.args.n_trials)
+            + str((step * self.config.args.n_trials) + self.config.args.n_trials)
         )
 
     def _verify_dna(self, sequence):

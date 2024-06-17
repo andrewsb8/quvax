@@ -484,14 +484,14 @@ class DesignParser(object):
 
         #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         #+1 accounts for original randomly generated sequences
-        self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled + 1
+        self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
         #if original number of steps have been completed, and user extends the optimization
         if self.args.codon_iterations == 0 and self.args.extend != 0:
             self.log.info("Extending optimization by " + str(self.args.extend) + " steps")
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
                 "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
-                (self.args.codon_iterations + self.generations_sampled - 1, self.seq),
+                (self.args.codon_iterations + self.generations_sampled, self.seq),
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
