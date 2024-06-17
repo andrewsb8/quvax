@@ -251,6 +251,7 @@ class CodonOptimizer(ABC):
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
         if self.codon_optimize_step != 0 and self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
+            sys.stderr.write("\n")
             self.config.log.info("Writing checkpoint:")
             self._post_process()
             self.config.log.info("")
