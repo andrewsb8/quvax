@@ -18,6 +18,8 @@ def test_resume(caplog):
         "-i",
         "quvax.db",
         "--resume",
+        "-e",
+        "3",
     ]
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)
