@@ -191,7 +191,7 @@ class DesignParser(object):
             "-ci",
             "--checkpoint_interval",
             default=10,
-            type=str,
+            type=int,
             help="Frequency at which optimization details are updated: random state, min free energy, and generations sampled",
         )
         self.parser.add_argument(
@@ -330,6 +330,16 @@ class DesignParser(object):
             """
             )
 
+        if self.args.checkpoint_interval > self.args.codon_iterations:
+            self.log.warning(
+                """
+            Checkpoint interval is larger than the number of optimization steps!
+            If you are running many steps, you might want to lower the
+            checkpoint interval.
+
+            """
+            )
+
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
         self.log.info("Protein Sequence : " + self.seq)
@@ -405,6 +415,13 @@ class DesignParser(object):
             help="Input fasta-format protein sequence (or SQLite database with --resume)",
         )
         self.parser.add_argument(
+            "-e",
+            "--extend",
+            default=0,
+            type=int,
+            help="Option to extend optimization by integer number of steps",
+        )
+        self.parser.add_argument(
             "-l",
             "--log_file_name",
             default="quvax.log",
@@ -464,6 +481,26 @@ class DesignParser(object):
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
         self.args.checkpoint_interval = data[0][19]
+
+        # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
+        # +1 accounts for original randomly generated sequences
+        self.args.codon_iterations = (
+            self.args.codon_iterations - self.generations_sampled + 1
+        )
+        # if original number of steps have been completed, and user extends the optimization
+        if self.args.codon_iterations == 0 and self.args.extend != 0:
+            self.log.info(
+                "Extending optimization by " + str(self.args.extend) + " steps"
+            )
+            self.args.codon_iterations += self.args.extend
+            self.db_cursor.execute(
+                "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
+                (self.args.codon_iterations + self.generations_sampled, self.seq),
+            )
+        else:
+            raise ValueError(
+                "Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details."
+            )
 
         # collect final generation of sequences
         self.db_cursor.execute(

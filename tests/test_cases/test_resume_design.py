@@ -66,7 +66,7 @@ def test_resume_compare(caplog):
     opt2 = GeneticAlgorithm(config2)
 
     # resume second optimization
-    testargs3 = ["-i", "second.db", "--resume"]
+    testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
 
@@ -114,7 +114,7 @@ def test_resume_compare_MC(caplog):
     opt2 = GeneticAlgorithm(config2)
 
     # resume second optimization
-    testargs3 = ["-i", "second.db", "--resume"]
+    testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
 
