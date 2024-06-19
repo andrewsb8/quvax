@@ -17,6 +17,9 @@ class TfDiffEv(CodonOptimizer):
         # tensorflow counts initial pop as first step but others don't
         # line below makes counting consistent among all optimizers
         self.codon_optimize_step -= 1
+        #initialize tensor to store energies and list to store its indices
+        #see Scalar Updates here: https://www.tensorflow.org/api_docs/python/tf/tensor_scatter_nd_update
+        self.energies_tensor = tf.Variable([0 for i in range(self.config.args.n_trials)], dtype=np.float32)
         self._optimize()
         self._post_process()
 
@@ -61,7 +64,7 @@ class TfDiffEv(CodonOptimizer):
         self._iterate(n_seqs)
 
         # Return TF object
-        return tf.cast(self.energies, np.float32)
+        return self.energies_tensor.assign(self.energies)
 
     def _convert_to_ints(self, members) -> List:
         """
