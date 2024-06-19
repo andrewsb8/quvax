@@ -87,13 +87,13 @@ Test python files are in ```tests/test_cases```. For running a specific set of t
 ```
 argparse==1.4.0
 biopython==1.81
-black==23.12.1
 dwave-samplers==1.2.0
 pandas==2.0.3
 pytest-cov==4.1.0
 python-codon-tables==0.1.12
-tensorflow==2.13.0
-tensorflow-probability==0.21.0
+tensorflow==2.16.2
+tensorflow-probability==0.24.0
+tf_keras==2.16.0
 ```
 
 ## Known Issues
