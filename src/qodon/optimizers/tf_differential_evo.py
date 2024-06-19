@@ -1,7 +1,6 @@
 from src.qodon.optimizer import CodonOptimizer
 import numpy as np
 from typing import List
-import keras
 import tensorflow as tf
 import tensorflow_probability as tfp
 
