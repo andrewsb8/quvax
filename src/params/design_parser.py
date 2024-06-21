@@ -57,7 +57,7 @@ class DesignParser(object):
         self._load_input()
         self._validate()
         self._log_args()
-        self._create_db()
+        self._prepare_db()
 
     @classmethod
     def _resume(cls, args=None):
@@ -348,14 +348,23 @@ class DesignParser(object):
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
 
-    def _create_db(self):
+    def _prepare_db(self):
         self.log.info("Creating database " + self.args.output)
         self.db = sqlite3.connect(self.args.output)
         self.db_cursor = self.db.cursor()
-        # This will fail if a db already exists in this directory
-        self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT);"
-        )
+        try:
+            self.db_cursor.execute(
+                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT);"
+            )
+            self.db_cursor.execute(
+                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT, secondary_structure VARCHAR({len(self.seq)*3}));"
+            )
+            self.db_cursor.execute(
+                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
+            )
+            self.log.info("Created database " + self.args.output + "\n\n")
+        except:
+            self.log.info("Connected to existing database.\n\n")
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
             "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -378,19 +387,14 @@ class DesignParser(object):
                 self.args.checkpoint_interval,
             ),
         )
-        self.db_cursor.execute(
-            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT, secondary_structure VARCHAR({len(self.seq)*3}));"
-        )
-        self.db_cursor.execute(
-            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
-        )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences
         self.db_cursor.execute(
             f"SELECT sim_key FROM SIM_DETAILS WHERE protein_sequence = '{self.seq}';"
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
-        self.log.info("Created database " + self.args.output + "\n\n")
+        print(self.sim_key)
+
 
     def _parse_resume(self, args=None):
         """

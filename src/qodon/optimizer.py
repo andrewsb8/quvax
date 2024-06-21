@@ -262,7 +262,7 @@ class CodonOptimizer(ABC):
             # below is the equivalent of TRUNCATE in MySQL DB, SQLite has
             # different syntax. Clear table to avoid duplicate degenerate
             # sequences
-            self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
+            self.config.db_cursor.execute(f"DELETE FROM MFE_SEQUENCES WHERE sim_key = '{self.config.sim_key}';")
         else:
             # add one to account for initial sequences
             num = self.codon_optimize_step
@@ -345,7 +345,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            "INSERT INTO MFE_SEQUENCES (sequences, secondary_structure) SELECT sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
+            "INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
             (self.mfe,),
         )
         self.config.db.commit()
