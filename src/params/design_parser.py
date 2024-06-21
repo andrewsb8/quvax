@@ -493,11 +493,15 @@ class DesignParser(object):
         self.args.checkpoint_interval = data[0][19]
         self.args.convergence = data[0][20]
 
-        #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
-        self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
-        #if original number of steps have been completed, and user extends the optimization
+        # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
+        self.args.codon_iterations = (
+            self.args.codon_iterations - self.generations_sampled
+        )
+        # if original number of steps have been completed, and user extends the optimization
         if self.args.codon_iterations == 0 and self.args.extend != 0:
-            self.log.info("Extending optimization by " + str(self.args.extend) + " steps")
+            self.log.info(
+                "Extending optimization by " + str(self.args.extend) + " steps"
+            )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
                 "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
@@ -505,8 +509,9 @@ class DesignParser(object):
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
-            raise ValueError("Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details.")
-
+            raise ValueError(
+                "Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details."
+            )
 
         # collect final generation of sequences
         self.db_cursor.execute(

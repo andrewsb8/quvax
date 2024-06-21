@@ -87,7 +87,7 @@ class CodonOptimizer(ABC):
         for energy in energies:
             if energy < self.mfe:
                 self.mfe = energy
-                #reset convergence_counter
+                # reset convergence_counter
                 self.convergence_count = 0
                 new_min = True
         if not new_min:
@@ -95,7 +95,11 @@ class CodonOptimizer(ABC):
 
     def _check_convergence(self):
         if self.convergence_count >= self.config.args.convergence:
-            self.config.log.info("A new free minimum energy sequence has not been sampled in " + str(self.config.args.convergence) + " generations. Optimization is converged. Terminating.\n")
+            self.config.log.info(
+                "A new free minimum energy sequence has not been sampled in "
+                + str(self.config.args.convergence)
+                + " generations. Optimization is converged. Terminating.\n"
+            )
             self._post_process()
             sys.exit(1)
 
@@ -265,9 +269,15 @@ class CodonOptimizer(ABC):
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
         if self.config.args.convergence > 0:
             self._check_convergence()
-        if self.codon_optimize_step != 0 and self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
+        if (
+            self.codon_optimize_step != 0
+            and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
+            and self.codon_optimize_step != self.config.args.codon_iterations
+        ):
             sys.stderr.write("\n")
-            self.config.log.info("Writing checkpoint at step " + str(self.codon_optimize_step) + ":")
+            self.config.log.info(
+                "Writing checkpoint at step " + str(self.codon_optimize_step) + ":"
+            )
             self._post_process()
             self.config.log.info("")
 
