@@ -117,6 +117,7 @@ def test_fe_generation():
         )
     ) == True
 
+
 def test_hash_analysis():
     """
     Test that the input hash value will point at the correct optimization for analysis
