@@ -48,6 +48,8 @@ class DesignParser(object):
     state_file : str
         Output (or optional input file with --resume, see -h) to set random seed
         state
+    hash_value : int
+        Hash used to identify optimizations within a database produced by design.py
 
     """
 
