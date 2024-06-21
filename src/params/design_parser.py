@@ -19,6 +19,8 @@ class DesignParser(object):
         Input file name
     codon_iterations : int
         Iterations for codon optimizations (outer loop)
+    convergence : int
+        Terminates optimization if new free energy minimum is not found within an integer number of generations
     rna_iterations : int
         Iterations for RNA folded energy calcuations (inner loop)
     n_trials : int
@@ -206,6 +208,13 @@ class DesignParser(object):
             type=str,
             help="File to save (or load with --resume) the state of the pseudo random number generator",
         )
+        self.parser.add_argument(
+            "-cc",
+            "--convergence",
+            default=0,
+            type=int,
+            help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -354,11 +363,11 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         # This will fail if a db already exists in this directory
         self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT);"
+            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT, convergence INT);"
         )
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval, convergence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             (
                 self.args.input,
                 self.seq,
@@ -376,6 +385,7 @@ class DesignParser(object):
                 self.args.coeff_stem_len,
                 self.args.state_file,
                 self.args.checkpoint_interval,
+                self.args.convergence,
             ),
         )
         self.db_cursor.execute(
@@ -481,6 +491,7 @@ class DesignParser(object):
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
         self.args.checkpoint_interval = data[0][19]
+        self.args.convergence = data[0][20]
 
         #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
