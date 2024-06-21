@@ -299,7 +299,7 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step + self.config.generations_sampled
         else:
             step = self.codon_optimize_step
-        self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
+        self.config.db_cursor.execute(f"SELECT COUNT(DISTINCT sequences) from OUTPUTS where sim_key = {self.config.sim_key};")
         num = self.config.db_cursor.fetchall()[0][0]
         # "+ self.config.args.n_trials" to account for initial randomly generated sequences
         self.config.log.info(
@@ -330,14 +330,14 @@ class CodonOptimizer(ABC):
         # write min free energy to log and db
         self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
         self.config.db_cursor.execute(
-            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;",
-            (self.mfe, self.config.seq),
+            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE sim_key = ?;",
+            (self.mfe, self.config.sim_key),
         )
         self.config.db.commit()
 
         # get number and list of degenerate min free energy sequences
         self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};"
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe} and sim_key = {self.config.sim_key};"
         )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
