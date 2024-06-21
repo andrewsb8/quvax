@@ -352,8 +352,6 @@ class DesignParser(object):
 
     def _prepare_db(self):
         self.log.info("Creating database " + self.args.output)
-        hash_value = hash(str(datetime.datetime.now()) + self.seq)
-        self.log.info("Job Hash: " + str(hash_value))
         self.db = sqlite3.connect(self.args.output)
         self.db_cursor = self.db.cursor()
         try:
@@ -367,6 +365,8 @@ class DesignParser(object):
                 f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
             )
             self.log.info("Created database " + self.args.output + "\n\n")
+            hash_value = hash(str(datetime.datetime.now()) + self.seq)
+            self.log.info("Job Hash: " + str(hash_value))
         except:
             self.log.info("Connected to existing database.\n\n")
         # f strings do not work with INSERT statements
@@ -499,6 +499,7 @@ class DesignParser(object):
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
         self.args.checkpoint_interval = data[0][19]
+        self.args.hash_value = data[0][20]
 
         #originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = self.args.codon_iterations - self.generations_sampled
