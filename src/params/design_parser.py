@@ -393,7 +393,6 @@ class DesignParser(object):
             f"SELECT sim_key FROM SIM_DETAILS WHERE protein_sequence = '{self.seq}';"
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
-        print(self.sim_key)
 
 
     def _parse_resume(self, args=None):
