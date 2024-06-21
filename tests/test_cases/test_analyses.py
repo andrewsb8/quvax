@@ -116,3 +116,30 @@ def test_fe_generation():
             "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt",
         )
     ) == True
+
+def test_hash_analysis():
+    """
+    Test that the input hash value will point at the correct optimization for analysis
+
+    """
+    from src.analysis.analyses.fe_generation import FreeEnergyGeneration
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_analysis/quvax2.db",
+        "-at",
+        "fe_generation",
+        "-o",
+        "test_fegeneration_out.txt",
+        "-hv",
+        "7224012419568161126",
+    ]
+    config = AnalysisParser(testargs)
+    analysis = FreeEnergyGeneration(config)
+
+    assert (
+        filecmp.cmp(
+            "test_fegeneration_out.txt",
+            "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt",
+        )
+    ) == True

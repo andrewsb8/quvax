@@ -23,7 +23,7 @@ class FreeEnergyLandscape(Analysis):
         self.codon_diff_all = []
         self.energy_diff_all = []
 
-        self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS;")
+        self.config.db_cursor.execute(f"SELECT sequences, energies from OUTPUTS where sim_key = {self.config.sim_details['sim_key']};")
         data = self.config.db_cursor.fetchall()
         self.sequences = [dat[0] for dat in data]
         self.energies = [dat[1] for dat in data]
