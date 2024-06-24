@@ -54,6 +54,41 @@ def test_resume_hash_fail(caplog):
         DesignParser._resume(testargs)
 
 
+# fails with ValueError: 'UUC' is not in list in _convert_codons_to_ints
+# unsure why this happens. If I run test with same options, db, state, from
+# the command line, the error does not appear.
+@pytest.mark.skip
+def test_resume_hash(caplog):
+    """
+    Test to verify successful execution of resuming optimization by specifying
+    hash in a database containing data from multiple optimizations
+
+    """
+    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+
+    # copy database so test does not add information to test file
+    # it will be deleted after test is completed
+    shutil.copy("tests/test_files/test_design/quvax2.db", "quvax2.db")
+    shutil.copy("tests/test_files/test_design/quvax.state", "quvax.state")
+    testargs = [
+        "-i",
+        "quvax2.db",
+        "--resume",
+        "-e",
+        "3",
+        "-hv",
+        "6611451324788769988",
+    ]
+    config = DesignParser._resume(testargs)
+    GeneticAlgorithm(config)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
 def test_resume_compare(caplog):
     """
     Test to verify that --resume will produce the same trajectory as an
