@@ -481,6 +481,9 @@ class DesignParser(object):
             raise ValueError("Hash value not found in database.")
         data = self.db_cursor.fetchall()
 
+        if len(data) == 0:
+            raise ValueError("No data retrieved from database. Check your inputs.")
+
         # manually assigning inputs from database
         self.sim_key = data[0][0]
         self.seq = data[0][2]
@@ -501,7 +504,9 @@ class DesignParser(object):
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
         self.args.checkpoint_interval = data[0][19]
-        if self.args.hash_value is not None:  # only overwrite it user did not provide a value
+        if (
+            self.args.hash_value is not None
+        ):  # only overwrite it user did not provide a value
             self.args.hash_value = data[0][20]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations

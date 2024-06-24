@@ -54,10 +54,6 @@ def test_resume_hash_fail():
         DesignParser._resume(testargs)
 
 
-# fails with ValueError: 'UUC' is not in list in _convert_codons_to_ints
-# unsure why this happens. If I run test with same options, db, state, from
-# the command line, the error does not appear.
-@pytest.mark.skip
 def test_resume_hash(caplog):
     """
     Test to verify successful execution of resuming optimization by specifying
@@ -77,7 +73,7 @@ def test_resume_hash(caplog):
         "-e",
         "3",
         "-hv",
-        "6611451324788769988",
+        "-2276549442771581155",
     ]
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)
