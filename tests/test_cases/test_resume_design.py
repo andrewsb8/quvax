@@ -31,7 +31,7 @@ def test_resume(caplog):
     assert log_entry in caplog.record_tuples
 
 
-def test_resume_hash_fail(caplog):
+def test_resume_hash_fail():
     """
     Test to verify graceful failure if specifying a hash value that does not exist
 
@@ -89,7 +89,7 @@ def test_resume_hash(caplog):
     assert log_entry in caplog.record_tuples
 
 
-def test_resume_compare(caplog):
+def test_resume_compare():
     """
     Test to verify that --resume will produce the same trajectory as an
     optimization that is done with a single execution of design.py
@@ -133,7 +133,7 @@ def test_resume_compare(caplog):
     assert opt.list_seqs == opt3.list_seqs
 
 
-def test_resume_compare_MC(caplog):
+def test_resume_compare_MC():
     """
     Test to verify that --resume will produce the same trajectory as an
     optimization that is done with a single execution of design.py
