@@ -36,6 +36,10 @@ $ python design.py -i examples/spike_trim.fasta
 
 You can see command line options and their defaults in the log file or through the help option: ```$ python design.py -h```
 
+### Storing Multiple Optimizations in One Database
+
+If you were to run the above execution of ```design.py``` twice, data from both executions will be stored within the same database (default output: ```quvax.db```). Each optimization will be associated with a hash value that can be used to identify the sequence. The hash value will be used to resume optimizations and analyze optimizations.
+
 ### Continuing an Optimization
 
 An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified.
