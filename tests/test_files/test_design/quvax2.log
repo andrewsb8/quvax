@@ -1,6 +1,6 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-06-24 10:19:51.085409
-Command line: python design.py -i tests/test_files/test_sequences/spike_trim_10.fasta -n 3 -c 3 -r 1000 -co GA -ms 2 -ml 2
+Execution Time : 2024-06-21 15:12:15.211157
+Command line: python design.py -i ../quvax-data/MESQTVDDEAPAV/MESQTVDDEAPAV.fasta -co RAND -n 2 -c 5 -o quvax2.db -l quvax2.log
 
 
 Warnings and Errors:
@@ -14,20 +14,20 @@ Warnings and Errors:
 
 
 List of Parameters:
-Protein Sequence : MFVFLVLLPL
-input : tests/test_files/test_sequences/spike_trim_10.fasta
-codon_iterations : 3
-rna_iterations : 1000
-n_trials : 3
-codon_optimizer : GA
-min_stem_len : 2
-min_loop_len : 2
+Protein Sequence : MESQTVDDEAPAV
+input : ../quvax-data/MESQTVDDEAPAV/MESQTVDDEAPAV.fasta
+codon_iterations : 5
+rna_iterations : 10000
+n_trials : 2
+codon_optimizer : RAND
+min_stem_len : 3
+min_loop_len : 3
 solver : SA
 coeff_max_bond : 1
 coeff_stem_len : 10
-log_file_name : quvax.log
+log_file_name : quvax2.log
 species : h_sapiens_9606
-output : quvax.db
+output : quvax2.db
 random_seed : 1
 target : None
 checkpoint_interval : 10
@@ -36,15 +36,15 @@ state_file : quvax.state
 
 
 
-Creating database quvax.db
-Job Hash: 8169247244345843486
-Created database quvax.db
+Creating database quvax2.db
+Job Hash: 6611451324788769988
+Connected to existing database.
 
 
 Beginning codon optimization
-Number of Generations: (3) of total generations (3)
+Number of Generations: (5) of total generations (5)
 
 Number of unique sequences sampled: 12 of possible 12
-Minimum energy of codon sequences: -71.0
+Minimum energy of codon sequences: -126.0
 Number of degenerate minimum free energy sequences sampled: 1
 Finished parsing optimized sequences.

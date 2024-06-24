@@ -31,6 +31,29 @@ def test_resume(caplog):
     assert log_entry in caplog.record_tuples
 
 
+def test_resume_hash_fail(caplog):
+    """
+    Test to verify graceful failure if specifying a hash value that does not exist
+
+    """
+
+    # copy database so test does not add information to test file
+    # it will be deleted after test is completed
+    shutil.copy("tests/test_files/test_design/quvax2.db", "quvax2.db")
+    shutil.copy("tests/test_files/test_design/quvax.state", "quvax.state")
+    testargs = [
+        "-i",
+        "quvax.db",
+        "--resume",
+        "-e",
+        "3",
+        "-hv",
+        "0",
+    ]
+    with pytest.raises(ValueError):
+        DesignParser._resume(testargs)
+
+
 def test_resume_compare(caplog):
     """
     Test to verify that --resume will produce the same trajectory as an
