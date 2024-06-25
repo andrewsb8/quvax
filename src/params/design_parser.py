@@ -19,6 +19,8 @@ class DesignParser(object):
         Input file name
     codon_iterations : int
         Iterations for codon optimizations (outer loop)
+    convergence : int
+        Terminates optimization if new free energy minimum is not found within an integer number of generations
     rna_iterations : int
         Iterations for RNA folded energy calcuations (inner loop)
     n_trials : int
@@ -208,6 +210,13 @@ class DesignParser(object):
             type=str,
             help="File to save (or load with --resume) the state of the pseudo random number generator",
         )
+        self.parser.add_argument(
+            "-cc",
+            "--convergence",
+            default=0,
+            type=int,
+            help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -358,7 +367,7 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         try:
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, hash_value INT);"
+                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, convergence UNSIGNED INT, hash_value INT);"
             )
             self.db_cursor.execute(
                 f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
@@ -371,7 +380,7 @@ class DesignParser(object):
             self.log.info("Connected to existing database.\n\n")
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, convergence, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             (
                 self.args.input,
                 self.seq,
@@ -389,11 +398,12 @@ class DesignParser(object):
                 self.args.coeff_stem_len,
                 self.args.state_file,
                 self.args.checkpoint_interval,
+                self.args.convergence,
                 hash_value,
             ),
         )
         self.db.commit()
-        # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences
+        # retrieve the integer value of the key associated with the input protein sequence with associated hash value
         self.db_cursor.execute(
             f"SELECT sim_key FROM SIM_DETAILS WHERE hash_value = '{hash_value}';"
         )
@@ -478,11 +488,13 @@ class DesignParser(object):
         try:
             self.db_cursor.execute(query)
         except:
-            raise ValueError("Hash value not found in database.")
+            self.log.error("There was an error retreiving data from the database.")
+            raise ValueError("There was an error retreiving data from the database.")
         data = self.db_cursor.fetchall()
 
         if len(data) == 0:
-            raise ValueError("No data retrieved from database. Check your inputs.")
+            self.log.error("No data retrieved from database. Check your inputs or database structure.")
+            raise ValueError("No data retrieved from database. Check your inputs or database structure.")
 
         # manually assigning inputs from database
         self.sim_key = data[0][0]
@@ -503,11 +515,12 @@ class DesignParser(object):
         self.args.coeff_stem_len = data[0][16]
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
-        self.args.checkpoint_interval = data[0][19]
+        self.args.convergence = data[0][19]
+        self.args.checkpoint_interval = data[0][20]
         if (
             self.args.hash_value is not None
-        ):  # only overwrite it user did not provide a value
-            self.args.hash_value = data[0][20]
+        ):  # only overwrite if user provides a value
+            self.args.hash_value = data[0][21]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (

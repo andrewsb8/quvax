@@ -1,5 +1,5 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-06-24 10:46:11.138606
+Execution Time : 2024-06-25 12:33:23.972145
 Command line: python design.py -i ../quvax-data/MESQTVDDEAPAV/MESQTVDDEAPAV.fasta -co RAND -n 2 -c 5 -o quvax.db -l quvax.log
 
 
@@ -33,11 +33,12 @@ target : None
 checkpoint_interval : 10
 resume : False
 state_file : quvax.state
+convergence : 0
 
 
 
 Creating database quvax.db
-Job Hash: -2276549442771581155
+Job Hash: 7743367849903544142
 Connected to existing database.
 
 

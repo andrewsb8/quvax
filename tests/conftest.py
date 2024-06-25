@@ -41,7 +41,8 @@ def test_cleanup():
     yield
     files = [
         "quvax.db",
-        "quvax2.db" "quvax.state",
+        "quvax2.db",
+        "quvax.state",
         "first.db",
         "second.db",
         "quvax.log",
