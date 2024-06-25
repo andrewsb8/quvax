@@ -17,6 +17,8 @@ class AnalysisParser(object):
         Input file name
     analysis_type : str
         Specify which analysis to perform
+    hash_value : int
+        Hash used to identify optimizations within a database produced by design.py
     log_file_name : str
         String for log file for writing program outputs, warnings, and errors
     output : str
@@ -62,6 +64,13 @@ class AnalysisParser(object):
             default="fe_landscape",
             type=str,
             help="Specify type of analysis. Values: fe_landscape, fe_generation, fe_trajectory, codon_trajectory",
+        )
+        self.parser.add_argument(
+            "-hv",
+            "--hash_value",
+            default=None,
+            type=int,
+            help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
         self.parser.add_argument(
             "-l",
@@ -132,8 +141,11 @@ class AnalysisParser(object):
         # query to get sim_detail columns info
         self.db_cursor.execute(f"PRAGMA table_info(SIM_DETAILS);")
         keys = self.db_cursor.fetchall()
-        # this query is not valid if there are more than one sim_ids in the db
-        self.db_cursor.execute(f"SELECT * FROM SIM_DETAILS;")
+        if self.args.hash_value:
+            query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
+        else:
+            query = f"SELECT * FROM SIM_DETAILS;"
+        self.db_cursor.execute(query)
         sim_details = self.db_cursor.fetchall()
         self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")

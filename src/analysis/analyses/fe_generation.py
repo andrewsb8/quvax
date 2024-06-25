@@ -24,7 +24,7 @@ class FreeEnergyGeneration(Analysis):
 
         for m in range(self.config.sim_details["generation_size"]):
             self.config.db_cursor.execute(
-                f"SELECT sequences, energies from OUTPUTS WHERE population_key = {m};"
+                f"SELECT sequences, energies from OUTPUTS WHERE population_key = {m} and sim_key = {self.config.sim_details['sim_key']};"
             )
             data = self.config.db_cursor.fetchall()
             self.sequences = [dat[0] for dat in data]

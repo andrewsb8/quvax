@@ -50,6 +50,8 @@ class DesignParser(object):
     state_file : str
         Output (or optional input file with --resume, see -h) to set random seed
         state
+    hash_value : int
+        Hash used to identify optimizations within a database produced by design.py
 
     """
 
@@ -59,7 +61,7 @@ class DesignParser(object):
         self._load_input()
         self._validate()
         self._log_args()
-        self._create_db()
+        self._prepare_db()
 
     @classmethod
     def _resume(cls, args=None):
@@ -357,17 +359,28 @@ class DesignParser(object):
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
 
-    def _create_db(self):
+    def _prepare_db(self):
         self.log.info("Creating database " + self.args.output)
+        hash_value = hash(str(datetime.datetime.now()) + self.seq)
+        self.log.info("Job Hash: " + str(hash_value))
         self.db = sqlite3.connect(self.args.output)
         self.db_cursor = self.db.cursor()
-        # This will fail if a db already exists in this directory
-        self.db_cursor.execute(
-            f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR(100), protein_sequence VARCHAR({len(self.seq)}), target_sequence VARCHAR({len(self.seq)*3}), generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR(20), coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR(100), checkpoint_interval INT, convergence INT);"
-        )
+        try:
+            self.db_cursor.execute(
+                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, convergence UNSIGNED INT, hash_value INT);"
+            )
+            self.db_cursor.execute(
+                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
+            )
+            self.db_cursor.execute(
+                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR)"
+            )
+            self.log.info("Created database " + self.args.output + "\n\n")
+        except:
+            self.log.info("Connected to existing database.\n\n")
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, checkpoint_interval, convergence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, convergence, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             (
                 self.args.input,
                 self.seq,
@@ -386,21 +399,15 @@ class DesignParser(object):
                 self.args.state_file,
                 self.args.checkpoint_interval,
                 self.args.convergence,
+                hash_value,
             ),
         )
-        self.db_cursor.execute(
-            f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), energies FLOAT, secondary_structure VARCHAR({len(self.seq)*3}));"
-        )
-        self.db_cursor.execute(
-            f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR({len(self.seq)*3}))"
-        )
         self.db.commit()
-        # retrieve the integer value of the key associated with the input protein sequence, there is no check for redundant sequences
+        # retrieve the integer value of the key associated with the input protein sequence with associated hash value
         self.db_cursor.execute(
-            f"SELECT sim_key FROM SIM_DETAILS WHERE protein_sequence = '{self.seq}';"
+            f"SELECT sim_key FROM SIM_DETAILS WHERE hash_value = '{hash_value}';"
         )
         self.sim_key = self.db_cursor.fetchall()[0][0]
-        self.log.info("Created database " + self.args.output + "\n\n")
 
     def _parse_resume(self, args=None):
         """
@@ -446,6 +453,13 @@ class DesignParser(object):
             help="File to save (or load with --resume) the state of the pseudo random number generator",
         )
         self.parser.add_argument(
+            "-hv",
+            "--hash_value",
+            default=None,
+            type=int,
+            help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
+        )
+        self.parser.add_argument(
             "--resume",
             action="store_true",
             help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag and an input random state file is required for useful results",
@@ -467,9 +481,20 @@ class DesignParser(object):
         self.db = sqlite3.connect(self.args.input)
         self.db_cursor = self.db.cursor()
 
-        # Only one simulation can be stored in the database, so no chance of picking wrong row
-        self.db_cursor.execute(f"SELECT * FROM SIM_DETAILS;")
+        if self.args.hash_value is not None:
+            query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
+        else:
+            query = f"SELECT * FROM SIM_DETAILS;"
+        try:
+            self.db_cursor.execute(query)
+        except:
+            self.log.error("There was an error retreiving data from the database.")
+            raise ValueError("There was an error retreiving data from the database.")
         data = self.db_cursor.fetchall()
+
+        if len(data) == 0:
+            self.log.error("No data retrieved from database. Check your inputs or database structure.")
+            raise ValueError("No data retrieved from database. Check your inputs or database structure.")
 
         # manually assigning inputs from database
         self.sim_key = data[0][0]
@@ -490,8 +515,12 @@ class DesignParser(object):
         self.args.coeff_stem_len = data[0][16]
         self.generations_sampled = data[0][17]
         self.args.state_file = data[0][18]
-        self.args.checkpoint_interval = data[0][19]
-        self.args.convergence = data[0][20]
+        self.args.convergence = data[0][19]
+        self.args.checkpoint_interval = data[0][20]
+        if (
+            self.args.hash_value is not None
+        ):  # only overwrite if user provides a value
+            self.args.hash_value = data[0][21]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (

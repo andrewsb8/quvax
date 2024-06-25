@@ -287,7 +287,9 @@ class CodonOptimizer(ABC):
             # below is the equivalent of TRUNCATE in MySQL DB, SQLite has
             # different syntax. Clear table to avoid duplicate degenerate
             # sequences
-            self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
+            self.config.db_cursor.execute(
+                f"DELETE FROM MFE_SEQUENCES WHERE sim_key = '{self.config.sim_key}';"
+            )
         else:
             # add one to account for initial sequences
             num = self.codon_optimize_step
@@ -324,7 +326,9 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step + self.config.generations_sampled
         else:
             step = self.codon_optimize_step
-        self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(DISTINCT sequences) from OUTPUTS where sim_key = {self.config.sim_key};"
+        )
         num = self.config.db_cursor.fetchall()[0][0]
         # "+ self.config.args.n_trials" to account for initial randomly generated sequences
         self.config.log.info(
@@ -355,14 +359,14 @@ class CodonOptimizer(ABC):
         # write min free energy to log and db
         self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
         self.config.db_cursor.execute(
-            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;",
-            (self.mfe, self.config.seq),
+            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE sim_key = ?;",
+            (self.mfe, self.config.sim_key),
         )
         self.config.db.commit()
 
         # get number and list of degenerate min free energy sequences
         self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};"
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe} and sim_key = {self.config.sim_key};"
         )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
@@ -370,7 +374,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            "INSERT INTO MFE_SEQUENCES (sequences, secondary_structure) SELECT sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
+            "INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
             (self.mfe,),
         )
         self.config.db.commit()
