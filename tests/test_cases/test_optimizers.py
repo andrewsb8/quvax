@@ -1,3 +1,4 @@
+import pytest
 from src.params.design_parser import DesignParser
 
 
@@ -121,3 +122,29 @@ def test_GA_MCSolver(caplog):
         "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples
+
+
+def test_convergence(caplog):
+    """
+    Test Genetic Algorithm Optimizer runs correctly
+
+    """
+    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-n",
+        "1",
+        "-c",
+        "10",
+        "-co",
+        "RAND",
+        "-cc",
+        "1",
+    ]
+    parser = DesignParser(testargs)
+    with pytest.raises(SystemExit) as s:
+        RandomOptimizer(parser)
+    assert s.type == SystemExit
+    assert s.value.code == 1

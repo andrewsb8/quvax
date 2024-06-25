@@ -31,6 +31,7 @@ class CodonOptimizer(ABC):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.codon_optimize_step = 0
+        self.convergence_count = 0
         self.config.log.info("Beginning codon optimization")
         (
             self.codon_table,
@@ -82,9 +83,25 @@ class CodonOptimizer(ABC):
             )
 
     def _update_mfe(self, energies):
+        new_min = False
         for energy in energies:
             if energy < self.mfe:
                 self.mfe = energy
+                # reset convergence_counter
+                self.convergence_count = 0
+                new_min = True
+        if not new_min:
+            self.convergence_count += 1
+
+    def _check_convergence(self):
+        if self.convergence_count >= self.config.args.convergence:
+            self.config.log.info(
+                "A new free minimum energy sequence has not been sampled in "
+                + str(self.config.args.convergence)
+                + " generations. Optimization is converged. Terminating.\n"
+            )
+            self._post_process()
+            sys.exit(1)
 
     def _convert_to_p_list(self, a):
         """
@@ -250,9 +267,17 @@ class CodonOptimizer(ABC):
             self.sec_structs.append(self.folder.dot_bracket)
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
-        if self.codon_optimize_step != 0 and self.codon_optimize_step % self.config.args.checkpoint_interval == 0 and self.codon_optimize_step != self.config.args.codon_iterations:
+        if self.config.args.convergence > 0:
+            self._check_convergence()
+        if (
+            self.codon_optimize_step != 0
+            and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
+            and self.codon_optimize_step != self.config.args.codon_iterations
+        ):
             sys.stderr.write("\n")
-            self.config.log.info("Writing checkpoint at step " + str(self.codon_optimize_step) + ":")
+            self.config.log.info(
+                "Writing checkpoint at step " + str(self.codon_optimize_step) + ":"
+            )
             self._post_process()
             self.config.log.info("")
 
