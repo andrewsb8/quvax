@@ -6,7 +6,6 @@ import sys
 import logging
 import datetime
 from src.exceptions.exceptions import InvalidSequenceError
-import sqlite3
 
 
 class DesignParser(object):
@@ -54,6 +53,8 @@ class DesignParser(object):
         Frequency to write checkpoint
     hash_value : int
         Hash used to identify optimizations within a database produced by design.py
+    database : str
+        String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
 
     """
 
@@ -219,6 +220,13 @@ class DesignParser(object):
             type=int,
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
         )
+        self.parser.add_argument(
+            "-db",
+            "--database",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -361,11 +369,22 @@ class DesignParser(object):
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
 
+    def _connect_to_db(self, database):
+        if self.args.database == "sqlite":
+            import sqlite3
+            db = sqlite3.connect(database)
+        elif self.args.database == "postgres":
+            #try to create database, except will connect to database
+            return
+        else:
+            raise NotImplementedError("Database type (-db) " + self.args.database + " not implemented. Options: sqlite, postgres.")
+
+        return db
+
     def _prepare_db(self):
-        self.log.info("Creating database " + self.args.output)
         hash_value = hash(str(datetime.datetime.now()) + self.seq)
         self.log.info("Job Hash: " + str(hash_value))
-        self.db = sqlite3.connect(self.args.output)
+        self.db = self._connect_to_db(self.args.output)
         self.db_cursor = self.db.cursor()
         try:
             self.db_cursor.execute(
@@ -431,7 +450,7 @@ class DesignParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input fasta-format protein sequence (or SQLite database with --resume)",
+            help="Database with information to resume optimization",
         )
         self.parser.add_argument(
             "-e",
@@ -466,6 +485,13 @@ class DesignParser(object):
             action="store_true",
             help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag and an input random state file is required for useful results",
         )
+        self.parser.add_argument(
+            "-db",
+            "--database",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type to retrieve optimization from. Default: sqlite. Options: sqlite, postgres.",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -480,7 +506,8 @@ class DesignParser(object):
 
         """
         self.log.info("Loading info from database " + self.args.input)
-        self.db = sqlite3.connect(self.args.input)
+        #need to pass self in below line because function is initiated from class method, no instance of class yet
+        self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
         if self.args.hash_value is not None:
@@ -519,10 +546,6 @@ class DesignParser(object):
         self.args.state_file = data[0][18]
         self.args.convergence = data[0][19]
         self.args.checkpoint_interval = data[0][20]
-        if (
-            self.args.hash_value is not None
-        ):  # only overwrite if user provides a value
-            self.args.hash_value = data[0][21]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
@@ -544,7 +567,7 @@ class DesignParser(object):
                 "Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details."
             )
 
-        # collect final generation of sequences
+        # collect final generation of sequences from previous execution of design.py
         self.db_cursor.execute(
             f"SELECT sequences from OUTPUTS WHERE generation = {self.generations_sampled};"
         )
