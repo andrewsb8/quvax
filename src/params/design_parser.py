@@ -222,7 +222,7 @@ class DesignParser(object):
         )
         self.parser.add_argument(
             "-db",
-            "--database",
+            "--database_type",
             default="sqlite",
             type=str,
             help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
@@ -370,10 +370,10 @@ class DesignParser(object):
         self.log.info("\n\n")
 
     def _connect_to_db(self, database):
-        if self.args.database == "sqlite":
+        if self.args.database_type == "sqlite":
             import sqlite3
             db = sqlite3.connect(database)
-        elif self.args.database == "postgres":
+        elif self.args.database_type == "postgres":
             #try to create database, except will connect to database
             return
         else:
@@ -487,7 +487,7 @@ class DesignParser(object):
         )
         self.parser.add_argument(
             "-db",
-            "--database",
+            "--database_type",
             default="sqlite",
             type=str,
             help="Option to choose database type to retrieve optimization from. Default: sqlite. Options: sqlite, postgres.",
