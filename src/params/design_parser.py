@@ -582,7 +582,7 @@ class DesignParser(object):
             self.args.codon_iterations - self.generations_sampled
         )
         # if original number of steps have been completed, and user extends the optimization
-        if self.args.extend != 0:
+        if self.args.extend > 0:
             self.log.info(
                 "Extending optimization by " + str(self.args.extend) + " steps"
             )
@@ -595,10 +595,12 @@ class DesignParser(object):
             raise ValueError(
                 "Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details."
             )
+        elif self.args.extend < 0:
+            raise ValueError("Value for -e cannot be less than zero.")
 
         # collect final generation of sequences from previous execution of design.py
         self.db_cursor.execute(
-            f"SELECT sequences from OUTPUTS WHERE generation = {self.generations_sampled};"
+            f"SELECT sequences from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
         )
         sequences = self.db_cursor.fetchall()
         self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]
