@@ -555,7 +555,10 @@ class DesignParser(object):
         # manually assigning inputs from database
         self.sim_key = data[0][0]
         self.seq = data[0][2]
-        self.args.target = data[0][3]
+        if data[0][3] == "None":
+            self.args.target = None
+        else:
+            self.args.target = data[0][3]
         self.args.n_trials = data[0][4]
         self.args.codon_iterations = data[0][5]
         self.args.codon_optimizer = data[0][6]
@@ -579,7 +582,7 @@ class DesignParser(object):
             self.args.codon_iterations - self.generations_sampled
         )
         # if original number of steps have been completed, and user extends the optimization
-        if self.args.codon_iterations == 0 and self.args.extend != 0:
+        if self.args.extend != 0:
             self.log.info(
                 "Extending optimization by " + str(self.args.extend) + " steps"
             )
