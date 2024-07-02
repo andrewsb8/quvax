@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 import datetime
+import hashlib
 from src.exceptions.exceptions import InvalidSequenceError
 
 
@@ -405,11 +406,11 @@ class DesignParser(object):
     def _prepare_db(self):
         self.db = self._connect_to_db(self.args.output)
         self.db_cursor = self.db.cursor()
-        hash_value = hash(str(datetime.datetime.now()) + self.seq)
+        hash_value = hashlib.shake_256((str(datetime.datetime.now()) + self.seq).encode()).hexdigest(5)
         self.log.info("Job Hash: " + str(hash_value))
         try:
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value INT);"
+                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"
             )
             self.db_cursor.execute(
                 f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT, population_key INT, generation INT, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
@@ -422,28 +423,20 @@ class DesignParser(object):
             self.log.info("Adding data to existing tables within database.\n\n")
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, convergence, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            (
-                self.args.input,
-                self.seq,
-                self.args.target,
-                self.args.n_trials,
-                self.args.codon_iterations,
-                self.args.codon_optimizer,
-                self.args.random_seed,
-                self.args.solver,
-                self.args.rna_iterations,
-                self.args.min_stem_len,
-                self.args.min_loop_len,
-                self.args.species,
-                self.args.coeff_max_bond,
-                self.args.coeff_stem_len,
-                self.args.state_file,
-                self.args.checkpoint_interval,
-                self.args.convergence,
-                hash_value,
-            ),
-        )
+            f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
+            target_sequence, generation_size, codon_opt_iterations, optimizer,
+            random_seed, rna_solver, rna_folding_iterations, min_stem_len,
+            min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
+            convergence, checkpoint_interval, hash_value) VALUES
+            ('{self.args.input}', '{self.seq}', '{self.args.target}',
+            '{self.args.n_trials}', '{self.args.codon_iterations}',
+            '{self.args.codon_optimizer}', '{self.args.random_seed}',
+            '{self.args.solver}', '{self.args.rna_iterations}',
+            '{self.args.min_stem_len}', '{self.args.min_loop_len}',
+            '{self.args.species}', '{self.args.coeff_max_bond}',
+            '{self.args.coeff_stem_len}', '{self.args.state_file}',
+            '{self.args.checkpoint_interval}', '{self.args.convergence}',
+            '{hash_value}');""")
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
         self.db_cursor.execute(
