@@ -380,35 +380,45 @@ class DesignParser(object):
     def _connect_to_db(self, database):
         if self.args.database_type == "sqlite":
             import sqlite3
+
             db = sqlite3.connect(database)
         elif self.args.database_type == "postgres":
             import psycopg2
             from configparser import ConfigParser
-            #parse ini file
+
+            # parse ini file
             parser = ConfigParser()
             parser.read(self.args.database_ini)
             ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
-            conn = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname=postgres")
+            conn = psycopg2.connect(
+                f"user={ini_data['user']} password={ini_data['password']} dbname=postgres"
+            )
             cursor = conn.cursor()
-            #try to create database, except will rollback
+            # try to create database, except will rollback
             try:
-                conn.autocommit = True #need to create database
+                conn.autocommit = True  # need to create database
                 cursor.execute(f"CREATE DATABASE {database}")
                 conn.commit()
             except:
                 conn.rollback()
                 cursor.close()
                 self.log.info("Database exists in postgres client.")
-            #connect to database
+            # connect to database
             db = psycopg2.connect(**ini_data)
         else:
-            raise NotImplementedError("Database type (-db) " + self.args.database + " not implemented. Options: sqlite, postgres.")
+            raise NotImplementedError(
+                "Database type (-db) "
+                + self.args.database
+                + " not implemented. Options: sqlite, postgres."
+            )
         return db
 
     def _prepare_db(self):
         self.db = self._connect_to_db(self.args.output)
         self.db_cursor = self.db.cursor()
-        hash_value = hashlib.shake_256((str(datetime.datetime.now()) + self.seq).encode()).hexdigest(5)
+        hash_value = hashlib.shake_256(
+            (str(datetime.datetime.now()) + self.seq).encode()
+        ).hexdigest(5)
         self.log.info("Job Hash: " + str(hash_value))
         try:
             if self.args.database_type == "sqlite":
@@ -416,13 +426,25 @@ class DesignParser(object):
             elif self.args.database_type == "postgres":
                 primary_key_type = "SERIAL"
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key {primary_key_type} PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"
+                f"""CREATE TABLE SIM_DETAILS (sim_key {primary_key_type}
+                PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR,
+                 target_sequence VARCHAR, generation_size INT,
+                 codon_opt_iterations INT, optimizer VARCHAR(10),
+                 random_seed INT, min_free_energy FLOAT,
+                 target_min_free_energy FLOAT, rna_solver
+                 VARCHAR(20), rna_folding_iterations INT, min_stem_len
+                 INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
+                 coeff_stem_len INT, generations_sampled INT, state_file
+                 VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"""
             )
             self.db_cursor.execute(
-                f"CREATE TABLE OUTPUTS (index_key {primary_key_type} PRIMARY KEY, sim_key INT, population_key INT, generation INT, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
+                f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
+                PRIMARY KEY, sim_key INT, population_key INT, generation INT,
+                sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"""
             )
             self.db_cursor.execute(
-                f"CREATE TABLE MFE_SEQUENCES (index_key {primary_key_type} PRIMARY KEY, sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"
+                f"""CREATE TABLE MFE_SEQUENCES (index_key {primary_key_type} PRIMARY KEY,
+                sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"""
             )
             self.log.info("Created database tables in " + self.args.output + "\n\n")
         except:
@@ -442,7 +464,8 @@ class DesignParser(object):
             '{self.args.species}', '{self.args.coeff_max_bond}',
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
             '{self.args.checkpoint_interval}', '{self.args.convergence}',
-            '{hash_value}');""")
+            '{hash_value}');"""
+        )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
         self.db_cursor.execute(
@@ -533,7 +556,7 @@ class DesignParser(object):
 
         """
         self.log.info("Loading info from database " + self.args.input)
-        #need to pass self in below line because function is initiated from class method, no instance of class yet
+        # need to pass self in below line because function is initiated from class method, no instance of class yet
         self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
@@ -549,8 +572,12 @@ class DesignParser(object):
         data = self.db_cursor.fetchall()
 
         if len(data) == 0:
-            self.log.error("No data retrieved from database. Check your inputs or database structure.")
-            raise ValueError("No data retrieved from database. Check your inputs or database structure.")
+            self.log.error(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
+            raise ValueError(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
 
         # manually assigning inputs from database
         self.sim_key = data[0][0]

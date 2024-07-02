@@ -207,7 +207,8 @@ class CodonOptimizer(ABC):
                 f"""INSERT INTO OUTPUTS(sim_key, population_key, generation,
                 sequences, energies, secondary_structure) VALUES(
                 '{self.config.sim_key}', '{i}', '{step}', '{sequences[i]}',
-                '{energies[i]}', '{secondary_structure[i]}');""")
+                '{energies[i]}', '{secondary_structure[i]}');"""
+            )
             self.config.db.commit()
         return
 
@@ -288,7 +289,8 @@ class CodonOptimizer(ABC):
             # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.seq}';")
+            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.seq}';"
+        )
         self.config.db.commit()
         self._save_random_state()
         self._get_number_unique_sequences()
