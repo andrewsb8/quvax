@@ -382,12 +382,24 @@ class DesignParser(object):
             db = sqlite3.connect(database)
         elif self.args.database_type == "postgres":
             import psycopg2
-            import config
-            #parse ini file, try to create database, except will connect to database
-            return
+            from configparser import ConfigParser
+            #parse ini file
+            parser = ConfigParser()
+            parser.read(self.args.database_ini)
+            ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
+            #try to create database, except will connect to database
+            try:
+                conn = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname=postgres")
+                cursor = conn.cursor()
+                conn.autocommit = True #need to create database
+                cursor.execute(f"CREATE DATABASE {database}")
+                conn.commit()
+            except:
+                self.log.info("Database exists in postgres client.")
+            #connect to database
+            db = psycopg2.connect(**ini_data)
         else:
             raise NotImplementedError("Database type (-db) " + self.args.database + " not implemented. Options: sqlite, postgres.")
-
         return db
 
     def _prepare_db(self):
@@ -397,17 +409,17 @@ class DesignParser(object):
         self.log.info("Job Hash: " + str(hash_value))
         try:
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, convergence UNSIGNED INT, hash_value INT);"
+                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value INT);"
             )
             self.db_cursor.execute(
-                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
+                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT, population_key INT, generation INT, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
             )
             self.db_cursor.execute(
-                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR)"
+                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"
             )
-            self.log.info("Created database " + self.args.output + "\n\n")
+            self.log.info("Created database tables in " + self.args.output + "\n\n")
         except:
-            self.log.info("Connected to existing database.\n\n")
+            self.log.info("Adding data to existing tables within database.\n\n")
         # f strings do not work with INSERT statements
         self.db_cursor.execute(
             "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, convergence, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
