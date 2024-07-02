@@ -390,7 +390,7 @@ class DesignParser(object):
             ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
             conn = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname=postgres")
             cursor = conn.cursor()
-            #try to create database, except will connect to database
+            #try to create database, except will rollback
             try:
                 conn.autocommit = True #need to create database
                 cursor.execute(f"CREATE DATABASE {database}")
