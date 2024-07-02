@@ -227,6 +227,13 @@ class DesignParser(object):
             type=str,
             help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
         )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -374,7 +381,9 @@ class DesignParser(object):
             import sqlite3
             db = sqlite3.connect(database)
         elif self.args.database_type == "postgres":
-            #try to create database, except will connect to database
+            import psycopg2
+            import config
+            #parse ini file, try to create database, except will connect to database
             return
         else:
             raise NotImplementedError("Database type (-db) " + self.args.database + " not implemented. Options: sqlite, postgres.")
@@ -382,10 +391,10 @@ class DesignParser(object):
         return db
 
     def _prepare_db(self):
-        hash_value = hash(str(datetime.datetime.now()) + self.seq)
-        self.log.info("Job Hash: " + str(hash_value))
         self.db = self._connect_to_db(self.args.output)
         self.db_cursor = self.db.cursor()
+        hash_value = hash(str(datetime.datetime.now()) + self.seq)
+        self.log.info("Job Hash: " + str(hash_value))
         try:
             self.db_cursor.execute(
                 f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, convergence UNSIGNED INT, hash_value INT);"
@@ -491,6 +500,13 @@ class DesignParser(object):
             default="sqlite",
             type=str,
             help="Option to choose database type to retrieve optimization from. Default: sqlite. Options: sqlite, postgres.",
+        )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
         )
 
         if args is None:
