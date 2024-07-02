@@ -388,14 +388,16 @@ class DesignParser(object):
             parser = ConfigParser()
             parser.read(self.args.database_ini)
             ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
+            conn = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname=postgres")
+            cursor = conn.cursor()
             #try to create database, except will connect to database
             try:
-                conn = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname=postgres")
-                cursor = conn.cursor()
                 conn.autocommit = True #need to create database
                 cursor.execute(f"CREATE DATABASE {database}")
                 conn.commit()
             except:
+                conn.rollback()
+                cursor.close()
                 self.log.info("Database exists in postgres client.")
             #connect to database
             db = psycopg2.connect(**ini_data)
@@ -409,19 +411,23 @@ class DesignParser(object):
         hash_value = hashlib.shake_256((str(datetime.datetime.now()) + self.seq).encode()).hexdigest(5)
         self.log.info("Job Hash: " + str(hash_value))
         try:
+            if self.args.database_type == "sqlite":
+                primary_key_type = "INTEGER"
+            elif self.args.database_type == "postgres":
+                primary_key_type = "SERIAL"
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"
+                f"CREATE TABLE SIM_DETAILS (sim_key {primary_key_type} PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT, codon_opt_iterations INT, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations INT, min_stem_len INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled INT, state_file VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"
             )
             self.db_cursor.execute(
-                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT, population_key INT, generation INT, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
+                f"CREATE TABLE OUTPUTS (index_key {primary_key_type} PRIMARY KEY, sim_key INT, population_key INT, generation INT, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
             )
             self.db_cursor.execute(
-                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"
+                f"CREATE TABLE MFE_SEQUENCES (index_key {primary_key_type} PRIMARY KEY, sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"
             )
             self.log.info("Created database tables in " + self.args.output + "\n\n")
         except:
+            self.db.rollback()
             self.log.info("Adding data to existing tables within database.\n\n")
-        # f strings do not work with INSERT statements
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
             target_sequence, generation_size, codon_opt_iterations, optimizer,
