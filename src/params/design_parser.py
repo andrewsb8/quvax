@@ -52,7 +52,7 @@ class DesignParser(object):
         state
     checkpoint_interval : int
         Frequency to write checkpoint
-    hash_value : int
+    hash_value : str
         Hash used to identify optimizations within a database produced by design.py
     database : str
         String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
@@ -497,7 +497,7 @@ class DesignParser(object):
             "-hv",
             "--hash_value",
             default=None,
-            type=int,
+            type=str,
             help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
         self.parser.add_argument(
@@ -585,8 +585,7 @@ class DesignParser(object):
             )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
-                "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
-                (self.args.codon_iterations + self.generations_sampled, self.seq),
+                f"UPDATE SIM_DETAILS SET codon_opt_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.seq}';"
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
