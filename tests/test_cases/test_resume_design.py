@@ -18,6 +18,8 @@ def test_resume(caplog):
         "-i",
         "quvax.db",
         "--resume",
+        "-e",
+        "3",
     ]
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)
@@ -29,7 +31,61 @@ def test_resume(caplog):
     assert log_entry in caplog.record_tuples
 
 
-def test_resume_compare(caplog):
+def test_resume_hash_fail():
+    """
+    Test to verify graceful failure if specifying a hash value that does not exist
+
+    """
+
+    # copy database so test does not add information to test file
+    # it will be deleted after test is completed
+    shutil.copy("tests/test_files/test_design/quvax2.db", "quvax2.db")
+    shutil.copy("tests/test_files/test_design/quvax.state", "quvax.state")
+    testargs = [
+        "-i",
+        "quvax.db",
+        "--resume",
+        "-e",
+        "3",
+        "-hv",
+        "0",
+    ]
+    with pytest.raises(ValueError):
+        DesignParser._resume(testargs)
+
+
+def test_resume_hash(caplog):
+    """
+    Test to verify successful execution of resuming optimization by specifying
+    hash in a database containing data from multiple optimizations
+
+    """
+    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+
+    # copy database so test does not add information to test file
+    # it will be deleted after test is completed
+    shutil.copy("tests/test_files/test_design/quvax2.db", "quvax2.db")
+    shutil.copy("tests/test_files/test_design/quvax.state", "quvax.state")
+    testargs = [
+        "-i",
+        "quvax2.db",
+        "--resume",
+        "-e",
+        "3",
+        "-hv",
+        "7743367849903544142",
+    ]
+    config = DesignParser._resume(testargs)
+    GeneticAlgorithm(config)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
+def test_resume_compare():
     """
     Test to verify that --resume will produce the same trajectory as an
     optimization that is done with a single execution of design.py
@@ -66,14 +122,14 @@ def test_resume_compare(caplog):
     opt2 = GeneticAlgorithm(config2)
 
     # resume second optimization
-    testargs3 = ["-i", "second.db", "--resume"]
+    testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
 
     assert opt.list_seqs == opt3.list_seqs
 
 
-def test_resume_compare_MC(caplog):
+def test_resume_compare_MC():
     """
     Test to verify that --resume will produce the same trajectory as an
     optimization that is done with a single execution of design.py
@@ -114,7 +170,7 @@ def test_resume_compare_MC(caplog):
     opt2 = GeneticAlgorithm(config2)
 
     # resume second optimization
-    testargs3 = ["-i", "second.db", "--resume"]
+    testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
 

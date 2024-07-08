@@ -1,10 +1,10 @@
 argparse==1.4.0
 biopython==1.81
-black==23.12.1
-dwave-neal==0.6.0
-flake8==6.1.0
+dwave-samplers==1.2.0
 pandas==2.0.3
+psycopg2-binary==2.9.9
 pytest-cov==4.1.0
 python-codon-tables==0.1.12
-tensorflow==2.13.0
-tensorflow-probability==0.21.0
+tensorflow==2.16.1
+tensorflow-probability==0.24.0
+tf_keras==2.16.0

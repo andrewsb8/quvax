@@ -1,15 +1,21 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-04-18 11:50:42.005342
-Command line: python design.py -i tests/test_files/test_sequences/spike_trim_20.fasta -n 4 -c 5 -ms 2 -ml 2
+Execution Time : 2024-06-21 15:09:32.843475
+Command line: python design.py -i tests/test_files/test_sequences/spike_trim_10.fasta -n 4 -c 5 -ms 2 -ml 2
 
 
 Warnings and Errors:
 
 
+            Checkpoint interval is larger than the number of optimization steps!
+            If you are running many steps, you might want to lower the
+            checkpoint interval.
+
+            
+
 
 List of Parameters:
-Protein Sequence : MFVFLVLLPLVSSQCVNLTT
-input : tests/test_files/test_sequences/spike_trim_20.fasta
+Protein Sequence : MFVFLVLLPL
+input : tests/test_files/test_sequences/spike_trim_10.fasta
 codon_iterations : 5
 rna_iterations : 10000
 n_trials : 4
@@ -24,7 +30,9 @@ species : h_sapiens_9606
 output : quvax.db
 random_seed : 1
 target : None
+checkpoint_interval : 10
 resume : False
+state_file : quvax.state
 
 
 
@@ -32,9 +40,11 @@ Creating database quvax.db
 Created database quvax.db
 
 
+Job Hash: 7224012419568161126
 Beginning codon optimization
 Number of Generations: (5) of total generations (5)
 
-Minimum energy of codon sequences: -64.0
+Number of unique sequences sampled: 21 of possible 24
+Minimum energy of codon sequences: -71.0
 Number of degenerate minimum free energy sequences sampled: 5
 Finished parsing optimized sequences.

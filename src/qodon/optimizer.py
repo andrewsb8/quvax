@@ -31,6 +31,7 @@ class CodonOptimizer(ABC):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.codon_optimize_step = 0
+        self.convergence_count = 0
         self.config.log.info("Beginning codon optimization")
         (
             self.codon_table,
@@ -55,8 +56,9 @@ class CodonOptimizer(ABC):
     def _optimize(self):
         pass
 
-    def _update_codon_step(self):
-        self.codon_optimize_step += 1
+    def _update_codon_step(self, update_counter=True):
+        if update_counter:
+            self.codon_optimize_step += 1
         if self.config.args.resume:
             step = self.codon_optimize_step + self.config.generations_sampled
             total = self.config.args.codon_iterations + self.config.generations_sampled
@@ -81,9 +83,25 @@ class CodonOptimizer(ABC):
             )
 
     def _update_mfe(self, energies):
+        new_min = False
         for energy in energies:
             if energy < self.mfe:
                 self.mfe = energy
+                # reset convergence_counter
+                self.convergence_count = 0
+                new_min = True
+        if not new_min:
+            self.convergence_count += 1
+
+    def _check_convergence(self):
+        if self.convergence_count >= self.config.args.convergence:
+            self.config.log.info(
+                "A new free minimum energy sequence has not been sampled in "
+                + str(self.config.args.convergence)
+                + " generations. Optimization is converged. Terminating.\n"
+            )
+            self._post_process()
+            sys.exit(1)
 
     def _convert_to_p_list(self, a):
         """
@@ -186,15 +204,10 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step
         for i in range(len(energies)):
             self.config.db_cursor.execute(
-                "INSERT INTO OUTPUTS(sim_key, population_key, generation, sequences, energies, secondary_structure) VALUES(?, ?, ?, ?, ?, ?);",
-                (
-                    self.config.sim_key,
-                    i,
-                    step,
-                    sequences[i],
-                    energies[i],
-                    secondary_structure[i],
-                ),
+                f"""INSERT INTO OUTPUTS(sim_key, population_key, generation,
+                sequences, energies, secondary_structure) VALUES(
+                '{self.config.sim_key}', '{i}', '{step}', '{sequences[i]}',
+                '{energies[i]}', '{secondary_structure[i]}');"""
             )
             self.config.db.commit()
         return
@@ -230,7 +243,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.seq)
         ]
 
-    def _iterate(self, sequences, energies = None, sec_structs = None):
+    def _iterate(self, sequences, energies = None, sec_structs = None, update_counter=True):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon
@@ -238,6 +251,8 @@ class CodonOptimizer(ABC):
         to the database, and updates the min free energy.
 
         """
+
+        self._update_codon_step(update_counter)
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
         if energies is None:
             self.energies = []
@@ -251,6 +266,19 @@ class CodonOptimizer(ABC):
             self.sec_structs = sec_structs
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
+        if self.config.args.convergence > 0:
+            self._check_convergence()
+        if (
+            self.codon_optimize_step != 0
+            and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
+            and self.codon_optimize_step != self.config.args.codon_iterations
+        ):
+            sys.stderr.write("\n")
+            self.config.log.info(
+                "Writing checkpoint at step " + str(self.codon_optimize_step) + ":"
+            )
+            self._post_process()
+            self.config.log.info("")
 
     def _post_process(self):
         if self.config.args.resume:
@@ -258,13 +286,14 @@ class CodonOptimizer(ABC):
             # below is the equivalent of TRUNCATE in MySQL DB, SQLite has
             # different syntax. Clear table to avoid duplicate degenerate
             # sequences
-            self.config.db_cursor.execute("DELETE FROM MFE_SEQUENCES;")
+            self.config.db_cursor.execute(
+                f"DELETE FROM MFE_SEQUENCES WHERE sim_key = '{self.config.sim_key}';"
+            )
         else:
             # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
-            "UPDATE SIM_DETAILS SET generations_sampled = ? WHERE protein_sequence = ?;",
-            (num, self.config.seq),
+            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.seq}';"
         )
         self.config.db.commit()
         self._save_random_state()
@@ -295,14 +324,16 @@ class CodonOptimizer(ABC):
             step = self.codon_optimize_step + self.config.generations_sampled
         else:
             step = self.codon_optimize_step
-        self.config.db_cursor.execute("SELECT COUNT(DISTINCT sequences) from OUTPUTS;")
+        self.config.db_cursor.execute(
+            f"SELECT COUNT(DISTINCT sequences) from OUTPUTS where sim_key = '{self.config.sim_key}';"
+        )
         num = self.config.db_cursor.fetchall()[0][0]
-        # step+1 to account for initial randomly generated sequences
+        # "+ self.config.args.n_trials" to account for initial randomly generated sequences
         self.config.log.info(
             "Number of unique sequences sampled: "
             + str(num)
             + " of possible "
-            + str((step + 1) * self.config.args.n_trials)
+            + str((step * self.config.args.n_trials) + self.config.args.n_trials)
         )
 
     def _verify_dna(self, sequence):
@@ -326,14 +357,13 @@ class CodonOptimizer(ABC):
         # write min free energy to log and db
         self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
         self.config.db_cursor.execute(
-            "UPDATE SIM_DETAILS SET min_free_energy = ? WHERE protein_sequence = ?;",
-            (self.mfe, self.config.seq),
+            f"UPDATE SIM_DETAILS SET min_free_energy = '{self.mfe}' WHERE sim_key = '{self.config.sim_key}';"
         )
         self.config.db.commit()
 
         # get number and list of degenerate min free energy sequences
         self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe};"
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe} and sim_key = {self.config.sim_key};"
         )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
@@ -341,8 +371,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            "INSERT INTO MFE_SEQUENCES (sequences, secondary_structure) SELECT sequences, secondary_structure FROM OUTPUTS WHERE energies = ?",
-            (self.mfe,),
+            f"INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = '{self.mfe}'"
         )
         self.config.db.commit()
         self.config.log.info("Finished parsing optimized sequences.")
@@ -361,8 +390,7 @@ class CodonOptimizer(ABC):
             "Target sequence folding energy: " + str(self.target_folded_energy)
         )
         self.config.db_cursor.execute(
-            "UPDATE SIM_DETAILS SET target_min_free_energy = ? WHERE target_sequence = ?;",
-            (self.target_folded_energy, self.config.args.target),
+            f"UPDATE SIM_DETAILS SET target_min_free_energy = '{self.target_folded_energy}' WHERE target_sequence = '{self.config.args.target}';"
         )
         self.config.db.commit()
         self.config.log.info("\n")
