@@ -243,7 +243,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.seq)
         ]
 
-    def _iterate(self, sequences, energies = None, sec_structs = None, update_counter=True):
+    def _iterate(self, sequences, energies=None, sec_structs=None, update_counter=True):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon

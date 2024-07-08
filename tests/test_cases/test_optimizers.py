@@ -91,6 +91,7 @@ def test_GA(caplog):
     )
     assert log_entry in caplog.record_tuples
 
+
 def test_Metro(caplog):
     """
     Test Metropolis Algorithm Optimizer runs correctly
@@ -119,6 +120,7 @@ def test_Metro(caplog):
         "Finished parsing optimized sequences.",
     )
     assert log_entry in caplog.record_tuples
+
 
 def test_GA_MCSolver(caplog):
     """

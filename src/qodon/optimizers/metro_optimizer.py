@@ -4,6 +4,7 @@ import random
 import numpy as np
 import copy
 
+
 class MetropolisOptimizer(CodonOptimizer):
 
     """
@@ -48,9 +49,9 @@ class MetropolisOptimizer(CodonOptimizer):
             for j, sequence in enumerate(members):
                 seq_copy = copy.deepcopy(sequence)
                 seq_rejections = 0
-                #try multiple changes in case of rejections
+                # try multiple changes in case of rejections
                 while True:
-                    #if reach maximum rejects, randomly sample another sequence
+                    # if reach maximum rejects, randomly sample another sequence
                     if seq_rejections >= self.config.args.sequence_rejections:
                         rand_seq = self._generate_sequences(1)
                         self._fold_rna(self._convert_ints_to_codons(rand_seq[0]))
@@ -58,31 +59,40 @@ class MetropolisOptimizer(CodonOptimizer):
                         randomed += 1
                         rejected += seq_rejections
                         break
-                    #propose change and fold
-                    proposed_members = self._perturb_dna(seq_copy, self.config.args.num_sequence_changes)
+                    # propose change and fold
+                    proposed_members = self._perturb_dna(
+                        seq_copy, self.config.args.num_sequence_changes
+                    )
                     self._fold_rna(self._convert_ints_to_codons(proposed_members))
-                    #Accept lower energy, require sequence is not the same
-                    #which is an edge case (i.e. propose change to only amino
-                    #acids with one possible codon) that can save some cycles
-                    if proposed_members != sequence and self.folder.best_score <= energies[j]:
+                    # Accept lower energy, require sequence is not the same
+                    # which is an edge case (i.e. propose change to only amino
+                    # acids with one possible codon) that can save some cycles
+                    if (
+                        proposed_members != sequence
+                        and self.folder.best_score <= energies[j]
+                    ):
                         members[j] = proposed_members
                         energies[j] = self.folder.best_score
                         sec_structs[j] = self.folder.dot_bracket
                         accepted += 1
                         rejected += seq_rejections
                         break
-                    #Otherwise, we need to generate a probability
-                    elif proposed_members != sequence and math.e**(-self.config.args.beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
+                    # Otherwise, we need to generate a probability
+                    elif proposed_members != sequence and math.e ** (
+                        -self.config.args.beta * (self.folder.best_score - energies[j])
+                    ) >= random.uniform(0.0, 1.0):
                         members[j] = proposed_members
                         energies[j] = self.folder.best_score
                         sec_structs[j] = self.folder.dot_bracket
                         accepted += 1
                         rejected += seq_rejections
                         break
-                    #Rejects the change if not, no reassignment necessary
+                    # Rejects the change if not, no reassignment necessary
                     else:
                         seq_rejections += 1
-            self._iterate(members, energies, sec_structs) #pass energies and ss to _iterate to avoid refolding
+            self._iterate(
+                members, energies, sec_structs
+            )  # pass energies and ss to _iterate to avoid refolding
         self.config.log.info("Sequence changes accepted: " + str(accepted))
         self.config.log.info("Sequence changes rejected: " + str(rejected))
         self.config.log.info("Random sequences generated: " + str(randomed))
@@ -95,20 +105,20 @@ class MetropolisOptimizer(CodonOptimizer):
         indexes (same format as initial_sequences).
 
         """
-        #first, randomly select num_change number of indices in the sequence
-        indices = random.sample(range(0, len(self.config.seq)-1), num_changes)
+        # first, randomly select num_change number of indices in the sequence
+        indices = random.sample(range(0, len(self.config.seq) - 1), num_changes)
 
         for k in range(len(indices)):
-            #Define what amino acid is being changed
+            # Define what amino acid is being changed
             change_res = self.config.seq[indices[k]]
-            #Determine the old codon number so that we can ensure it is actually changed
+            # Determine the old codon number so that we can ensure it is actually changed
             old_codon = old_genes[indices[k]]
             new_codon = old_codon
             num_codons = len(self.code_map[change_res]["codons"])
             if num_codons <= 1:
                 return old_genes
-            #Use the code map to randomly change the codon
+            # Use the code map to randomly change the codon
             while new_codon == old_codon:
-                old_genes[indices[k]] = random.randint(0,num_codons)
+                old_genes[indices[k]] = random.randint(0, num_codons)
                 new_codon = old_genes[indices[k]]
         return old_genes
