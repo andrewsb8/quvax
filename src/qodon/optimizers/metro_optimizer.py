@@ -6,7 +6,6 @@ import copy
 
 
 class MetropolisOptimizer(CodonOptimizer):
-
     """
     Implementation of the Monte Carlo Metropolis Algorithm for a codon sequence.
     The algorithm will propose a user defined number of changes to each sequence
