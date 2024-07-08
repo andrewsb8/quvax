@@ -25,7 +25,7 @@ class GeneticAlgorithm(CodonOptimizer):
 
         """
         if not self.config.args.resume:
-            self._iterate(self.initial_sequences, False)
+            self._iterate(self.initial_sequences, update_counter=False)
             members = self.initial_sequences
         else:
             members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
