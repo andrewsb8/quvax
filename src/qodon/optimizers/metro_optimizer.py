@@ -41,8 +41,6 @@ class MetropolisOptimizer(CodonOptimizer):
         accepted = 0
         rejected = 0
         randomed = 0
-        #beta = 1/kT
-        beta = 1
         energies = self.energies
         sec_structs = self.sec_structs
 
@@ -74,7 +72,7 @@ class MetropolisOptimizer(CodonOptimizer):
                         rejected += seq_rejections
                         break
                     #Otherwise, we need to generate a probability
-                    elif proposed_members != sequence and math.e**(-beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
+                    elif proposed_members != sequence and math.e**(-self.config.args.beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
                         members[j] = proposed_members
                         energies[j] = self.folder.best_score
                         sec_structs[j] = self.folder.dot_bracket

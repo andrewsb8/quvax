@@ -242,6 +242,13 @@ class DesignParser(object):
             help="For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.",
         )
         self.parser.add_argument(
+            "-b",
+            "--beta",
+            default=1,
+            type=float,
+            help="For use with MC optimizer only. Value for 1/kT. Default: 1.",
+        )
+        self.parser.add_argument(
             "-db",
             "--database_type",
             default="sqlite",
