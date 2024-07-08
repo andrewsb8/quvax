@@ -6,10 +6,16 @@ import numpy as np
 class MetropolisOptimizer(CodonOptimizer):
 
     """
-    Implementation of the Monte Carlo Metropolis Algorithm for a codon sequence
+    Implementation of the Monte Carlo Metropolis Algorithm for a codon sequence.
+    The algorithm will propose a user defined number of changes to each sequence
+    in the population. If accepted, move to next sequence. If rejected, propose
+    new changes. If a user-defined number of rejections happen for the same
+    sequence, then a new random sequence is defined. This will prevent local
+    minimum trapping and redundant sequences in the database. The user-defined
+    convergence criterion will still allow the optimization to terminate in a
+    reasonable amount of iterations.
 
     Parameters
-
     -----------
 
     """
@@ -26,15 +32,14 @@ class MetropolisOptimizer(CodonOptimizer):
         """
 
         if not self.config.args.resume:
-            self._iterate(self.initial_sequences)
+            self._iterate(self.initial_sequences, update_counter=False)
             members = self.initial_sequences
         else:
             members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
 
         accepted = 0
         rejected = 0
-        #number of proposed changes
-        num_changes = 1
+        randomed = 0
         #beta = 1/kT
         beta = 1
         energies = self.energies
@@ -42,28 +47,43 @@ class MetropolisOptimizer(CodonOptimizer):
 
         for i in range(self.config.args.codon_iterations):
             for j, sequence in enumerate(members):
-                #first propose a change in codon with our perturb function
-                proposed_members = self._perturb_dna(sequence, num_changes)
-                self._fold_rna(self._convert_ints_to_codons(proposed_members))
-                #If the new energy is lower than the old energy, we will accept the proposed sequence.
-                if self.folder.best_score <= energies[j]:
-                    members[j] = proposed_members
-                    energies[j] = self.folder.best_score
-                    sec_structs[j] = self.folder.dot_bracket
-                    accepted += 1
-                #Otherwise, we need to generate a probability
-                elif math.e**(-beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
-                    members[j] = proposed_members
-                    energies[j] = self.folder.best_score
-                    sec_structs[j] = self.folder.dot_bracket
-                    accepted += 1
-                #Rejects the change if not, no reassignment necessary
-                else:
-                    rejected += 1
+                seq_rejections = 0
+                #try multiple changes in case of rejections
+                while True:
+                    #if reach maximum rejects, randomly sample another sequence
+                    if seq_rejections >= self.config.args.sequence_rejections:
+                        rand_seq = self._generate_sequences(1)
+                        self._fold_rna(self._convert_ints_to_codons(rand_seq[0]))
+                        energies[j] = self.folder.best_score
+                        randomed += 1
+                        break
+                    #propose change and fold
+                    proposed_members = self._perturb_dna(sequence, self.config.args.num_sequence_changes)
+                    self._fold_rna(self._convert_ints_to_codons(proposed_members))
+                    #Accept lower energy.
+                    if self.folder.best_score <= energies[j]:
+                        members[j] = proposed_members
+                        energies[j] = self.folder.best_score
+                        sec_structs[j] = self.folder.dot_bracket
+                        accepted += 1
+                        rejected += seq_rejections
+                        break
+                    #Otherwise, we need to generate a probability
+                    elif math.e**(-beta*(self.folder.best_score - energies[j])) >= random.uniform(0.0, 1.0):
+                        members[j] = proposed_members
+                        energies[j] = self.folder.best_score
+                        sec_structs[j] = self.folder.dot_bracket
+                        accepted += 1
+                        rejected += seq_rejections
+                        break
+                    #Rejects the change if not, no reassignment necessary
+                    else:
+                        seq_rejections += 1
             self._update_codon_step()
             self._iterate(members, energies, sec_structs) #pass energies and ss to _iterate to avoid refolding
-        self.config.log.info("Amount accepted: " + str(accepted))
-        self.config.log.info("Amount rejected: " + str(rejected))
+        self.config.log.info("Changes accepted: " + str(accepted))
+        self.config.log.info("Changes rejected: " + str(rejected))
+        self.config.log.info("Random sequences generated: " + str(randomed))
 
     def _perturb_dna(self, old_genes: list, num_changes):
         """

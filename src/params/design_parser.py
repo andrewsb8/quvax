@@ -54,8 +54,14 @@ class DesignParser(object):
         Frequency to write checkpoint
     hash_value : str
         Hash used to identify optimizations within a database produced by design.py
-    database : str
+    database_type : str
         String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
+    database_ini : str
+        Input file containing access information for postgres database.
+    sequence_rejections : int,
+        For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
+    num_sequence_changes : int,
+        For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
 
     """
 
@@ -219,7 +225,21 @@ class DesignParser(object):
             "--convergence",
             default=0,
             type=int,
-            help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
+            help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
+        )
+        self.parser.add_argument(
+            "-sr",
+            "--sequence_rejections",
+            default=3,
+            type=int,
+            help="For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
+        )
+        self.parser.add_argument(
+            "-nc",
+            "--num_sequence_changes",
+            default=1,
+            type=int,
+            help="For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.",
         )
         self.parser.add_argument(
             "-db",
