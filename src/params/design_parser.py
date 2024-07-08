@@ -5,8 +5,8 @@ import os
 import sys
 import logging
 import datetime
+import hashlib
 from src.exceptions.exceptions import InvalidSequenceError
-import sqlite3
 
 
 class DesignParser(object):
@@ -52,8 +52,10 @@ class DesignParser(object):
         state
     checkpoint_interval : int
         Frequency to write checkpoint
-    hash_value : int
+    hash_value : str
         Hash used to identify optimizations within a database produced by design.py
+    database : str
+        String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
 
     """
 
@@ -219,6 +221,20 @@ class DesignParser(object):
             type=int,
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
         )
+        self.parser.add_argument(
+            "-db",
+            "--database_type",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
+        )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -361,48 +377,94 @@ class DesignParser(object):
             self.log.info(k + " : " + str(iterable_args[k]))
         self.log.info("\n\n")
 
+    def _connect_to_db(self, database):
+        if self.args.database_type == "sqlite":
+            import sqlite3
+
+            db = sqlite3.connect(database)
+        elif self.args.database_type == "postgres":
+            import psycopg2
+            from configparser import ConfigParser
+
+            # parse ini file
+            parser = ConfigParser()
+            parser.read(self.args.database_ini)
+            ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
+            conn = psycopg2.connect(
+                f"user={ini_data['user']} password={ini_data['password']} dbname=postgres"
+            )
+            cursor = conn.cursor()
+            # try to create database, except will rollback
+            try:
+                conn.autocommit = True  # need to create database
+                cursor.execute(f"CREATE DATABASE {database}")
+                conn.commit()
+            except:
+                conn.rollback()
+                cursor.close()
+                self.log.info("Database exists in postgres client.")
+            # connect to database
+            db = psycopg2.connect(**ini_data)
+        else:
+            raise NotImplementedError(
+                "Database type (-db) "
+                + self.args.database
+                + " not implemented. Options: sqlite, postgres."
+            )
+        return db
+
     def _prepare_db(self):
-        self.log.info("Creating database " + self.args.output)
-        hash_value = hash(str(datetime.datetime.now()) + self.seq)
-        self.log.info("Job Hash: " + str(hash_value))
-        self.db = sqlite3.connect(self.args.output)
+        self.db = self._connect_to_db(self.args.output)
         self.db_cursor = self.db.cursor()
+        hash_value = hashlib.shake_256(
+            (str(datetime.datetime.now()) + self.seq).encode()
+        ).hexdigest(5)
+        self.log.info("Job Hash: " + str(hash_value))
         try:
+            if self.args.database_type == "sqlite":
+                primary_key_type = "INTEGER"
+            elif self.args.database_type == "postgres":
+                primary_key_type = "SERIAL"
             self.db_cursor.execute(
-                f"CREATE TABLE SIM_DETAILS (sim_key INTEGER PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR, target_sequence VARCHAR, generation_size INT UNSIGNED, codon_opt_iterations INT UNSIGNED, optimizer VARCHAR(10), random_seed INT, min_free_energy FLOAT, target_min_free_energy FLOAT, rna_solver VARCHAR(20), rna_folding_iterations UNSIGNED INT, min_stem_len UNSIGNED INT, min_loop_len UNSIGNED INT, species VARCHAR, coeff_max_bond INT, coeff_stem_len INT, generations_sampled UNSIGNED INT, state_file VARCHAR, checkpoint_interval INT, convergence UNSIGNED INT, hash_value INT);"
+                f"""CREATE TABLE SIM_DETAILS (sim_key {primary_key_type}
+                PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR,
+                 target_sequence VARCHAR, generation_size INT,
+                 codon_opt_iterations INT, optimizer VARCHAR(10),
+                 random_seed INT, min_free_energy FLOAT,
+                 target_min_free_energy FLOAT, rna_solver
+                 VARCHAR(20), rna_folding_iterations INT, min_stem_len
+                 INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
+                 coeff_stem_len INT, generations_sampled INT, state_file
+                 VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"""
             )
             self.db_cursor.execute(
-                f"CREATE TABLE OUTPUTS (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, population_key INT UNSIGNED, generation INT UNSIGNED, sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"
+                f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
+                PRIMARY KEY, sim_key INT, population_key INT, generation INT,
+                sequences VARCHAR, energies FLOAT, secondary_structure VARCHAR);"""
             )
             self.db_cursor.execute(
-                f"CREATE TABLE MFE_SEQUENCES (index_key INTEGER PRIMARY KEY, sim_key INT UNSIGNED, sequences VARCHAR({len(self.seq)*3}), secondary_structure VARCHAR)"
+                f"""CREATE TABLE MFE_SEQUENCES (index_key {primary_key_type} PRIMARY KEY,
+                sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"""
             )
-            self.log.info("Created database " + self.args.output + "\n\n")
+            self.log.info("Created database tables in " + self.args.output + "\n\n")
         except:
-            self.log.info("Connected to existing database.\n\n")
-        # f strings do not work with INSERT statements
+            self.db.rollback()
+            self.log.info("Adding data to existing tables within database.\n\n")
         self.db_cursor.execute(
-            "INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence, target_sequence, generation_size, codon_opt_iterations, optimizer, random_seed, rna_solver, rna_folding_iterations, min_stem_len, min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file, convergence, checkpoint_interval, hash_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            (
-                self.args.input,
-                self.seq,
-                self.args.target,
-                self.args.n_trials,
-                self.args.codon_iterations,
-                self.args.codon_optimizer,
-                self.args.random_seed,
-                self.args.solver,
-                self.args.rna_iterations,
-                self.args.min_stem_len,
-                self.args.min_loop_len,
-                self.args.species,
-                self.args.coeff_max_bond,
-                self.args.coeff_stem_len,
-                self.args.state_file,
-                self.args.checkpoint_interval,
-                self.args.convergence,
-                hash_value,
-            ),
+            f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
+            target_sequence, generation_size, codon_opt_iterations, optimizer,
+            random_seed, rna_solver, rna_folding_iterations, min_stem_len,
+            min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
+            convergence, checkpoint_interval, hash_value) VALUES
+            ('{self.args.input}', '{self.seq}', '{self.args.target}',
+            '{self.args.n_trials}', '{self.args.codon_iterations}',
+            '{self.args.codon_optimizer}', '{self.args.random_seed}',
+            '{self.args.solver}', '{self.args.rna_iterations}',
+            '{self.args.min_stem_len}', '{self.args.min_loop_len}',
+            '{self.args.species}', '{self.args.coeff_max_bond}',
+            '{self.args.coeff_stem_len}', '{self.args.state_file}',
+            '{self.args.checkpoint_interval}', '{self.args.convergence}',
+            '{hash_value}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
@@ -431,7 +493,7 @@ class DesignParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input fasta-format protein sequence (or SQLite database with --resume)",
+            help="Database with information to resume optimization",
         )
         self.parser.add_argument(
             "-e",
@@ -458,13 +520,27 @@ class DesignParser(object):
             "-hv",
             "--hash_value",
             default=None,
-            type=int,
+            type=str,
             help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
         self.parser.add_argument(
             "--resume",
             action="store_true",
             help="Option to resume an optimization, -i needs to be a SQLite database file when using this flag and an input random state file is required for useful results",
+        )
+        self.parser.add_argument(
+            "-db",
+            "--database_type",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type to retrieve optimization from. Default: sqlite. Options: sqlite, postgres.",
+        )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
         )
 
         if args is None:
@@ -480,7 +556,8 @@ class DesignParser(object):
 
         """
         self.log.info("Loading info from database " + self.args.input)
-        self.db = sqlite3.connect(self.args.input)
+        # need to pass self in below line because function is initiated from class method, no instance of class yet
+        self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
         if self.args.hash_value is not None:
@@ -495,13 +572,20 @@ class DesignParser(object):
         data = self.db_cursor.fetchall()
 
         if len(data) == 0:
-            self.log.error("No data retrieved from database. Check your inputs or database structure.")
-            raise ValueError("No data retrieved from database. Check your inputs or database structure.")
+            self.log.error(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
+            raise ValueError(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
 
         # manually assigning inputs from database
         self.sim_key = data[0][0]
         self.seq = data[0][2]
-        self.args.target = data[0][3]
+        if data[0][3] == "None":
+            self.args.target = None
+        else:
+            self.args.target = data[0][3]
         self.args.n_trials = data[0][4]
         self.args.codon_iterations = data[0][5]
         self.args.codon_optimizer = data[0][6]
@@ -519,34 +603,31 @@ class DesignParser(object):
         self.args.state_file = data[0][18]
         self.args.convergence = data[0][19]
         self.args.checkpoint_interval = data[0][20]
-        if (
-            self.args.hash_value is not None
-        ):  # only overwrite if user provides a value
-            self.args.hash_value = data[0][21]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
             self.args.codon_iterations - self.generations_sampled
         )
         # if original number of steps have been completed, and user extends the optimization
-        if self.args.codon_iterations == 0 and self.args.extend != 0:
+        if self.args.extend > 0:
             self.log.info(
                 "Extending optimization by " + str(self.args.extend) + " steps"
             )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
-                "UPDATE SIM_DETAILS SET codon_opt_iterations = ? WHERE protein_sequence = ?;",
-                (self.args.codon_iterations + self.generations_sampled, self.seq),
+                f"UPDATE SIM_DETAILS SET codon_opt_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.seq}';"
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
             raise ValueError(
                 "Optimization complete. Use -e to extend the optimization if desired. See python design.py --resume -h for details."
             )
+        elif self.args.extend < 0:
+            raise ValueError("Value for -e cannot be less than zero.")
 
-        # collect final generation of sequences
+        # collect final generation of sequences from previous execution of design.py
         self.db_cursor.execute(
-            f"SELECT sequences from OUTPUTS WHERE generation = {self.generations_sampled};"
+            f"SELECT sequences from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
         )
         sequences = self.db_cursor.fetchall()
         self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]

@@ -36,13 +36,26 @@ $ python design.py -i examples/spike_trim.fasta
 
 You can see command line options and their defaults in the log file or through the help option: ```$ python design.py -h```
 
+### Database options
+
+QuVax has options to integrate with SQLite and Postgres databases. SQLite is the default option and the output option (```-o```) is just the name of the file containing the database. Connecting to a Postgres database requires some more information. ```-o``` should now list the database you intend to write to in your Postgres instance. An ```.ini``` file, supplied to the ```-in``` option, is required in the following format:
+
+```
+[postgresql]
+user=(user)
+password=(password)
+database=(database name)
+```
+
+where parentheticals, ```()```, are replaced by your values. (database name) needs to be the same as the provided option for ```-o```. The user should have permissions to create databases in the Postgres instance, although you could create one through the client of your choice and connect to it via QuVax.
+
 ### Storing Multiple Optimizations in One Database
 
-If you were to run the above execution of ```design.py``` twice, data from both executions will be stored within the same database (default output: ```quvax.db```). Each optimization will be associated with a hash value that can be used to identify the sequence. The hash value will be used to resume optimizations and analyze optimizations.
+If you were to run the above execution of ```design.py``` twice, data from both executions will be stored within the same database (default output is SQLite database with name ```quvax.db```). Each optimization will be associated with a hash value that can be used to identify the sequence. The hash value will be used to resume optimizations and analyze optimizations.
 
 ### Continuing an Optimization
 
-An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```-resume``` option must be specified.
+An option to continue from the end of a previous execution of ```design.py``` is available. To do this, the input needs to be a valid SQLite database and the ```--resume``` option must be specified.
 
 ```
 $ python design.py -i quvax.db --resume
@@ -93,6 +106,7 @@ argparse==1.4.0
 biopython==1.81
 dwave-samplers==1.2.0
 pandas==2.0.3
+psycopg2-binary==2.9.9
 pytest-cov==4.1.0
 python-codon-tables==0.1.12
 tensorflow==2.16.1
