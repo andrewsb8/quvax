@@ -360,3 +360,28 @@ def test_RAND_LongerSequence():
     opt = RandomOptimizer(parser)
     opt2 = RandomOptimizer(parser)
     assert opt.list_seqs == opt2.list_seqs
+
+
+def test_METRO_DefaultSeed():
+    """
+    Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed and Tensorflow Evolution Optimizer
+
+    """
+    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-n",
+        "4",
+        "-c",
+        "10",
+        "-sd",
+        "1",
+        "-co",
+        "METRO",
+    ]
+    parser = DesignParser(testargs)
+    opt = MetropolisOptimizer(parser)
+    opt2 = MetropolisOptimizer(parser)
+    assert opt.list_seqs == opt2.list_seqs

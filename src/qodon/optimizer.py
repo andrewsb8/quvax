@@ -49,6 +49,7 @@ class CodonOptimizer(ABC):
             self._load_random_state()
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
+            self.energies = self.config.energies
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
 
@@ -243,7 +244,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.seq)
         ]
 
-    def _iterate(self, sequences, update_counter=True):
+    def _iterate(self, sequences, energies=None, sec_structs=None, update_counter=True):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon
@@ -254,12 +255,16 @@ class CodonOptimizer(ABC):
 
         self._update_codon_step(update_counter)
         self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
-        self.energies = []
-        self.sec_structs = []
-        for s in self.list_seqs:
-            self._fold_rna(s)
-            self.energies.append(self.folder.best_score)
-            self.sec_structs.append(self.folder.dot_bracket)
+        if energies is None:
+            self.energies = []
+            self.sec_structs = []
+            for s in self.list_seqs:
+                self._fold_rna(s)
+                self.energies.append(self.folder.best_score)
+                self.sec_structs.append(self.folder.dot_bracket)
+        else:
+            self.energies = energies
+            self.sec_structs = sec_structs
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
         if self.config.args.convergence > 0:

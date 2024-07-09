@@ -1,5 +1,5 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-06-25 12:30:43.739720
+Execution Time : 2024-07-09 13:08:13.582565
 Command line: python design.py -i tests/test_files/test_sequences/spike_trim_10.fasta -n 3 -c 3 -r 1000 -co GA -ms 2 -ml 2
 
 
@@ -34,12 +34,16 @@ checkpoint_interval : 10
 resume : False
 state_file : quvax.state
 convergence : 0
+sequence_rejections : 3
+num_sequence_changes : 1
+beta : 1
+database_type : sqlite
+database_ini : None
 
 
 
-Creating database quvax.db
-Job Hash: -1910710064200749974
-Created database quvax.db
+Job Hash: f44f9fbf0e
+Created database tables in quvax.db
 
 
 Beginning codon optimization

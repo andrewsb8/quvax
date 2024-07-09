@@ -54,8 +54,14 @@ class DesignParser(object):
         Frequency to write checkpoint
     hash_value : str
         Hash used to identify optimizations within a database produced by design.py
-    database : str
+    database_type : str
         String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
+    database_ini : str
+        Input file containing access information for postgres database.
+    sequence_rejections : int,
+        For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
+    num_sequence_changes : int,
+        For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
 
     """
 
@@ -123,7 +129,7 @@ class DesignParser(object):
             "--codon_optimizer",
             default="TFDE",
             type=str,
-            help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE), Random Optimizer (RAND)",
+            help="Options: Genetic Algorithm (GA), Tensorflow Differential Evolution (TFDE), Random Optimizer (RAND), Metropolis Algorithm (METRO)",
         )
         self.parser.add_argument(
             "-ms",
@@ -219,7 +225,28 @@ class DesignParser(object):
             "--convergence",
             default=0,
             type=int,
-            help="Terminates optimization if new free energy minimum is not found within an integer number of generations",
+            help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
+        )
+        self.parser.add_argument(
+            "-sr",
+            "--sequence_rejections",
+            default=3,
+            type=int,
+            help="For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
+        )
+        self.parser.add_argument(
+            "-nc",
+            "--num_sequence_changes",
+            default=1,
+            type=int,
+            help="For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.",
+        )
+        self.parser.add_argument(
+            "-b",
+            "--beta",
+            default=1,
+            type=float,
+            help="For use with MC optimizer only. Value for 1/kT. Default: 1.",
         )
         self.parser.add_argument(
             "-db",
@@ -435,7 +462,8 @@ class DesignParser(object):
                  VARCHAR(20), rna_folding_iterations INT, min_stem_len
                  INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
                  coeff_stem_len INT, generations_sampled INT, state_file
-                 VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR);"""
+                 VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
+                 sequence_rejections INT, num_sequence_changes INT, beta FLOAT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -455,7 +483,8 @@ class DesignParser(object):
             target_sequence, generation_size, codon_opt_iterations, optimizer,
             random_seed, rna_solver, rna_folding_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
-            convergence, checkpoint_interval, hash_value) VALUES
+            convergence, checkpoint_interval, hash_value, sequence_rejections,
+            num_sequence_changes, beta) VALUES
             ('{self.args.input}', '{self.seq}', '{self.args.target}',
             '{self.args.n_trials}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -464,7 +493,8 @@ class DesignParser(object):
             '{self.args.species}', '{self.args.coeff_max_bond}',
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
             '{self.args.checkpoint_interval}', '{self.args.convergence}',
-            '{hash_value}');"""
+            '{hash_value}', '{self.args.sequence_rejections}',
+            '{self.args.num_sequence_changes}', '{self.args.beta}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
@@ -603,6 +633,9 @@ class DesignParser(object):
         self.args.state_file = data[0][18]
         self.args.convergence = data[0][19]
         self.args.checkpoint_interval = data[0][20]
+        self.args.sequence_rejections = data[0][22]  # skip hash value
+        self.args.num_sequence_changes = data[0][23]
+        self.args.beta = data[0][24]
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
@@ -627,8 +660,9 @@ class DesignParser(object):
 
         # collect final generation of sequences from previous execution of design.py
         self.db_cursor.execute(
-            f"SELECT sequences from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
+            f"SELECT sequences, energies from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
         )
-        sequences = self.db_cursor.fetchall()
-        self.initial_sequences = [sequences[i][0] for i in range(len(sequences))]
+        data = self.db_cursor.fetchall()
+        self.initial_sequences = [data[i][0] for i in range(len(data))]
+        self.energies = [data[j][1] for j in range(len(data))]
         self.log.info("Loaded info from database " + self.args.input)

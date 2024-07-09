@@ -92,6 +92,36 @@ def test_GA(caplog):
     assert log_entry in caplog.record_tuples
 
 
+def test_Metro(caplog):
+    """
+    Test Metropolis Algorithm Optimizer runs correctly
+
+    """
+    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-n",
+        "4",
+        "-c",
+        "4",
+        "-ms",
+        "2",
+        "-co",
+        "METRO",
+    ]
+    parser = DesignParser(testargs)
+    parser.log.info("test_METRO")
+    MetropolisOptimizer(parser)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
 def test_GA_MCSolver(caplog):
     """
     Test Genetic Algorithm Optimizer runs correctly
