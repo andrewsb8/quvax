@@ -70,13 +70,17 @@ class MetropolisOptimizer(CodonOptimizer):
                         proposed_members != sequence
                         and self.folder.best_score <= energies[j]
                     ):
-                        self._accept_changes(proposed_members, j, members, energies, sec_structs)
+                        self._accept_changes(
+                            proposed_members, j, members, energies, sec_structs
+                        )
                         break
                     # Otherwise, we need to generate a probability
                     elif proposed_members != sequence and math.e ** (
                         -self.config.args.beta * (self.folder.best_score - energies[j])
                     ) >= random.uniform(0.0, 1.0):
-                        self._accept_changes(proposed_members, j, members, energies, sec_structs)
+                        self._accept_changes(
+                            proposed_members, j, members, energies, sec_structs
+                        )
                         break
                     # Rejects the change if not, no reassignment necessary
                     else:
