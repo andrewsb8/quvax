@@ -12,9 +12,9 @@ class MetropolisOptimizer(CodonOptimizer):
     in the population. If accepted, move to next sequence. If rejected, propose
     new changes. If a user-defined number of rejections happen for the same
     sequence, then a new random sequence is defined. This will prevent local
-    minimum trapping and redundant sequences in the database. The user-defined
-    convergence criterion will still allow the optimization to terminate in a
-    reasonable amount of iterations.
+    minimum trapping, redundant sequences in the database, and increase sampling
+    of phase space. The user-defined convergence criterion will still allow the
+    optimization to terminate in a reasonable amount of iterations.
 
     Parameters
     -----------

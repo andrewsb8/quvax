@@ -1,5 +1,5 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2024-06-25 12:33:23.972145
+Execution Time : 2024-07-09 13:09:37.702850
 Command line: python design.py -i ../quvax-data/MESQTVDDEAPAV/MESQTVDDEAPAV.fasta -co RAND -n 2 -c 5 -o quvax.db -l quvax.log
 
 
@@ -34,12 +34,16 @@ checkpoint_interval : 10
 resume : False
 state_file : quvax.state
 convergence : 0
+sequence_rejections : 3
+num_sequence_changes : 1
+beta : 1
+database_type : sqlite
+database_ini : None
 
 
 
-Creating database quvax.db
-Job Hash: 7743367849903544142
-Connected to existing database.
+Job Hash: 541c0d0454
+Adding data to existing tables within database.
 
 
 Beginning codon optimization
