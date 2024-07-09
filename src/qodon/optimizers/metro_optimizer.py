@@ -35,14 +35,16 @@ class MetropolisOptimizer(CodonOptimizer):
         if not self.config.args.resume:
             self._iterate(self.initial_sequences, update_counter=False)
             members = self.initial_sequences
+            sec_structs = self.sec_structs
         else:
             members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
+            # not loading previous secondary structure because they are not compared
+            sec_structs = ["" for i in range(self.config.args.n_trials)]
 
+        energies = self.energies
         self.accepted = 0
         self.rejected = 0
         self.randomed = 0
-        energies = self.energies
-        sec_structs = self.sec_structs
 
         for i in range(self.config.args.codon_iterations):
             for j, sequence in enumerate(members):
@@ -55,6 +57,7 @@ class MetropolisOptimizer(CodonOptimizer):
                         rand_seq = self._generate_sequences(1)
                         self._fold_rna(self._convert_ints_to_codons(rand_seq[0]))
                         energies[j] = self.folder.best_score
+                        sec_structs[j] = self.folder.dot_bracket
                         self.randomed += 1
                         self.rejected += self.seq_rejections
                         break
@@ -88,6 +91,9 @@ class MetropolisOptimizer(CodonOptimizer):
             self._iterate(
                 members, energies, sec_structs
             )  # pass energies and ss to _iterate to avoid refolding
+        self.config.log.info(
+            "MC stats are only kept track of in each individual execution of design.py and are not aggregated from previous runs if using --resume."
+        )
         self.config.log.info("Sequence changes accepted: " + str(self.accepted))
         self.config.log.info("Sequence changes rejected: " + str(self.rejected))
         self.config.log.info("Random sequences generated: " + str(self.randomed))

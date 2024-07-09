@@ -49,6 +49,7 @@ class CodonOptimizer(ABC):
             self._load_random_state()
             self.mfe = self.config.mfe
             self.initial_sequences = self.config.initial_sequences
+            self.energies = self.config.energies
             if self.config.args.target is not None:
                 self.target_folded_energy = self.config.target_folded_energy
 
