@@ -486,6 +486,11 @@ class DesignParser(object):
         except:
             self.db.rollback()
             self.log.info("Adding data to existing tables within database.\n\n")
+            self.db_cursor.execute(
+                f"SELECT sim_key FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
+            )
+            if len(self.db_cursor.fetchall()) > 0:
+                raise ValueError("Hash value already exists in database. Please specify another value.")
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
             target_sequence, generation_size, codon_opt_iterations, optimizer,
