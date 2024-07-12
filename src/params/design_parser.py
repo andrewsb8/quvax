@@ -394,10 +394,14 @@ class DesignParser(object):
             )
 
         if self.args.codon_optimizer == "GA" and self.args.n_trials < 2:
-            raise ValueError("Population size (-n) for the genetic algorithm (-co GA) must be at least 2.")
+            raise ValueError(
+                "Population size (-n) for the genetic algorithm (-co GA) must be at least 2."
+            )
 
         if self.args.codon_optimizer == "TFDE" and self.args.n_trials < 4:
-            raise ValueError("Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4.")
+            raise ValueError(
+                "Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
+            )
 
         if self.args.checkpoint_interval > self.args.codon_iterations:
             self.log.warning(
@@ -496,7 +500,9 @@ class DesignParser(object):
                 f"SELECT sim_key FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
             )
             if len(self.db_cursor.fetchall()) > 0:
-                raise ValueError("Hash value already exists in database. Please specify another value.")
+                raise ValueError(
+                    "Hash value already exists in database. Please specify another value."
+                )
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
             target_sequence, generation_size, codon_opt_iterations, optimizer,

@@ -124,7 +124,7 @@ def test_Metro(caplog):
 
 def test_GA_MCSolver(caplog):
     """
-    Test Genetic Algorithm Optimizer runs correctly
+    Test Genetic Algorithm Optimizer runs correctly with Monte Carlo RNA folding
 
     """
     from src.qodon.optimizers.classical_ga import GeneticAlgorithm
@@ -142,6 +142,39 @@ def test_GA_MCSolver(caplog):
         "GA",
         "-s",
         "MC",
+    ]
+    parser = DesignParser(testargs)
+    parser.log.info("test_GA")
+    GeneticAlgorithm(parser)
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
+def test_GA_ExactSolver(caplog):
+    """
+    Test Genetic Algorithm Optimizer runs correctly with ExactSolver for RNA
+    folding
+
+    """
+    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-n",
+        "4",
+        "-c",
+        "4",
+        "-ms",
+        "2",
+        "-co",
+        "GA",
+        "-s",
+        "ES",
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_GA")

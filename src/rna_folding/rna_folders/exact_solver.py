@@ -9,6 +9,7 @@ class ExactSolver(RNAFolder):
     Class to exactly minimize the rna folding hamiltonian for a given sequence
 
     """
+
     def __init__(self, config):
         super().__init__(config)
 
@@ -22,13 +23,17 @@ class ExactSolver(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        if 0 < self.len_stem_list < 30 or (self.len_stem_list > 30 and self.mpi_enabled):
+        if 0 < self.len_stem_list < 30 or (
+            self.len_stem_list > 30 and self.mpi_enabled
+        ):
             self._solve()
             self._stems_to_dot_bracket(self.n, self.stems_used)
         elif self.len_stem_list == 0:
             self._stems_to_dot_bracket(self.n, [])
         elif self.len_stem_list > 30 and not self.mpi_enabled:
-            self.config.log.warning(f"{self.len_stem_list} stems detected. For systems with > 30 stems, it is highly recommended to use MPI. Otherwise, folding a single RNA sequence will take at least 1.5 hours and scale very poorly for longer sequences.")
+            self.config.log.warning(
+                f"{self.len_stem_list} stems detected. For systems with > 30 stems, it is highly recommended to use MPI. Otherwise, folding a single RNA sequence will take at least 1.5 hours and scale very poorly for longer sequences."
+            )
         else:
             raise ValueError("Undefined behavior.")
 
@@ -46,6 +51,7 @@ class ExactSolver(RNAFolder):
 
         if self.mpi_enabled:
             from mpi4py import MPI
+
             self.comm = MPI.COMM_WORLD
             self.size = self.comm.Get_size()
             self.rank = self.comm.Get_rank()
@@ -120,7 +126,9 @@ class ExactSolver(RNAFolder):
         """Compute score for passed bit vector"""
 
         ## Convert integer to bit representation
-        b = np.unpackbits(np.array([num], dtype=">i8").view(np.uint8))[-self.len_stem_list :]
+        b = np.unpackbits(np.array([num], dtype=">i8").view(np.uint8))[
+            -self.len_stem_list :
+        ]
         # b = np.array(list(np.binary_repr(num).zfill(self.len_stem_list))).astype(np.int8)
         b = b.reshape(-1, b.shape[0])
         result = np.einsum("ij,ik,jk->i", b, b, self.model)

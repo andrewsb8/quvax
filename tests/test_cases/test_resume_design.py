@@ -103,6 +103,8 @@ def test_resume_compare():
         "10",
         "-o",
         "first.db",
+        "-co",
+        "GA",
     ]
     config = DesignParser(testargs)
     opt = GeneticAlgorithm(config)
@@ -117,6 +119,8 @@ def test_resume_compare():
         "5",
         "-o",
         "second.db",
+        "-co",
+        "GA",
     ]
     config2 = DesignParser(testargs2)
     opt2 = GeneticAlgorithm(config2)
@@ -149,6 +153,8 @@ def test_resume_compare_MC():
         "first.db",
         "-s",
         "MC",
+        "-co",
+        "GA",
     ]
     config = DesignParser(testargs)
     opt = GeneticAlgorithm(config)
@@ -165,6 +171,8 @@ def test_resume_compare_MC():
         "second.db",
         "-s",
         "MC",
+        "-co",
+        "GA",
     ]
     config2 = DesignParser(testargs2)
     opt2 = GeneticAlgorithm(config2)
