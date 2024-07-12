@@ -13,7 +13,7 @@ class ExactSolver(RNAFolder):
         super().__init__(config)
 
         ## MPI
-        self.mpi_enabled = True
+        self.mpi_enabled = False
         self.comm = None
         self.size: int = None
         self.rank: int = None
@@ -44,19 +44,18 @@ class ExactSolver(RNAFolder):
     def _init_mpi(self):
         """Checks to see if we're MPI enabled"""
 
-        try:
+        if self.mpi_enabled:
             from mpi4py import MPI
-        except Exception as e:
-            self.comm = None
-            self.rank = 0
-            self.size = 1
-            return
-        else:
             self.comm = MPI.COMM_WORLD
             self.size = self.comm.Get_size()
             self.rank = self.comm.Get_rank()
             print(f"MPI Status: Rank: {self.rank} Size: {self.size}")
             sys.stdout.flush()
+            return
+        else:
+            self.rank = 0
+            self.size = 1
+            return
 
     def _run_serial(self):
         """Run solver serially"""
