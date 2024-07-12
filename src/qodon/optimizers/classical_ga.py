@@ -4,7 +4,7 @@ import random
 
 class GeneticAlgorithm(CodonOptimizer):
     """
-    A basic implementation of a genetic algorithm.
+    A basic implementation of a genetic algorithm for codon optimization.
 
     Parameters
     ----------
@@ -15,9 +15,6 @@ class GeneticAlgorithm(CodonOptimizer):
         super().__init__(config)
         self._optimize()
         self._post_process()
-
-    def __repr__(self):
-        return "Classical genetic algorithm for codon optimization."
 
     def _optimize(self):
         """

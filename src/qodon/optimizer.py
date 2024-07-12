@@ -1,6 +1,4 @@
 from src.params.design_parser import DesignParser
-from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
-from src.rna_folding.rna_folders.classical_mc import MC
 from abc import ABC, abstractmethod
 import python_codon_tables as pct
 from Bio.Seq import Seq
@@ -183,9 +181,14 @@ class CodonOptimizer(ABC):
 
     def _determine_folder(self):
         if self.config.args.solver == "SA":
+            from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
             return SimulatedAnnealer(self.config)
         elif self.config.args.solver == "MC":
+            from src.rna_folding.rna_folders.classical_mc import MC
             return MC(self.config)
+        elif self.config.args.solver == "ES":
+            from src.rna_folding.rna_folders.exact_solver import ExactSolver
+            return ExactSolver(self.config)
         else:
             raise NotImplementedError(
                 "Invalid RNA folding solver. Use -h for available options."

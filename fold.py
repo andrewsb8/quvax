@@ -14,6 +14,9 @@ if __name__ == "__main__":
         from src.rna_folding.rna_folders.classical_mc import MC
 
         fold = MC(config)
+    elif config.args.solver == "ES":
+        from src.rna_folding.rna_folders.exact_solver import ExactSolver
+        fold = ExactSolver(config)
     else:
         config.log.error(
             "Please select a valid folder. See python fold.py -h for details."

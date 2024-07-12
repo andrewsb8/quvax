@@ -1,171 +1,40 @@
-#!/usr/bin/env python
-
 import numpy as np
 from random import uniform
 import itertools, time, sys
-from rna_fold import RNAFold
+from src.rna_folding.rna_folder import RNAFolder
 
 
-"""
-Compute all possible solutions to an Ising model.
+class ExactSolver(RNAFolder):
+    """
+    Class to exactly minimize the rna folding hamiltonian for a given sequence
 
-I ran this serially and got the following scaling, measured in seconds:
-
-y(n_cores) = 4.08e-06 * exp(0.7 * n_cores)
-
-Examples:
-28 qubits: 00:23:38
-30 qubits: 01:36:20
-32 qubits: 06:32:31
-
-
-MPI Scaling (ballpark based on best performing cores):
-=====================================================
-time ~ 2**N_qubits/(#cores*50000) seconds
-
-Example Run:
-===========
-mpiexec -np 16 python3 exact_solver.py MODEL ARG1 ARG2 ARG3
-mpiexec -np 16 python3 exact_solver.py MockModel N_qubits
-mpiexec -np 16 python3 exact_solver.py RNAModel seq <min_stem_len> <min_loop_len>
-
-"""
-
-
-class Model(object):
-    """Model Base Class"""
-
-    def __init__(self):
-        h: dict = None
-        J: dict = None
-
-        ## Number of qubits required for model
-        self.N_qubits: int = None
-
-        ## NP 2D matrix from h/J
-        model: numpy.ndarray = None
-
-        ## Perform class level consistency checks
-        self.check()
-
-    def check(self):
-        pass
-
-    def execute(self):
-        ## Compute H & J
-        self._compute_h_and_J()
-        self._dicts_to_np()
-
-    def _compute_h_and_J(self):
-        """Virtual method for computing h & J
-
-        This method should be replaced with the ACTUAL method
-        for computing h & J
-
-        """
-
-        self.h = None
-        self.J = None
-        self.N_qubits = 0
-
-        return self.h, self.J, self.N_qubits
-
-    def _dicts_to_np(self):
-        """Converts h/J dicts to 2D np array"""
-
-        self.model = np.zeros((self.N_qubits, self.N_qubits), dtype="float32")
-        for i in range(self.N_qubits):
-            for j in range(i, self.N_qubits):
-                if i == j:
-                    self.model[i][i] = self.h[i]
-                else:
-                    self.model[i][j] = self.J[(i, j)]
-        return self.model
-
-    def score(self, num):
-        """Compute score for passed bit vector"""
-
-        ## Convert integer to bit representation
-        b = np.unpackbits(np.array([num], dtype=">i8").view(np.uint8))[-self.N_qubits :]
-        # b = np.array(list(np.binary_repr(num).zfill(self.N_qubits))).astype(np.int8)
-        b = b.reshape(-1, b.shape[0])
-        result = np.einsum("ij,ik,jk->i", b, b, self.model)
-        return b[result.argmin()], result.min()
-
-    def result(self):
-        """Return a result"""
-        return None
-
-
-class RNAModel(Model):
-    """Derived model class to compute RNA model"""
-
-    def __init__(self, seq: str, min_stem_len: int = 3, min_loop_len: int = 3):
-        super().__init__()
-
-        ## Instantiate RNA class
-        self.rna_ss = RNAFold(
-            seq, min_stem_len=int(min_stem_len), min_loop_len=int(min_loop_len)
-        )
-
-        print(f"N Stems: {len(self.rna_ss.stems)}")
-        sys.stdout.flush()
-
-    def _compute_h_and_J(self):
-        self.h = self.rna_ss.h
-        self.J = self.rna_ss.J
-        self.N_qubits = len(self.rna_ss.stems)
-        return self.h, self.J, self.N_qubits
-
-    def result(self, bv):
-        """Return the result"""
-        return np.array(self.rna_ss.stems)[bv.astype("bool")]
-
-
-class MockModel(Model):
-    def __init__(self, N_qubits: int):
-        super().__init__()
-
-        self.N_qubits = int(N_qubits)
-
-    def _compute_h_and_J(self):
-        self.h = {i: uniform(-1, 1) for i in range(self.N_qubits)}
-        self.J = {
-            (i, j): uniform(-1, 1)
-            for i in range(self.N_qubits)
-            for j in range(i + 1, self.N_qubits)
-        }
-        return self.h, self.J, self.N_qubits
-
-    def result(self, bv):
-        """Return the result"""
-        return None
-
-
-class ExactSolver(object):
-    def __init__(self, model_name: str, model_args: list):
-        ## The model used for scoring
-        self.model: Model = None
-        self.model_name: str = model_name
-        self.model_args: list = model_args
-
-        ## Timer
-        self.t0 = None
+    """
+    def __init__(self, config):
+        super().__init__(config)
 
         ## MPI
         self.mpi_enabled = False
         self.comm = None
         self.size: int = None
         self.rank: int = None
-
-        ## Go
-        self.check()
-
-    def check(self):
         ## Check to see if we've got an MPI job
         self._init_mpi()
 
-    def execute(self):
+    def _fold(self, sequence):
+        self._fold_prep(sequence)
+        self.best_score = 1e100
+        if 0 < self.len_stem_list < 30 or (self.len_stem_list > 30 and self.mpi_enabled):
+            self._solve()
+            self._stems_to_dot_bracket(self.n, self.stems_used)
+        elif self.len_stem_list == 0:
+            self._stems_to_dot_bracket(self.n, [])
+        elif self.len_stem_list > 30 and not self.mpi_enabled:
+            self.config.log.warning(f"{self.len_stem_list} stems detected. For systems with > 30 stems, it is highly recommended to use MPI. Otherwise, folding a single RNA sequence will take at least 1.5 hours and scale very poorly for longer sequences.")
+        else:
+            raise ValueError("Undefined behavior.")
+
+    def _solve(self):
+        self._dicts_to_np()
         ## Check if serial or parallel
         if self.size > 1:
             result = self._run_mpi()
@@ -204,49 +73,31 @@ class ExactSolver(object):
     def _build_bit_vectors(self):
         self._bits = itertools.product([0, 1], repeat=self.model.N_qubits)
 
-    def _timestamp(self):
-        if self.t0 == None:
-            self.t0 = time.time()
-
-        return time.time() - self.t0
-
     def _run_serial(self):
         """Run solver serially"""
-
-        self._timestamp()
-
-        ## Initialize the model
-        self.model = globals()[self.model_name](*self.model_args)
-        self.model.execute()
 
         ## Array of integers
         gen = itertools.count(self.rank, self.size)
 
-        stop = 2**self.model.N_qubits
-        best_score = ([0], 1e100)
-        steps = 0
+        stop = 2**self.len_stem_list
         for num in gen:
             if num < stop:
-                result, score = self.model.score(num)
-                if score < best_score[1]:
-                    best_score = (result, score)
+                result, score = self._score(num)
+                if score < self.best_score:
+                    self.best_score = score
+                    stem_indices = result.tolist()
             else:
                 break
 
-        print(f"{self.model_name},{best_score},{self.size},{self._timestamp()}")
+        print(stem_indices, self.stems)
+        self.stems_used = [
+            self.stems[i] for i in range(len(stem_indices)) if stem_indices[i] == 1
+        ]
+
+        print(f"{self.len_stem_list}, {self.best_score}, {self.stems_used}")
 
     def _run_mpi(self):
         """Run solver with MPI"""
-
-        if self.rank == 0:
-            self._timestamp()
-
-            ## Initialize the model
-            self.model = globals()[self.model_name](*self.model_args)
-            self.model.execute()
-
-        else:
-            self.model = None
 
         ## Broadcast model/bits to other procs
         self.model = self.comm.bcast(self.model, root=0)
@@ -258,7 +109,7 @@ class ExactSolver(object):
         best_score = ([0], 1e100)
         for num in gen:
             if num < stop:
-                result, score = self.model.score(num)
+                result, score = self._score(num)
                 if score < best_score[1]:
                     best_score = (result, score)
             else:
@@ -290,10 +141,24 @@ class ExactSolver(object):
             )
             sys.stdout.flush()
 
+    def _dicts_to_np(self):
+        """Converts h/J dicts to 2D np array"""
 
-if __name__ == "__main__":
-    model_name = sys.argv[1]
-    model_args = sys.argv[2:]
+        self.model = np.zeros((self.len_stem_list, self.len_stem_list), dtype="float32")
+        for i in range(self.len_stem_list):
+            for j in range(i, self.len_stem_list):
+                if i == j:
+                    self.model[i][i] = self.h[i]
+                else:
+                    self.model[i][j] = self.J[(i, j)]
+        return self.model
 
-    solver = ExactSolver(model_name, model_args)
-    solver.execute()
+    def _score(self, num):
+        """Compute score for passed bit vector"""
+
+        ## Convert integer to bit representation
+        b = np.unpackbits(np.array([num], dtype=">i8").view(np.uint8))[-self.len_stem_list :]
+        # b = np.array(list(np.binary_repr(num).zfill(self.len_stem_list))).astype(np.int8)
+        b = b.reshape(-1, b.shape[0])
+        result = np.einsum("ij,ik,jk->i", b, b, self.model)
+        return b[result.argmin()], result.min()
