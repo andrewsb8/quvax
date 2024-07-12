@@ -13,7 +13,7 @@ class ExactSolver(RNAFolder):
         super().__init__(config)
 
         ## MPI
-        self.mpi_enabled = False
+        self.mpi_enabled = True
         self.comm = None
         self.size: int = None
         self.rank: int = None
@@ -22,7 +22,6 @@ class ExactSolver(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        self.best_score = 1e100
         if 0 < self.len_stem_list < 30 or (self.len_stem_list > 30 and self.mpi_enabled):
             self._solve()
             self._stems_to_dot_bracket(self.n, self.stems_used)
@@ -34,6 +33,7 @@ class ExactSolver(RNAFolder):
             raise ValueError("Undefined behavior.")
 
     def _solve(self):
+        self.best_score = 1e100
         self._dicts_to_np()
         ## Check if serial or parallel
         if self.size > 1:
@@ -50,8 +50,6 @@ class ExactSolver(RNAFolder):
             self.comm = None
             self.rank = 0
             self.size = 1
-            print("Unable to initialize MPI: {e}")
-            print(f"MPI Status: Rank: {self.rank} Size: {self.size}")
             return
         else:
             self.comm = MPI.COMM_WORLD
@@ -88,42 +86,24 @@ class ExactSolver(RNAFolder):
 
         ## Work on only the slice relevent to this rank
         gen = itertools.count(self.rank, self.size)
-        stop = 2**self.model.N_qubits
-        steps = 0
-        best_score = ([0], 1e100)
+        stop = 2**self.len_stem_list
         for num in gen:
             if num < stop:
                 result, score = self._score(num)
-                if score < best_score[1]:
-                    best_score = (result, score)
+                if score < self.best_score:
+                    best_score_ind = (score, result)
             else:
                 break
 
-            if steps % 250000 == 0:
-                print(
-                    f"Rank: {self.rank}, step: {steps}, progress: {100 * self.size * steps/stop:.2f} %,"
-                    f" time: {self._timestamp():.4f}, steps_per_second: {steps / self._timestamp():.0f},"
-                    f" time remaining: {(((stop/self.size)-steps)*self._timestamp()/(steps+1)):.4f}, best: {best_score}"
-                )
-                sys.stdout.flush()
-
-            steps += 1
-
-        ## Gather from all processes and compute final best score.
-        print(
-            f"DONE Rank: {self.rank}, step: {steps}, progress: {100 * self.size * steps/stop:.2f} %,"
-            f" time: {self._timestamp():.4f}, steps_per_second: {steps / self._timestamp():.0f},"
-            f" time remaining: {(((stop/self.size)-steps)*self._timestamp()/(steps+1)):.4f}, best: {best_score}"
-        )
-        sys.stdout.flush()
         self.comm.barrier()
         best_score_all = self.comm.gather(best_score, root=0)
         if self.rank == 0:
             best_score_all = min(best_score_all, key=lambda x: x[1])
-            print(
-                f"{self.model_name},{best_score_all},{self.model.result(best_score_all[0])},{self.size},{self._timestamp()}"
-            )
-            sys.stdout.flush()
+            self.best_score = best_score_all[0]
+            stem_indices = best_score_all[1].tolist()
+            self.stems_used = [
+                self.stems[i] for i in range(len(stem_indices)) if stem_indices[i] == 1
+            ]
 
     def _dicts_to_np(self):
         """Converts h/J dicts to 2D np array"""
