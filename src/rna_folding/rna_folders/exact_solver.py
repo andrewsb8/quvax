@@ -23,19 +23,18 @@ class ExactSolver(RNAFolder):
 
     def _fold(self, sequence):
         self._fold_prep(sequence)
-        if 0 < self.len_stem_list < 30 or (
-            self.len_stem_list > 30 and self.mpi_enabled
-        ):
+        # 60 possible stems was the highest I could go without np.einsum throwing an error
+        if 0 < self.len_stem_list < 61:
+            if self.len_stem_list > 30 and not self.mpi_enabled:
+                self.config.log.warning(
+                    f"{self.len_stem_list} possible stems detected. For systems with > 30 possible stems, it is highly recommended to use MPI (Not Currently Implemented). Otherwise, folding a single RNA sequence will take at least 1.5 hours and scale very poorly for longer sequences."
+                )
             self._solve()
             self._stems_to_dot_bracket(self.n, self.stems_used)
         elif self.len_stem_list == 0:
             self._stems_to_dot_bracket(self.n, [])
-        elif self.len_stem_list > 30 and not self.mpi_enabled:
-            self.config.log.warning(
-                f"{self.len_stem_list} stems detected. For systems with > 30 stems, it is highly recommended to use MPI. Otherwise, folding a single RNA sequence will take at least 1.5 hours and scale very poorly for longer sequences."
-            )
         else:
-            raise ValueError("Undefined behavior.")
+            raise ValueError(f"Too many possible stem combinations ({self.len_stem_list}). Use simulated annealing (-s SA) or monte carlo (-s MC) folding.")
 
     def _solve(self):
         self.best_score = 1e100
