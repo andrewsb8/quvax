@@ -60,19 +60,6 @@ class ExactSolver(RNAFolder):
             print(f"MPI Status: Rank: {self.rank} Size: {self.size}")
             sys.stdout.flush()
 
-    def _grouper_it(self):
-        it = iter(self._bits)
-        while True:
-            chunk_it = itertools.islice(it, self.rank, None, self.size)
-            try:
-                first_el = next(chunk_it)
-            except StopIteration:
-                return
-            yield [_ for _ in itertools.chain((first_el,), chunk_it)]
-
-    def _build_bit_vectors(self):
-        self._bits = itertools.product([0, 1], repeat=self.model.N_qubits)
-
     def _run_serial(self):
         """Run solver serially"""
 
@@ -89,12 +76,9 @@ class ExactSolver(RNAFolder):
             else:
                 break
 
-        print(stem_indices, self.stems)
         self.stems_used = [
             self.stems[i] for i in range(len(stem_indices)) if stem_indices[i] == 1
         ]
-
-        print(f"{self.len_stem_list}, {self.best_score}, {self.stems_used}")
 
     def _run_mpi(self):
         """Run solver with MPI"""
