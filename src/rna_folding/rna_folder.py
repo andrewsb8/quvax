@@ -136,9 +136,6 @@ class RNAFolder(ABC):
         return False
 
     def _compute_h_and_J(self):
-        # print(
-        #    'Treatment of pseudoknots is questionable at best at the moment!')
-
         # Pull out stem lengths for simplicity
         stems = [_[2] for _ in self.stems]
         if len(stems) == 0:
