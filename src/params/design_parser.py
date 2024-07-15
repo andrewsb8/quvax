@@ -603,6 +603,16 @@ class DesignParser(object):
         self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
+        #get column/variable names
+        if self.args.database_type == "sqlite":
+            self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
+        if self.args.database_type == "postgres":
+            #table name must be lower case for postgres!
+            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;")
+        keys = self.db_cursor.fetchall()
+        keys = [_[0] for _ in keys] #make list from list of tuples
+
+        #get values of variables
         if self.args.hash_value is not None:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
         else:
@@ -613,6 +623,7 @@ class DesignParser(object):
             self.log.error("There was an error retreiving data from the database.")
             raise ValueError("There was an error retreiving data from the database.")
         data = self.db_cursor.fetchall()
+        data = list(data[0]) #make list from tuple
 
         if len(data) == 0:
             self.log.error(
@@ -624,36 +635,17 @@ class DesignParser(object):
         elif len(data) > 1 and self.args.hash_value is None:
             self.log.info("No hash value was specified and multiple optimizations are in the database. Using the first listed.")
 
-
-        # manually assigning inputs from database
-        self.sim_key = data[0][0]
-        self.protein_sequence = data[0][2]
-        if data[0][3] == "None":
-            self.args.target = None
-        else:
-            self.args.target = data[0][3]
-        self.args.n_trials = data[0][4]
-        self.args.codon_iterations = data[0][5]
-        self.args.codon_optimizer = data[0][6]
-        self.args.random_seed = data[0][7]
-        self.min_free_energy = data[0][8]
-        self.target_folded_energy = data[0][9]
-        self.args.solver = data[0][10]
-        self.args.rna_iterations = data[0][11]
-        self.args.min_stem_len = data[0][12]
-        self.args.min_loop_len = data[0][13]
-        self.args.species = data[0][14]
-        self.args.coeff_max_bond = data[0][15]
-        self.args.coeff_stem_len = data[0][16]
-        self.generations_sampled = data[0][17]
-        self.args.state_file = data[0][18]
-        self.args.convergence = data[0][19]
-        self.args.checkpoint_interval = data[0][20]
-        self.args.sequence_rejections = data[0][22]  # skip hash value
-        self.args.num_sequence_changes = data[0][23]
-        self.args.beta = data[0][24]
-
-        #not_args = ["protein_sequence", "min_free_energy", "generations_sampled", "target_folded_energy"]
+        #mapping values to member attributes
+        #manually keeping track of values which are not considered cli arguments, so members of self not self.args
+        not_args = ["protein_sequence", "min_free_energy", "generations_sampled", "target_folded_energy"]
+        mapping = dict(zip(keys, data))
+        for key, val in mapping.items():
+            if key in not_args:
+                setattr(self, key, val)
+            elif key not in not_args:
+                setattr(self.args, key, val)
+            else:
+                raise ValueError(f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax.")
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
