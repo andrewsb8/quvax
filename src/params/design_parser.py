@@ -333,7 +333,7 @@ class DesignParser(object):
             ]
             if target_reshape.count(["AUG"]) > self.protein_sequence.count("M"):
                 raise ValueError(
-                    "Your target sequence includes the start codon AUG but your input protein sequence does not contain amino acid M!"
+                    "Your target sequence contains more AUG codons than your protein sequence contains M amino acid residues! Did you leave the start codon in your target sequence?"
                 )
 
             if (
