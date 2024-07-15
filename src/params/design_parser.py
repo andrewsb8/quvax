@@ -621,6 +621,10 @@ class DesignParser(object):
             raise ValueError(
                 "No data retrieved from database. Check your inputs or database structure."
             )
+        elif len(data) > 1 and self.args.hash_value is None:
+            self.log.info("No hash value was specified and multiple optimizations are in the database. Using the first listed.")
+
+        print(vars(self))
 
         # manually assigning inputs from database
         self.sim_key = data[0][0]

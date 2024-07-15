@@ -181,6 +181,17 @@ class AnalysisParser(object):
             query = f"SELECT * FROM SIM_DETAILS;"
         self.db_cursor.execute(query)
         sim_details = self.db_cursor.fetchall()
+        if len(sim_details) == 0:
+            self.log.error(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
+            raise ValueError(
+                "No data retrieved from database. Check your inputs or database structure."
+            )
+        elif len(data) > 1 and self.args.hash_value is None:
+            self.log.info(
+                "No hash value was specified and multiple optimizations are in the database. Using the first listed."
+            )
         self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
