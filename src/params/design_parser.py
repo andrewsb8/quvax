@@ -641,6 +641,8 @@ class DesignParser(object):
         not_args = ["sim_key", "protein_sequence", "min_free_energy", "generations_sampled", "target_min_free_energy"]
         mapping = dict(zip(keys, data))
         for key, val in mapping.items():
+            if val == "None": #None values read as strings from db
+                val = None
             if key in not_args:
                 setattr(self, key, val)
             elif key not in not_args:
