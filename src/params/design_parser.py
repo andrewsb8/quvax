@@ -331,9 +331,9 @@ class DesignParser(object):
                 [self.args.target[i : i + 3]]
                 for i in range(0, len(self.args.target), 3)
             ]
-            if target_reshape.count(["AUG"]) > self.protein_sequence.count("M"):
+            if target_reshape.count(["AUG"]) != self.protein_sequence.count("M"):
                 raise ValueError(
-                    "Your target sequence contains more AUG codons than your protein sequence contains M amino acid residues! Did you leave the start codon in your target sequence?"
+                    "Your target RNA sequence and protein sequence contain an unequal number of AUG codons and M amino acid residues! Did you leave the start codon in your target sequence?"
                 )
 
             if (
