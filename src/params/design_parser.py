@@ -463,11 +463,11 @@ class DesignParser(object):
             self.db_cursor.execute(
                 f"""CREATE TABLE SIM_DETAILS (sim_key {primary_key_type}
                 PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR,
-                 target_sequence VARCHAR, generation_size INT,
-                 codon_opt_iterations INT, optimizer VARCHAR(10),
+                 target VARCHAR, n_trials INT,
+                 codon_iterations INT, codon_optimizer VARCHAR(10),
                  random_seed INT, min_free_energy FLOAT,
-                 target_min_free_energy FLOAT, rna_solver
-                 VARCHAR(20), rna_folding_iterations INT, min_stem_len
+                 target_min_free_energy FLOAT, solver
+                 VARCHAR(20), rna_iterations INT, min_stem_len
                  INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
@@ -493,8 +493,8 @@ class DesignParser(object):
                 raise ValueError("Hash value already exists in database. Please specify another value.")
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
-            target_sequence, generation_size, codon_opt_iterations, optimizer,
-            random_seed, rna_solver, rna_folding_iterations, min_stem_len,
+            target, n_trials, codon_iterations, codon_optimizer,
+            random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta) VALUES
@@ -623,7 +623,6 @@ class DesignParser(object):
             self.log.error("There was an error retreiving data from the database.")
             raise ValueError("There was an error retreiving data from the database.")
         data = self.db_cursor.fetchall()
-        data = list(data[0]) #make list from tuple
 
         if len(data) == 0:
             self.log.error(
@@ -635,9 +634,11 @@ class DesignParser(object):
         elif len(data) > 1 and self.args.hash_value is None:
             self.log.info("No hash value was specified and multiple optimizations are in the database. Using the first listed.")
 
+        data = list(data[0]) #make list from tuple
+
         #mapping values to member attributes
         #manually keeping track of values which are not considered cli arguments, so members of self not self.args
-        not_args = ["protein_sequence", "min_free_energy", "generations_sampled", "target_folded_energy"]
+        not_args = ["sim_key", "protein_sequence", "min_free_energy", "generations_sampled", "target_min_free_energy"]
         mapping = dict(zip(keys, data))
         for key, val in mapping.items():
             if key in not_args:
@@ -658,7 +659,7 @@ class DesignParser(object):
             )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
-                f"UPDATE SIM_DETAILS SET codon_opt_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.protein_sequence}';"
+                f"UPDATE SIM_DETAILS SET codon_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.protein_sequence}';"
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:

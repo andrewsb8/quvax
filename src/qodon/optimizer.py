@@ -51,7 +51,7 @@ class CodonOptimizer(ABC):
             self.initial_sequences = self.config.initial_sequences
             self.energies = self.config.energies
             if self.config.args.target is not None:
-                self.target_folded_energy = self.config.target_folded_energy
+                self.target_min_free_energy = self.config.target_min_free_energy
 
     @abstractmethod
     def _optimize(self):
@@ -270,7 +270,7 @@ class CodonOptimizer(ABC):
         if self.config.args.convergence > 0:
             self._check_convergence()
         if (
-            self.codon_optimize_step != 0
+            self.codon_optimize_step != 0 and self.config.args.checkpoint_interval != 0
             and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
             and self.codon_optimize_step != self.config.args.codon_iterations
         ):
@@ -386,12 +386,12 @@ class CodonOptimizer(ABC):
         self._verify_dna(self.config.args.target)
 
     def _fold_target(self):
-        self.target_folded_energy = self._fold_rna(self.config.args.target)
+        self.target_min_free_energy = self._fold_rna(self.config.args.target)
         self.config.log.info(
-            "Target sequence folding energy: " + str(self.target_folded_energy)
+            "Target sequence folding energy: " + str(self.target_min_free_energy)
         )
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET target_min_free_energy = '{self.target_folded_energy}' WHERE target_sequence = '{self.config.args.target}';"
+            f"UPDATE SIM_DETAILS SET target_min_free_energy = '{self.target_min_free_energy}' WHERE target_sequence = '{self.config.args.target}';"
         )
         self.config.db.commit()
         self.config.log.info("\n")
