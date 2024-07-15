@@ -173,16 +173,14 @@ class AnalysisParser(object):
             self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
         if self.args.database_type == "postgres":
             #table name must be lower case for postgres!
-            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details';")
+            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;")
         keys = self.db_cursor.fetchall()
-        print(keys) #, keys[0], keys[0][0])
         if self.args.hash_value:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
         else:
             query = f"SELECT * FROM SIM_DETAILS;"
         self.db_cursor.execute(query)
         sim_details = self.db_cursor.fetchall()
-        print(sim_details)
         self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
