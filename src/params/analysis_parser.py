@@ -188,7 +188,7 @@ class AnalysisParser(object):
             raise ValueError(
                 "No data retrieved from database. Check your inputs or database structure."
             )
-        elif len(data) > 1 and self.args.hash_value is None:
+        elif len(sim_details) > 1 and self.args.hash_value is None:
             self.log.info(
                 "No hash value was specified and multiple optimizations are in the database. Using the first listed."
             )
