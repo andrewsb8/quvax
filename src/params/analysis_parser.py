@@ -4,7 +4,6 @@ import sys
 import pickle
 import logging
 import datetime
-import sqlite3
 
 
 class AnalysisParser(object):
@@ -56,7 +55,7 @@ class AnalysisParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input SQLite database from output of design.py (default .db)",
+            help="Input (SQLite or Postgres) database from output of design.py",
         )
         self.parser.add_argument(
             "-at",
@@ -69,7 +68,7 @@ class AnalysisParser(object):
             "-hv",
             "--hash_value",
             default=None,
-            type=int,
+            type=str,
             help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
         self.parser.add_argument(
@@ -92,6 +91,20 @@ class AnalysisParser(object):
             default=1,
             type=int,
             help="Random seed for sequence generation, optimization, and folding",
+        )
+        self.parser.add_argument(
+            "-db",
+            "--database_type",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
+        )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
         )
 
         if args is None:
@@ -118,8 +131,25 @@ class AnalysisParser(object):
         self.log.info("Warnings and Errors:\n")
 
     def _connect_to_db(self):
-        self.log.info("Connecting to database " + self.args.input)
-        self.db = sqlite3.connect(self.args.input)
+        if self.args.database_type == "sqlite":
+            import sqlite3
+            self.log.info("Connecting to database " + self.args.input)
+            self.db = sqlite3.connect(self.args.input)
+        elif self.args.database_type == "postgres":
+            import psycopg2
+            from configparser import ConfigParser
+
+            # parse ini file
+            parser = ConfigParser()
+            parser.read(self.args.database_ini)
+            ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
+            self.db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={self.args.input}")
+        else:
+            raise NotImplementedError(
+                "Database type (-db) "
+                + self.args.database
+                + " not implemented. Options: sqlite, postgres."
+            )
         self.db_cursor = self.db.cursor()
 
     def _validate(self):
@@ -139,7 +169,11 @@ class AnalysisParser(object):
 
     def _query_details(self):
         # query to get sim_detail columns info
-        self.db_cursor.execute(f"PRAGMA table_info(SIM_DETAILS);")
+        if self.args.database_type == "sqlite":
+            self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
+        if self.args.database_type == "postgres":
+            #table name must be lower case for postgres!
+            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;")
         keys = self.db_cursor.fetchall()
         if self.args.hash_value:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
@@ -150,5 +184,5 @@ class AnalysisParser(object):
         self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
-            self.log.info(keys[i][1] + " : " + str(sim_details[0][i]))
-            self.sim_details[keys[i][1]] = sim_details[0][i]
+            self.log.info(keys[i][0] + " : " + str(sim_details[0][i]))
+            self.sim_details[keys[i][0]] = sim_details[0][i]
