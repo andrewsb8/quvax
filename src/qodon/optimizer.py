@@ -174,7 +174,7 @@ class CodonOptimizer(ABC):
         initial_members = []
         for i in range(ntrials):
             chosen_indices = []
-            for res in self.config.seq:
+            for res in self.config.protein_sequence:
                 chosen_indices.append(
                     random.randint(0.0, len(self.code_map[res]["codons"]) - 1)
                 )
@@ -229,7 +229,7 @@ class CodonOptimizer(ABC):
         return "".join(
             [
                 self.code_map[res]["codons"][sequence[i] % self._get_num_codons(res)]
-                for i, res in enumerate(self.config.seq)
+                for i, res in enumerate(self.config.protein_sequence)
             ]
         )
 
@@ -241,7 +241,7 @@ class CodonOptimizer(ABC):
 
         return [
             self.code_map[res]["codons"].index(sequence[i * 3 : (i * 3) + 3])
-            for i, res in enumerate(self.config.seq)
+            for i, res in enumerate(self.config.protein_sequence)
         ]
 
     def _iterate(self, sequences, energies=None, sec_structs=None, update_counter=True):
@@ -294,7 +294,7 @@ class CodonOptimizer(ABC):
             # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.seq}';"
+            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.protein_sequence}';"
         )
         self.config.db.commit()
         self._save_random_state()
@@ -342,7 +342,7 @@ class CodonOptimizer(ABC):
         Translate nucleotide sequence to make sure it matches input
 
         """
-        if self.config.seq != str(Seq(sequence).transcribe().translate()):
+        if self.config.protein_sequence != str(Seq(sequence).transcribe().translate()):
             self.config.log.error(
                 "Error: Codon sequence did not translate properly! Sequence: "
                 + sequence

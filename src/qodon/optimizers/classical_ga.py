@@ -76,7 +76,7 @@ class GeneticAlgorithm(CodonOptimizer):
         new_d_sequence = ""
         new_indices = []
         total_log_score = 0.0
-        for i, res in enumerate(self.config.seq):
+        for i, res in enumerate(self.config.protein_sequence):
             if mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
                 for j, chance in enumerate(self.code_map[res]["probs"]):

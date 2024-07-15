@@ -114,11 +114,11 @@ class MetropolisOptimizer(CodonOptimizer):
 
         """
         # first, randomly select num_change number of indices in the sequence
-        indices = random.sample(range(0, len(self.config.seq) - 1), num_changes)
+        indices = random.sample(range(0, len(self.config.protein_sequence) - 1), num_changes)
 
         for k in range(len(indices)):
             # Define what amino acid is being changed
-            change_res = self.config.seq[indices[k]]
+            change_res = self.config.protein_sequence[indices[k]]
             # Determine the old codon number so that we can ensure it is actually changed
             old_codon = old_genes[indices[k]]
             new_codon = old_codon
