@@ -24,6 +24,10 @@ class AnalysisParser(object):
         String to identify output file containing information about optimization process
     random_seed : int
         Sets random seed for all optimizers and packages
+    database_type : str
+        String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
+    database_ini : str
+        Input file containing access information for postgres database.
 
     """
 
