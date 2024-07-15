@@ -612,7 +612,7 @@ class DesignParser(object):
             self.db_cursor.execute(
                 f"SELECT name FROM pragma_table_info('SIM_DETAILS');"
             )
-        if self.args.database_type == "postgres":
+        elif self.args.database_type == "postgres":
             # table name must be lower case for postgres!
             self.db_cursor.execute(
                 f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;"
