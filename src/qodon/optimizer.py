@@ -44,10 +44,10 @@ class CodonOptimizer(ABC):
                 self._verify_target()
                 self._fold_target()
             self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-            self.mfe = 1000000  # set min free energy to high number
+            self.min_free_energy = 1000000  # set min free energy to high number
         else:
             self._load_random_state()
-            self.mfe = self.config.mfe
+            self.min_free_energy = self.config.min_free_energy
             self.initial_sequences = self.config.initial_sequences
             self.energies = self.config.energies
             if self.config.args.target is not None:
@@ -86,8 +86,8 @@ class CodonOptimizer(ABC):
     def _update_mfe(self, energies):
         new_min = False
         for energy in energies:
-            if energy < self.mfe:
-                self.mfe = energy
+            if energy < self.min_free_energy:
+                self.min_free_energy = energy
                 # reset convergence_counter
                 self.convergence_count = 0
                 new_min = True
@@ -356,15 +356,15 @@ class CodonOptimizer(ABC):
 
         """
         # write min free energy to log and db
-        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
+        self.config.log.info("Minimum energy of codon sequences: " + str(self.min_free_energy))
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET min_free_energy = '{self.mfe}' WHERE sim_key = '{self.config.sim_key}';"
+            f"UPDATE SIM_DETAILS SET min_free_energy = '{self.min_free_energy}' WHERE sim_key = '{self.config.sim_key}';"
         )
         self.config.db.commit()
 
         # get number and list of degenerate min free energy sequences
         self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe} and sim_key = {self.config.sim_key};"
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.min_free_energy} and sim_key = {self.config.sim_key};"
         )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
@@ -372,7 +372,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            f"INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = '{self.mfe}'"
+            f"INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = '{self.min_free_energy}'"
         )
         self.config.db.commit()
         self.config.log.info("Finished parsing optimized sequences.")

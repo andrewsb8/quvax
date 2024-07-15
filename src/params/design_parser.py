@@ -636,7 +636,7 @@ class DesignParser(object):
         self.args.codon_iterations = data[0][5]
         self.args.codon_optimizer = data[0][6]
         self.args.random_seed = data[0][7]
-        self.mfe = data[0][8]
+        self.min_free_energy = data[0][8]
         self.target_folded_energy = data[0][9]
         self.args.solver = data[0][10]
         self.args.rna_iterations = data[0][11]
