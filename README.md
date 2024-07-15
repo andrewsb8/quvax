@@ -44,10 +44,9 @@ QuVax has options to integrate with SQLite and Postgres databases. SQLite is the
 [postgresql]
 user=(user)
 password=(password)
-database=(database name)
 ```
 
-where parentheticals, ```()```, are replaced by your values. (database name) needs to be the same as the provided option for ```-o```. The user should have permissions to create databases in the Postgres instance, although you could create one through the client of your choice and connect to it via QuVax.
+where parentheticals, ```()```, are replaced by your values. Any other fields included in this file will be ignored! The user should have permissions to create databases in the Postgres instance, although you could create one through the client of your choice and connect to it via QuVax.
 
 ### Storing Multiple Optimizations in One Database
 

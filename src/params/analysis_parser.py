@@ -4,7 +4,6 @@ import sys
 import pickle
 import logging
 import datetime
-import sqlite3
 
 
 class AnalysisParser(object):
@@ -93,6 +92,20 @@ class AnalysisParser(object):
             type=int,
             help="Random seed for sequence generation, optimization, and folding",
         )
+        self.parser.add_argument(
+            "-db",
+            "--database_type",
+            default="sqlite",
+            type=str,
+            help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
+        )
+        self.parser.add_argument(
+            "-in",
+            "--database_ini",
+            default=None,
+            type=str,
+            help="database .ini file to connect to postgres database.",
+        )
 
         if args is None:
             self.args = self.parser.parse_args()
@@ -118,8 +131,25 @@ class AnalysisParser(object):
         self.log.info("Warnings and Errors:\n")
 
     def _connect_to_db(self):
-        self.log.info("Connecting to database " + self.args.input)
-        self.db = sqlite3.connect(self.args.input)
+        if self.args.database_type == "sqlite":
+            import sqlite3
+            self.log.info("Connecting to database " + self.args.input)
+            self.db = sqlite3.connect(self.args.input)
+        elif self.args.database_type == "postgres":
+            import psycopg2
+            from configparser import ConfigParser
+
+            # parse ini file
+            parser = ConfigParser()
+            parser.read(self.args.database_ini)
+            ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
+            self.db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={self.args.input}")
+        else:
+            raise NotImplementedError(
+                "Database type (-db) "
+                + self.args.database
+                + " not implemented. Options: sqlite, postgres."
+            )
         self.db_cursor = self.db.cursor()
 
     def _validate(self):
