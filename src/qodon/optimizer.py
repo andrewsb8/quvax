@@ -270,7 +270,8 @@ class CodonOptimizer(ABC):
         if self.config.args.convergence > 0:
             self._check_convergence()
         if (
-            self.codon_optimize_step != 0 and self.config.args.checkpoint_interval != 0
+            self.codon_optimize_step != 0
+            and self.config.args.checkpoint_interval != 0
             and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
             and self.codon_optimize_step != self.config.args.codon_iterations
         ):
@@ -356,7 +357,9 @@ class CodonOptimizer(ABC):
 
         """
         # write min free energy to log and db
-        self.config.log.info("Minimum energy of codon sequences: " + str(self.min_free_energy))
+        self.config.log.info(
+            "Minimum energy of codon sequences: " + str(self.min_free_energy)
+        )
         self.config.db_cursor.execute(
             f"UPDATE SIM_DETAILS SET min_free_energy = '{self.min_free_energy}' WHERE sim_key = '{self.config.sim_key}';"
         )

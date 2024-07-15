@@ -137,6 +137,7 @@ class AnalysisParser(object):
     def _connect_to_db(self):
         if self.args.database_type == "sqlite":
             import sqlite3
+
             self.log.info("Connecting to database " + self.args.input)
             self.db = sqlite3.connect(self.args.input)
         elif self.args.database_type == "postgres":
@@ -147,7 +148,9 @@ class AnalysisParser(object):
             parser = ConfigParser()
             parser.read(self.args.database_ini)
             ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
-            self.db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={self.args.input}")
+            self.db = psycopg2.connect(
+                f"user={ini_data['user']} password={ini_data['password']} dbname={self.args.input}"
+            )
         else:
             raise NotImplementedError(
                 "Database type (-db) "
@@ -174,10 +177,14 @@ class AnalysisParser(object):
     def _query_details(self):
         # query to get sim_detail columns info
         if self.args.database_type == "sqlite":
-            self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
+            self.db_cursor.execute(
+                f"SELECT name FROM pragma_table_info('SIM_DETAILS');"
+            )
         if self.args.database_type == "postgres":
-            #table name must be lower case for postgres!
-            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;")
+            # table name must be lower case for postgres!
+            self.db_cursor.execute(
+                f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;"
+            )
         keys = self.db_cursor.fetchall()
         if self.args.hash_value:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"

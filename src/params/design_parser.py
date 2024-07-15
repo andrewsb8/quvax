@@ -438,7 +438,9 @@ class DesignParser(object):
                 cursor.close()
                 self.log.info("Database exists in postgres client.")
             # connect to database
-            db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={database}")
+            db = psycopg2.connect(
+                f"user={ini_data['user']} password={ini_data['password']} dbname={database}"
+            )
         else:
             raise NotImplementedError(
                 "Database type (-db) "
@@ -490,7 +492,9 @@ class DesignParser(object):
                 f"SELECT sim_key FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
             )
             if len(self.db_cursor.fetchall()) > 0:
-                raise ValueError("Hash value already exists in database. Please specify another value.")
+                raise ValueError(
+                    "Hash value already exists in database. Please specify another value."
+                )
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
             target, n_trials, codon_iterations, codon_optimizer,
@@ -603,16 +607,20 @@ class DesignParser(object):
         self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
-        #get column/variable names
+        # get column/variable names
         if self.args.database_type == "sqlite":
-            self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
+            self.db_cursor.execute(
+                f"SELECT name FROM pragma_table_info('SIM_DETAILS');"
+            )
         if self.args.database_type == "postgres":
-            #table name must be lower case for postgres!
-            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;")
+            # table name must be lower case for postgres!
+            self.db_cursor.execute(
+                f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;"
+            )
         keys = self.db_cursor.fetchall()
-        keys = [_[0] for _ in keys] #make list from list of tuples
+        keys = [_[0] for _ in keys]  # make list from list of tuples
 
-        #get values of variables
+        # get values of variables
         if self.args.hash_value is not None:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
         else:
@@ -632,23 +640,33 @@ class DesignParser(object):
                 "No data retrieved from database. Check your inputs or database structure."
             )
         elif len(data) > 1 and self.args.hash_value is None:
-            self.log.info("No hash value was specified and multiple optimizations are in the database. Using the first listed.")
+            self.log.info(
+                "No hash value was specified and multiple optimizations are in the database. Using the first listed."
+            )
 
-        data = list(data[0]) #make list from tuple
+        data = list(data[0])  # make list from tuple
 
-        #mapping values to member attributes
-        #manually keeping track of values which are not considered cli arguments, so members of self not self.args
-        not_args = ["sim_key", "protein_sequence", "min_free_energy", "generations_sampled", "target_min_free_energy"]
+        # mapping values to member attributes
+        # manually keeping track of values which are not considered cli arguments, so members of self not self.args
+        not_args = [
+            "sim_key",
+            "protein_sequence",
+            "min_free_energy",
+            "generations_sampled",
+            "target_min_free_energy",
+        ]
         mapping = dict(zip(keys, data))
         for key, val in mapping.items():
-            if val == "None": #None values read as strings from db
+            if val == "None":  # None values read as strings from db
                 val = None
             if key in not_args:
                 setattr(self, key, val)
             elif key not in not_args:
                 setattr(self.args, key, val)
             else:
-                raise ValueError(f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax.")
+                raise ValueError(
+                    f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax."
+                )
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
