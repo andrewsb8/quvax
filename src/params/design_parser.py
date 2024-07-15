@@ -438,7 +438,7 @@ class DesignParser(object):
                 cursor.close()
                 self.log.info("Database exists in postgres client.")
             # connect to database
-            db = psycopg2.connect(**ini_data)
+            db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={database}")
         else:
             raise NotImplementedError(
                 "Database type (-db) "

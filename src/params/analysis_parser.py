@@ -55,7 +55,7 @@ class AnalysisParser(object):
             "--input",
             required=True,
             type=str,
-            help="Input SQLite database from output of design.py (default .db)",
+            help="Input (SQLite or Postgres) database from output of design.py",
         )
         self.parser.add_argument(
             "-at",
@@ -68,7 +68,7 @@ class AnalysisParser(object):
             "-hv",
             "--hash_value",
             default=None,
-            type=int,
+            type=str,
             help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
         self.parser.add_argument(
@@ -169,16 +169,22 @@ class AnalysisParser(object):
 
     def _query_details(self):
         # query to get sim_detail columns info
-        self.db_cursor.execute(f"PRAGMA table_info(SIM_DETAILS);")
+        if self.args.database_type == "sqlite":
+            self.db_cursor.execute(f"SELECT name FROM pragma_table_info('SIM_DETAILS');")
+        if self.args.database_type == "postgres":
+            #table name must be lower case for postgres!
+            self.db_cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details';")
         keys = self.db_cursor.fetchall()
+        print(keys) #, keys[0], keys[0][0])
         if self.args.hash_value:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
         else:
             query = f"SELECT * FROM SIM_DETAILS;"
         self.db_cursor.execute(query)
         sim_details = self.db_cursor.fetchall()
+        print(sim_details)
         self.sim_details = {}  # dict to store details for later access
         self.log.info("Input Optimization Details:")
         for i in range(len(keys)):
-            self.log.info(keys[i][1] + " : " + str(sim_details[0][i]))
-            self.sim_details[keys[i][1]] = sim_details[0][i]
+            self.log.info(keys[i][0] + " : " + str(sim_details[0][i]))
+            self.sim_details[keys[i][0]] = sim_details[0][i]
