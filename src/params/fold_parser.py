@@ -17,7 +17,7 @@ class FoldParser(object):
     input : str
         Input codon sequence
     solver : str
-        Designation of solver for RNA folding
+        Designation of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo), ES (Exact Solver)
     min_stem_len : int
         Minimum number of stems required in RNA folding
     min_loop_len : int
@@ -92,7 +92,7 @@ class FoldParser(object):
             "--solver",
             default="SA",
             type=str,
-            help="Choice of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo)",
+            help="Choice of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo), ES (Exact Solver)",
         )
         self.parser.add_argument(
             "-cB",
