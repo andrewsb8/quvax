@@ -41,15 +41,17 @@ class CodonOptimizer(ABC):
             if self.config.args.target is not None:
                 self._verify_target()
                 self._fold_target()
-            self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
-            self.mfe = 1000000  # set min free energy to high number
+            self.initial_sequences = self._generate_sequences(
+                self.config.args.population_size
+            )
+            self.min_free_energy = 1000000  # set min free energy to high number
         else:
             self._load_random_state()
-            self.mfe = self.config.mfe
+            self.min_free_energy = self.config.min_free_energy
             self.initial_sequences = self.config.initial_sequences
             self.energies = self.config.energies
             if self.config.args.target is not None:
-                self.target_folded_energy = self.config.target_folded_energy
+                self.target_min_free_energy = self.config.target_min_free_energy
 
     @abstractmethod
     def _optimize(self):
@@ -84,8 +86,8 @@ class CodonOptimizer(ABC):
     def _update_mfe(self, energies):
         new_min = False
         for energy in energies:
-            if energy < self.mfe:
-                self.mfe = energy
+            if energy < self.min_free_energy:
+                self.min_free_energy = energy
                 # reset convergence_counter
                 self.convergence_count = 0
                 new_min = True
@@ -172,7 +174,7 @@ class CodonOptimizer(ABC):
         initial_members = []
         for i in range(ntrials):
             chosen_indices = []
-            for res in self.config.seq:
+            for res in self.config.protein_sequence:
                 chosen_indices.append(
                     random.randint(0.0, len(self.code_map[res]["codons"]) - 1)
                 )
@@ -235,7 +237,7 @@ class CodonOptimizer(ABC):
         return "".join(
             [
                 self.code_map[res]["codons"][sequence[i] % self._get_num_codons(res)]
-                for i, res in enumerate(self.config.seq)
+                for i, res in enumerate(self.config.protein_sequence)
             ]
         )
 
@@ -247,7 +249,7 @@ class CodonOptimizer(ABC):
 
         return [
             self.code_map[res]["codons"].index(sequence[i * 3 : (i * 3) + 3])
-            for i, res in enumerate(self.config.seq)
+            for i, res in enumerate(self.config.protein_sequence)
         ]
 
     def _iterate(self, sequences, energies=None, sec_structs=None, update_counter=True):
@@ -277,6 +279,7 @@ class CodonOptimizer(ABC):
             self._check_convergence()
         if (
             self.codon_optimize_step != 0
+            and self.config.args.checkpoint_interval != 0
             and self.codon_optimize_step % self.config.args.checkpoint_interval == 0
             and self.codon_optimize_step != self.config.args.codon_iterations
         ):
@@ -300,7 +303,7 @@ class CodonOptimizer(ABC):
             # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.seq}';"
+            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.protein_sequence}';"
         )
         self.config.db.commit()
         self._save_random_state()
@@ -335,12 +338,15 @@ class CodonOptimizer(ABC):
             f"SELECT COUNT(DISTINCT sequences) from OUTPUTS where sim_key = '{self.config.sim_key}';"
         )
         num = self.config.db_cursor.fetchall()[0][0]
-        # "+ self.config.args.n_trials" to account for initial randomly generated sequences
+        # "+ self.config.args.population_size" to account for initial randomly generated sequences
         self.config.log.info(
             "Number of unique sequences sampled: "
             + str(num)
             + " of possible "
-            + str((step * self.config.args.n_trials) + self.config.args.n_trials)
+            + str(
+                (step * self.config.args.population_size)
+                + self.config.args.population_size
+            )
         )
 
     def _verify_dna(self, sequence):
@@ -348,7 +354,7 @@ class CodonOptimizer(ABC):
         Translate nucleotide sequence to make sure it matches input
 
         """
-        if self.config.seq != str(Seq(sequence).transcribe().translate()):
+        if self.config.protein_sequence != str(Seq(sequence).transcribe().translate()):
             self.config.log.error(
                 "Error: Codon sequence did not translate properly! Sequence: "
                 + sequence
@@ -362,15 +368,17 @@ class CodonOptimizer(ABC):
 
         """
         # write min free energy to log and db
-        self.config.log.info("Minimum energy of codon sequences: " + str(self.mfe))
+        self.config.log.info(
+            "Minimum energy of codon sequences: " + str(self.min_free_energy)
+        )
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET min_free_energy = '{self.mfe}' WHERE sim_key = '{self.config.sim_key}';"
+            f"UPDATE SIM_DETAILS SET min_free_energy = '{self.min_free_energy}' WHERE sim_key = '{self.config.sim_key}';"
         )
         self.config.db.commit()
 
         # get number and list of degenerate min free energy sequences
         self.config.db_cursor.execute(
-            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.mfe} and sim_key = {self.config.sim_key};"
+            f"SELECT COUNT(sequences) FROM OUTPUTS WHERE energies = {self.min_free_energy} and sim_key = {self.config.sim_key};"
         )
         num_degen_sequences = self.config.db_cursor.fetchall()[0][0]
         self.config.log.info(
@@ -378,7 +386,7 @@ class CodonOptimizer(ABC):
             + str(num_degen_sequences)
         )
         self.config.db_cursor.execute(
-            f"INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = '{self.mfe}'"
+            f"INSERT INTO MFE_SEQUENCES (sim_key, sequences, secondary_structure) SELECT sim_key, sequences, secondary_structure FROM OUTPUTS WHERE energies = '{self.min_free_energy}'"
         )
         self.config.db.commit()
         self.config.log.info("Finished parsing optimized sequences.")
@@ -392,12 +400,12 @@ class CodonOptimizer(ABC):
         self._verify_dna(self.config.args.target)
 
     def _fold_target(self):
-        self.target_folded_energy = self._fold_rna(self.config.args.target)
+        self.target_min_free_energy = self._fold_rna(self.config.args.target)
         self.config.log.info(
-            "Target sequence folding energy: " + str(self.target_folded_energy)
+            "Target sequence folding energy: " + str(self.target_min_free_energy)
         )
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET target_min_free_energy = '{self.target_folded_energy}' WHERE target_sequence = '{self.config.args.target}';"
+            f"UPDATE SIM_DETAILS SET target_min_free_energy = '{self.target_min_free_energy}' WHERE target_sequence = '{self.config.args.target}';"
         )
         self.config.db.commit()
         self.config.log.info("\n")

@@ -23,10 +23,10 @@ class DesignParser(object):
         Terminates optimization if new free energy minimum is not found within an integer number of generations
     rna_iterations : int
         Iterations for RNA folded energy calcuations (inner loop)
-    n_trials : int
-        Number of initial codon sequences to generate
+    population_size : int
+        Number of codon sequences generated from input protein sequence to undergo optimization
     codon_optimizer : str
-        Designation of outer loop optimizer
+        Choice of outer loop optimizer. Ex: Metropolis Monte Carlo (METRO)
     min_stem_len : int
         Minimum number of stems required in RNA folding
     min_loop_len : int
@@ -42,16 +42,16 @@ class DesignParser(object):
     species : str
         String to identify which species to generate codon frequencies
     output : str
-        String to identify output sqlite database file
+        String to identify output sqlite database file or postgres database
     random_seed : int
         Sets random seed for all optimizers and packages
     target : str
-        Optional input to include target codon sequence
+        Optional input to include a target codon sequence
     state_file : str
         Output (or optional input file with --resume, see -h) to set random seed
         state
     checkpoint_interval : int
-        Frequency to write checkpoint
+        Interval of codon optimization steps to write checkpoint
     hash_value : str
         Hash used to identify optimizations within a database produced by design.py
     database_type : str
@@ -62,6 +62,8 @@ class DesignParser(object):
         For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
         For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
+    beta : float,
+        For use with MC optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
 
     """
 
@@ -118,11 +120,11 @@ class DesignParser(object):
             help="Number of RNA folding (inner loop) iterations",
         )
         self.parser.add_argument(
-            "-n",
-            "--n_trials",
+            "-p",
+            "--population_size",
             default=10,
             type=int,
-            help="Number of initial sequences generated",
+            help="Number of codon sequences generated from input protein sequence to undergo optimization",
         )
         self.parser.add_argument(
             "-co",
@@ -185,7 +187,7 @@ class DesignParser(object):
             "--output",
             default="quvax.db",
             type=str,
-            help="String to identify output sqlite database file. Default: quvax.db",
+            help="Output sqlite database file or postgres database. Default (sqlite): quvax.db",
         )
         self.parser.add_argument(
             "-sd",
@@ -276,7 +278,7 @@ class DesignParser(object):
             self.args = self.parser.parse_args(args)
 
     def _load_input(self):
-        self.seq = str(SeqIO.read(self.args.input, "fasta").seq)
+        self.protein_sequence = str(SeqIO.read(self.args.input, "fasta").seq)
         if self.args.target is not None:
             self.args.target = self.args.target.upper()
 
@@ -304,16 +306,16 @@ class DesignParser(object):
 
         """
 
-        self.seq = self.seq.upper()
+        self.protein_sequence = self.protein_sequence.upper()
 
         aas = "ACDEFGHIKLMNPQRSTVWY"
 
-        if any(_ not in aas for _ in self.seq):
+        if any(_ not in aas for _ in self.protein_sequence):
             raise InvalidSequenceError(
                 "At least one character in the input sequence is invalid"
             )
 
-        if set(self.seq).issubset(set("GCATU")):
+        if set(self.protein_sequence).issubset(set("GCATU")):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
 
         if self.args.target is not None:
@@ -322,7 +324,7 @@ class DesignParser(object):
             if any(_ not in cs for _ in self.args.target):
                 raise InvalidSequenceError("Target is not a codon sequence!")
 
-            if len(self.args.target) != 3 * len(self.seq):
+            if len(self.args.target) != 3 * len(self.protein_sequence):
                 raise ValueError(
                     "Target sequence is not the correct length to code for the input protein sequence!"
                 )
@@ -331,9 +333,9 @@ class DesignParser(object):
                 [self.args.target[i : i + 3]]
                 for i in range(0, len(self.args.target), 3)
             ]
-            if target_reshape.count(["AUG"]) > self.seq.count("M"):
+            if target_reshape.count(["AUG"]) != self.protein_sequence.count("M"):
                 raise ValueError(
-                    "Your target sequence includes the start codon AUG but your input protein sequence does not contain amino acid M!"
+                    "Your target RNA sequence and protein sequence contain an unequal number of AUG codons and M amino acid residues! Did you leave the start codon in your target sequence?"
                 )
 
             if (
@@ -361,10 +363,10 @@ class DesignParser(object):
             """
             )
 
-        if self.args.n_trials < 1:
+        if self.args.population_size < 1:
             raise ValueError(
                 """
-            --n_trials must be at least 1!
+            --population_size must be at least 1!
 
             """
             )
@@ -393,12 +395,12 @@ class DesignParser(object):
             """
             )
 
-        if self.args.codon_optimizer == "GA" and self.args.n_trials < 2:
+        if self.args.codon_optimizer == "GA" and self.args.population_size < 2:
             raise ValueError(
                 "Population size (-n) for the genetic algorithm (-co GA) must be at least 2."
             )
 
-        if self.args.codon_optimizer == "TFDE" and self.args.n_trials < 4:
+        if self.args.codon_optimizer == "TFDE" and self.args.population_size < 4:
             raise ValueError(
                 "Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
             )
@@ -415,7 +417,7 @@ class DesignParser(object):
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
-        self.log.info("Protein Sequence : " + self.seq)
+        self.log.info("Protein Sequence : " + self.protein_sequence)
         iterable_args = vars(self.args)
         for k in iterable_args:
             self.log.info(k + " : " + str(iterable_args[k]))
@@ -448,7 +450,9 @@ class DesignParser(object):
                 cursor.close()
                 self.log.info("Database exists in postgres client.")
             # connect to database
-            db = psycopg2.connect(f"user={ini_data['user']} password={ini_data['password']} dbname={database}")
+            db = psycopg2.connect(
+                f"user={ini_data['user']} password={ini_data['password']} dbname={database}"
+            )
         else:
             raise NotImplementedError(
                 "Database type (-db) "
@@ -462,7 +466,7 @@ class DesignParser(object):
         self.db_cursor = self.db.cursor()
         if self.args.hash_value is None:
             self.args.hash_value = hashlib.shake_256(
-                (str(datetime.datetime.now()) + self.seq).encode()
+                (str(datetime.datetime.now()) + self.protein_sequence).encode()
             ).hexdigest(5)
             self.log.info("Job Hash generated by hashlib: " + str(self.args.hash_value))
         try:
@@ -473,11 +477,11 @@ class DesignParser(object):
             self.db_cursor.execute(
                 f"""CREATE TABLE SIM_DETAILS (sim_key {primary_key_type}
                 PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR,
-                 target_sequence VARCHAR, generation_size INT,
-                 codon_opt_iterations INT, optimizer VARCHAR(10),
+                 target VARCHAR, population_size INT,
+                 codon_iterations INT, codon_optimizer VARCHAR(10),
                  random_seed INT, min_free_energy FLOAT,
-                 target_min_free_energy FLOAT, rna_solver
-                 VARCHAR(20), rna_folding_iterations INT, min_stem_len
+                 target_min_free_energy FLOAT, solver
+                 VARCHAR(20), rna_iterations INT, min_stem_len
                  INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
@@ -505,13 +509,13 @@ class DesignParser(object):
                 )
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
-            target_sequence, generation_size, codon_opt_iterations, optimizer,
-            random_seed, rna_solver, rna_folding_iterations, min_stem_len,
+            target, population_size, codon_iterations, codon_optimizer,
+            random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta) VALUES
-            ('{self.args.input}', '{self.seq}', '{self.args.target}',
-            '{self.args.n_trials}', '{self.args.codon_iterations}',
+            ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
+            '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
             '{self.args.solver}', '{self.args.rna_iterations}',
             '{self.args.min_stem_len}', '{self.args.min_loop_len}',
@@ -615,6 +619,20 @@ class DesignParser(object):
         self.db = self._connect_to_db(self, self.args.input)
         self.db_cursor = self.db.cursor()
 
+        # get column/variable names
+        if self.args.database_type == "sqlite":
+            self.db_cursor.execute(
+                f"SELECT name FROM pragma_table_info('SIM_DETAILS');"
+            )
+        elif self.args.database_type == "postgres":
+            # table name must be lower case for postgres!
+            self.db_cursor.execute(
+                f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;"
+            )
+        keys = self.db_cursor.fetchall()
+        keys = [_[0] for _ in keys]  # make list from list of tuples
+
+        # get values of variables
         if self.args.hash_value is not None:
             query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
         else:
@@ -634,37 +652,33 @@ class DesignParser(object):
                 "No data retrieved from database. Check your inputs or database structure."
             )
         elif len(data) > 1 and self.args.hash_value is None:
-            self.log.info("No hash value was specified and multiple optimizations are in the database. Using the first listed.")
+            self.log.info(
+                "No hash value was specified and multiple optimizations are in the database. Using the first listed."
+            )
 
-        print(vars(self))
+        data = list(data[0])  # make list from tuple
 
-        # manually assigning inputs from database
-        self.sim_key = data[0][0]
-        self.seq = data[0][2]
-        if data[0][3] == "None":
-            self.args.target = None
-        else:
-            self.args.target = data[0][3]
-        self.args.n_trials = data[0][4]
-        self.args.codon_iterations = data[0][5]
-        self.args.codon_optimizer = data[0][6]
-        self.args.random_seed = data[0][7]
-        self.mfe = data[0][8]
-        self.target_folded_energy = data[0][9]
-        self.args.solver = data[0][10]
-        self.args.rna_iterations = data[0][11]
-        self.args.min_stem_len = data[0][12]
-        self.args.min_loop_len = data[0][13]
-        self.args.species = data[0][14]
-        self.args.coeff_max_bond = data[0][15]
-        self.args.coeff_stem_len = data[0][16]
-        self.generations_sampled = data[0][17]
-        self.args.state_file = data[0][18]
-        self.args.convergence = data[0][19]
-        self.args.checkpoint_interval = data[0][20]
-        self.args.sequence_rejections = data[0][22]  # skip hash value
-        self.args.num_sequence_changes = data[0][23]
-        self.args.beta = data[0][24]
+        # mapping values to member attributes
+        # manually keeping track of values which are not considered cli arguments, so members of self not self.args
+        not_args = [
+            "sim_key",
+            "protein_sequence",
+            "min_free_energy",
+            "generations_sampled",
+            "target_min_free_energy",
+        ]
+        mapping = dict(zip(keys, data))
+        for key, val in mapping.items():
+            if val == "None":  # None values read as strings from db
+                val = None
+            if key in not_args:
+                setattr(self, key, val)
+            elif key not in not_args:
+                setattr(self.args, key, val)
+            else:
+                raise ValueError(
+                    f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax."
+                )
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
@@ -677,7 +691,7 @@ class DesignParser(object):
             )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
-                f"UPDATE SIM_DETAILS SET codon_opt_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.seq}';"
+                f"UPDATE SIM_DETAILS SET codon_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.protein_sequence}';"
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:

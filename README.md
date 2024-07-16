@@ -1,6 +1,22 @@
 # QuVax
 ### mRNA design guided by folding potential
 
+For a given mRNA sequence, determining the minimum energy folded structure can be considered as a combinatorics problem where folding space is explored. While this is a difficult problem on its own, the appropriate mRNA sequence required to produce a desired protein in the body may be unknown. The mRNA sequence determines exactly which protein will be produced but a protein sequence can be produced by many mRNA sequences. Therefore, if only the protein sequence is known, an additional combinatorics problem of searching sequence space also needs to be solved.
+
+QuVax is a python command line application that treats this problem as a bilevel or nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence in FASTA file format using the genetic code. In each iteration of the optimization process, changes are made to the members of the population and each iteration of changes is referred to as a generation. The folding energies and secondary structures, for the minimum energy structure, are then determined according to a Hamiltonian [1]. Each "level" of the optimization is repeated for a user-defined number of iterations. Here is a basic example of the process in pseudocode:
+
+```
+for codon in codon_iterations:
+  for sequence in population:
+    Change mRNA or codon sequence
+    for fold in folding_iterations:
+      Search for minimum of fold space for given codon sequence
+    if energy < minimum_energy:
+      Set new minimum energy and record sequence and secondary structure
+```
+
+There are multiple optimizers that can be used to generate changes in the mRNA sequences or explore the fold space of a single mRNA sequences implemented in this tool. More details about the tool are outlined below.
+
 ## Getting Started
 
 Clone this repository. Install your preferred version of conda (Anaconda or Miniconda). Create Conda environment:
@@ -24,11 +40,11 @@ $ conda install --file requirements.md -c conda-forge
 
 ## Using QuVax
 
-QuVax has two primary functions: codon sequence and folding optimization and a small analysis suite. Optimization is executed with ```design.py``` and analyses with ```analyze.py```.
+QuVax has three functions: bilevel codon sequence and folding optimization, folding optimization for a single RNA sequence, and a small analysis suite. Bilevel optimization is executed using ```design.py```, folding with ```fold.py```, and analyses with ```analyze.py```.
 
-### Optimization of mRNA sequence for a given protein sequence with ```design.py```
+### Optimization of mRNA sequence and fold for a given protein sequence with ```design.py```
 
-QuVax treats this problem as a bilevel optimization problem or a nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence in FASTA file format. The folding energies are then determined according to a Hamiltonian [1]. Changes are then proposed to the mRNA sequences in the population and the folding energies are recalculated. This process is repeated for a user-defined number of iterations. Example execution of ```design.py```:
+Example execution of ```design.py```:
 
 ```
 $ python design.py -i examples/spike_trim.fasta
@@ -78,7 +94,7 @@ If you have a codon sequence in mind for folding optimization alone, you can use
 
 ```python fold.py -i GGGAAACUGGAAGGCGGGGCGAGCUGCAGCCCCAGUGAAUCAAAUGCAGC```
 
-Currently, the simulated annealer (```-s SA```) and the Monte Carlo (```-s MC```) are available for RNA folding and both can be used here. The output is a dot-bracket file (default: quvax.dot) which has the following format
+Currently, the simulated annealer (```-s SA```), the Monte Carlo (```-s MC```), and an Exact Solver (```-s ES```) are available for RNA folding and both can be used here. The output of ```fold.py``` is a dot-bracket file (default: quvax.dot) which has the following format
 
 ```
 \> Folded energy: -81.0
