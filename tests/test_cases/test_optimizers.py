@@ -12,7 +12,7 @@ def test_TFDE(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -42,7 +42,7 @@ def test_RAND(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -72,7 +72,7 @@ def test_GA(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -102,7 +102,7 @@ def test_Metro(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -132,7 +132,7 @@ def test_GA_MCSolver(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -165,7 +165,7 @@ def test_GA_ExactSolver(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "4",
         "-c",
         "4",
@@ -197,7 +197,7 @@ def test_convergence(caplog):
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GGGN.fasta",
-        "-n",
+        "-p",
         "1",
         "-c",
         "10",

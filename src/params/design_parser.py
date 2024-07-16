@@ -23,10 +23,10 @@ class DesignParser(object):
         Terminates optimization if new free energy minimum is not found within an integer number of generations
     rna_iterations : int
         Iterations for RNA folded energy calcuations (inner loop)
-    n_trials : int
-        Number of initial codon sequences to generate
+    population_size : int
+        Number of codon sequences generated from input protein sequence to undergo optimization
     codon_optimizer : str
-        Designation of outer loop optimizer
+        Choice of outer loop optimizer. Ex: Metropolis Monte Carlo (METRO)
     min_stem_len : int
         Minimum number of stems required in RNA folding
     min_loop_len : int
@@ -42,16 +42,16 @@ class DesignParser(object):
     species : str
         String to identify which species to generate codon frequencies
     output : str
-        String to identify output sqlite database file
+        String to identify output sqlite database file or postgres database
     random_seed : int
         Sets random seed for all optimizers and packages
     target : str
-        Optional input to include target codon sequence
+        Optional input to include a target codon sequence
     state_file : str
         Output (or optional input file with --resume, see -h) to set random seed
         state
     checkpoint_interval : int
-        Frequency to write checkpoint
+        Interval of codon optimization steps to write checkpoint
     hash_value : str
         Hash used to identify optimizations within a database produced by design.py
     database_type : str
@@ -62,6 +62,8 @@ class DesignParser(object):
         For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
         For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
+    beta : float,
+        For use with MC optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
 
     """
 
@@ -118,11 +120,11 @@ class DesignParser(object):
             help="Number of RNA folding (inner loop) iterations",
         )
         self.parser.add_argument(
-            "-n",
-            "--n_trials",
+            "-p",
+            "--population_size",
             default=10,
             type=int,
-            help="Number of initial sequences generated",
+            help="Number of codon sequences generated from input protein sequence to undergo optimization",
         )
         self.parser.add_argument(
             "-co",
@@ -185,7 +187,7 @@ class DesignParser(object):
             "--output",
             default="quvax.db",
             type=str,
-            help="String to identify output sqlite database file. Default: quvax.db",
+            help="Output sqlite database file or postgres database. Default (sqlite): quvax.db",
         )
         self.parser.add_argument(
             "-sd",
@@ -361,10 +363,10 @@ class DesignParser(object):
             """
             )
 
-        if self.args.n_trials < 1:
+        if self.args.population_size < 1:
             raise ValueError(
                 """
-            --n_trials must be at least 1!
+            --population_size must be at least 1!
 
             """
             )
@@ -393,12 +395,12 @@ class DesignParser(object):
             """
             )
 
-        if self.args.codon_optimizer == "GA" and self.args.n_trials < 2:
+        if self.args.codon_optimizer == "GA" and self.args.population_size < 2:
             raise ValueError(
                 "Population size (-n) for the genetic algorithm (-co GA) must be at least 2."
             )
 
-        if self.args.codon_optimizer == "TFDE" and self.args.n_trials < 4:
+        if self.args.codon_optimizer == "TFDE" and self.args.population_size < 4:
             raise ValueError(
                 "Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
             )
@@ -475,7 +477,7 @@ class DesignParser(object):
             self.db_cursor.execute(
                 f"""CREATE TABLE SIM_DETAILS (sim_key {primary_key_type}
                 PRIMARY KEY, protein_seq_file VARCHAR, protein_sequence VARCHAR,
-                 target VARCHAR, n_trials INT,
+                 target VARCHAR, population_size INT,
                  codon_iterations INT, codon_optimizer VARCHAR(10),
                  random_seed INT, min_free_energy FLOAT,
                  target_min_free_energy FLOAT, solver
@@ -507,13 +509,13 @@ class DesignParser(object):
                 )
         self.db_cursor.execute(
             f"""INSERT INTO SIM_DETAILS (protein_seq_file, protein_sequence,
-            target, n_trials, codon_iterations, codon_optimizer,
+            target, population_size, codon_iterations, codon_optimizer,
             random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
-            '{self.args.n_trials}', '{self.args.codon_iterations}',
+            '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
             '{self.args.solver}', '{self.args.rna_iterations}',
             '{self.args.min_stem_len}', '{self.args.min_loop_len}',

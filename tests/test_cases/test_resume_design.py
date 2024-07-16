@@ -73,7 +73,7 @@ def test_resume_hash(caplog):
         "-e",
         "3",
         "-hv",
-        "9f81c4c041",
+        "28ed1d88a9",
     ]
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)
@@ -97,7 +97,7 @@ def test_resume_compare():
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-n",
+        "-p",
         "2",
         "-c",
         "10",
@@ -113,7 +113,7 @@ def test_resume_compare():
     testargs2 = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-n",
+        "-p",
         "2",
         "-c",
         "5",
@@ -145,7 +145,7 @@ def test_resume_compare_MC():
     testargs = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-n",
+        "-p",
         "2",
         "-c",
         "10",
@@ -163,7 +163,7 @@ def test_resume_compare_MC():
     testargs2 = [
         "-i",
         "tests/test_files/test_sequences/GAG.fasta",
-        "-n",
+        "-p",
         "2",
         "-c",
         "5",

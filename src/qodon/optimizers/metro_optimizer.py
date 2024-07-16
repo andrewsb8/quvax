@@ -39,7 +39,7 @@ class MetropolisOptimizer(CodonOptimizer):
         else:
             members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
             # not loading previous secondary structure because they are not compared
-            sec_structs = ["" for i in range(self.config.args.n_trials)]
+            sec_structs = ["" for i in range(self.config.args.population_size)]
 
         energies = self.energies
         self.accepted = 0

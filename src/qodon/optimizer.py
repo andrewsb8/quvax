@@ -41,7 +41,7 @@ class CodonOptimizer(ABC):
             if self.config.args.target is not None:
                 self._verify_target()
                 self._fold_target()
-            self.initial_sequences = self._generate_sequences(self.config.args.n_trials)
+            self.initial_sequences = self._generate_sequences(self.config.args.population_size)
             self.min_free_energy = 1000000  # set min free energy to high number
         else:
             self._load_random_state()
@@ -336,12 +336,12 @@ class CodonOptimizer(ABC):
             f"SELECT COUNT(DISTINCT sequences) from OUTPUTS where sim_key = '{self.config.sim_key}';"
         )
         num = self.config.db_cursor.fetchall()[0][0]
-        # "+ self.config.args.n_trials" to account for initial randomly generated sequences
+        # "+ self.config.args.population_size" to account for initial randomly generated sequences
         self.config.log.info(
             "Number of unique sequences sampled: "
             + str(num)
             + " of possible "
-            + str((step * self.config.args.n_trials) + self.config.args.n_trials)
+            + str((step * self.config.args.population_size) + self.config.args.population_size)
         )
 
     def _verify_dna(self, sequence):
