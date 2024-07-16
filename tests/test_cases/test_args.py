@@ -25,7 +25,7 @@ def test_arg_rna_iterations():
 
 def test_arg_ntrials():
     """
-    Test if _validate() will throw error when -n is less than 1
+    Test if _validate() will throw error when -p is less than 1
 
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-p", "0"]
@@ -43,7 +43,7 @@ def test_lenNTrials_5(mock_optimizer):
 
 def test_lenNTrials_str():
     """
-    Test exception when non-integer is provided for -n
+    Test exception when non-integer is provided for -p
 
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-p", "4"]

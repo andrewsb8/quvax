@@ -34,7 +34,9 @@ class ExactSolver(RNAFolder):
         elif self.len_stem_list == 0:
             self._stems_to_dot_bracket(self.n, [])
         else:
-            raise ValueError(f"Too many possible stem combinations ({self.len_stem_list}). Use simulated annealing (-s SA) or monte carlo (-s MC) folding.")
+            raise ValueError(
+                f"Too many possible stem combinations ({self.len_stem_list}). Use simulated annealing (-s SA) or monte carlo (-s MC) folding."
+            )
 
     def _solve(self):
         self.best_score = 1e100
