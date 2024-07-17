@@ -13,7 +13,7 @@ class REMCOptimizer(MetropolisOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
-        self._generate_temperatures()
+        self.beta_list = self._generate_temperatures()
 
     def _optimize():
         """
@@ -41,10 +41,10 @@ class REMCOptimizer(MetropolisOptimizer):
 
         for i in range(self.config.args.codon_iterations):
             if i != 0 and self.config.args.exchange_frequency % i == 0:
-                self._attempt_exchanges(i)
-            self._metropolis_iteration(self.members)
+                self._attempt_exchanges(i, members, energies)
+            self._metropolis_iteration(members)
             self._iterate(
-                self.members, self.energies, self.sec_structs
+                members, energies, sec_structs
             )  # pass energies and ss to _iterate to avoid refolding
 
         if self.config.args.resume:
@@ -68,7 +68,7 @@ class REMCOptimizer(MetropolisOptimizer):
         define range of beta values in list
 
         """
-        self.beta_list = [
+        return [
             (
                 self.config.args.beta
                 + i
@@ -78,7 +78,7 @@ class REMCOptimizer(MetropolisOptimizer):
             for i in range(self.config.args.population_size)
         ]
 
-    def _attempt_exchanges(self, iteration):
+    def _attempt_exchanges(self, iteration, members, energies):
         """
         try to exchange systems to different temperatures
 
@@ -88,25 +88,26 @@ class REMCOptimizer(MetropolisOptimizer):
             for i in range(1, self.config.args.population_size, 2):
                 if self._check_changes(
                     self.beta_list[i - 1],
-                    self.energies[i - 1],
+                    energies[i - 1],
                     self.beta_list[i],
-                    self.energies[i],
+                    energies[i],
                 ):
-                    self._accept_exchange(i - 1)
+                    self._accept_exchange(i, members, energies)
                 else:
                     self.rejected_exchanges += 1
         else:
             for i in range(2, self.config.args.population_size, 2):
                 if self._check_changes(
                     self.beta_list[i - 1],
-                    self.energies[i - 1],
+                    energies[i - 1],
                     self.beta_list[i],
-                    self.energies[i],
+                    energies[i],
                 ):
-                    self._accept_exchange(i - 1)
+                    self._accept_exchange(i, members, energies)
                 else:
                     self.rejected_exchanges += 1
 
-    def _accept_exchange(self, index):
-        # switch objects of members and energies in the respective lists
+    def _accept_exchange(self, index, members, energies):
+        members[i-1], members[i] = members[i], members[i-1]
+        energies[i-1], energies[i] = energies[i], energies[i-1]
         self.accepted_exchanges += 1
