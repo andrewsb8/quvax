@@ -135,7 +135,10 @@ class MetropolisOptimizer(CodonOptimizer):
                 return old_genes
             # Use the code map to randomly change the codon
             while new_codon == old_codon:
-                old_genes[indices[k]] = random.randint(0, num_codons)
+                #num_codons-1 because if randint returns num_codons, that is
+                #equivalent to the 0th index and only num_changes-1 will be
+                #truly applied, which could lead to errors
+                old_genes[indices[k]] = random.randint(0, num_codons-1)
                 new_codon = old_genes[indices[k]]
         return old_genes
 

@@ -122,6 +122,36 @@ def test_Metro(caplog):
     assert log_entry in caplog.record_tuples
 
 
+def test_REMC(caplog):
+    """
+    Test Replica Exchange Monte Carlo Optimizer runs correctly
+
+    """
+    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-p",
+        "4",
+        "-c",
+        "4",
+        "-ms",
+        "2",
+        "-co",
+        "REMC",
+    ]
+    parser = DesignParser(testargs)
+    parser.log.info("test_METRO")
+    REMCOptimizer(parser)._optimize()
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
 def test_GA_MCSolver(caplog):
     """
     Test Genetic Algorithm Optimizer runs correctly with Monte Carlo RNA folding
@@ -189,7 +219,7 @@ def test_GA_ExactSolver(caplog):
 
 def test_convergence(caplog):
     """
-    Test Genetic Algorithm Optimizer runs correctly
+    Test that convergence will be achieved
 
     """
     from src.qodon.optimizers.random_optimizer import RandomOptimizer

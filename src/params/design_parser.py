@@ -424,6 +424,9 @@ class DesignParser(object):
                 "Population size (-p) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
             )
 
+        if (self.args.codon_optimizer == "METRO" or self.args.codon_optimizer == "REMC") and self.args.num_sequence_changes > len(self.protein_sequence):
+            raise ValueError("The number of changes proposed to any codon sequence (-nc) must be <= the length of the input protein sequence.")
+
         if self.args.checkpoint_interval > self.args.codon_iterations:
             self.log.warning(
                 """
