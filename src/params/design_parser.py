@@ -59,11 +59,11 @@ class DesignParser(object):
     database_ini : str
         Input file containing access information for postgres database.
     sequence_rejections : int,
-        For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
+        For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
-        For use with METRO optimizer only. Number of changes to propose for any given sequence. Default: 1.
+        For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.
     beta : float,
-        For use with METRO optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+        For use with METRO, REMC optimizers only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
     beta_max : float,
         For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size.
     exchange_frequency : int
