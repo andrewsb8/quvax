@@ -27,7 +27,7 @@ if __name__ == "__main__":
     elif config.args.codon_optimizer == "REMC":
         from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
 
-        MetropolisOptimizer(config)._optimize()
+        REMCOptimizer(config)._optimize()
     else:
         config.log.error(
             "Please select a valid optimizer. See python design.py -h for details."

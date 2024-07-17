@@ -45,6 +45,7 @@ class MetropolisOptimizer(CodonOptimizer):
         self.randomed = 0
 
         for i in range(self.config.args.codon_iterations):
+            self._metropolis_iteration(members, energies, sec_structs)
             self._iterate(
                 members, energies, sec_structs
             )  # pass energies and ss to _iterate to avoid refolding
@@ -56,7 +57,7 @@ class MetropolisOptimizer(CodonOptimizer):
         self.config.log.info("Random sequences generated: " + str(self.randomed))
         self._post_process()
 
-    def _metropolis_iteration(self, members):
+    def _metropolis_iteration(self, members, energies, sec_structs):
         for j, sequence in enumerate(members):
             seq_copy = copy.deepcopy(sequence)
             self.seq_rejections = 0
@@ -85,7 +86,7 @@ class MetropolisOptimizer(CodonOptimizer):
                     self.energies[j],
                     self.config.args.beta,
                 ):
-                    self._accept_changes(proposed_members, j)
+                    self._accept_changes(proposed_members, j, members, energies, sec_structs)
                     break
                 else:
                     self.seq_rejections += 1

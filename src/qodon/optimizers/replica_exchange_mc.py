@@ -15,7 +15,7 @@ class REMCOptimizer(MetropolisOptimizer):
         super().__init__(config)
         self.beta_list = self._generate_temperatures()
 
-    def _optimize():
+    def _optimize(self):
         """
         Method for codon optimization using replica exchange metropolis monte
         carlo algorithm
@@ -42,7 +42,7 @@ class REMCOptimizer(MetropolisOptimizer):
         for i in range(self.config.args.codon_iterations):
             if i != 0 and self.config.args.exchange_frequency % i == 0:
                 self._attempt_exchanges(i, members, energies)
-            self._metropolis_iteration(members)
+            self._metropolis_iteration(members, energies, sec_structs)
             self._iterate(
                 members, energies, sec_structs
             )  # pass energies and ss to _iterate to avoid refolding
@@ -107,7 +107,7 @@ class REMCOptimizer(MetropolisOptimizer):
                 else:
                     self.rejected_exchanges += 1
 
-    def _accept_exchange(self, index, members, energies):
+    def _accept_exchange(self, i, members, energies):
         members[i-1], members[i] = members[i], members[i-1]
         energies[i-1], energies[i] = energies[i], energies[i-1]
         self.accepted_exchanges += 1
