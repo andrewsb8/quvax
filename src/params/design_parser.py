@@ -61,9 +61,14 @@ class DesignParser(object):
     sequence_rejections : int,
         For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
-        For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
+        For use with METRO optimizer only. Number of changes to propose for any given sequence. Default: 1.
     beta : float,
-        For use with MC optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+        For use with METRO optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+    beta_max : float,
+        For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size.
+    exchange_frequency : int
+        For use with REMC optimizer only. Frequency at which replica exchange attempts are made during codon optimization in generations.
+
 
     """
 
@@ -251,6 +256,20 @@ class DesignParser(object):
             help="For use with MC optimizer only. Value for 1/kT. Default: 1.",
         )
         self.parser.add_argument(
+            "-bm",
+            "--beta_max",
+            default=10,
+            type=float,
+            help="For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size. Default: 10.",
+        )
+        self.parser.add_argument(
+            "-ef",
+            "--exchange_frequency",
+            default=10,
+            type=int,
+            help="For use with REMC optimizer only. Frequency at which replica exchange attempts are made during codon optimization in generations. Default: 10.",
+        )
+        self.parser.add_argument(
             "-db",
             "--database_type",
             default="sqlite",
@@ -414,6 +433,9 @@ class DesignParser(object):
 
             """
             )
+
+        if self.args.beta > self.args.beta_max:
+            raise ValueError("beta_max (-bm) must be larger than beta (-b).")
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
