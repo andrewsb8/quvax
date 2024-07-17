@@ -4,7 +4,13 @@ import random
 
 class REMCOptimizer(MetropolisOptimizer):
     """
-    Replica Excahnge Metropolis Monte Carlo Optimizer for codon optimization
+    Replica Excahnge Metropolis Monte Carlo Optimizer for codon optimization.
+    This is a direct extension of the Metropolis Monte Carlo Optimizer where
+    each member of the population is exposed to a temperature within a range
+    set by the user. Periodically, at a frequency set by the user, the sequences
+    are checked to see if they can be swapped between temperatures using a similar
+    Boltzmann criterion governing the Metropolis algorithm (except with different
+    beta (1/kT) values).
 
     Parameters
     -----------
