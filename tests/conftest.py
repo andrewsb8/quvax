@@ -24,6 +24,7 @@ def mock_optimizer():
     opt = MockOptimizer(parser)
     return opt
 
+
 class MockAnalysis(Analysis):
     def __init__(self, config):
         super().__init__(config)
@@ -31,10 +32,11 @@ class MockAnalysis(Analysis):
     def _analyze(self):
         pass
 
+
 @pytest.fixture
 def mock_analysis():
     """
-    Mock analysis object used only to access certain functions. No config is 
+    Mock analysis object used only to access certain functions. No config is
     needed so None is passed to it.
 
     """

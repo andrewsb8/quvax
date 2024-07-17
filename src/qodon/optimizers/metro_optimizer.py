@@ -23,6 +23,9 @@ class MetropolisOptimizer(CodonOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
+        self.accepted = 0
+        self.rejected = 0
+        self.randomed = 0
 
     def _optimize(self):
         """
@@ -40,9 +43,6 @@ class MetropolisOptimizer(CodonOptimizer):
             sec_structs = ["" for i in range(self.config.args.population_size)]
 
         energies = self.energies
-        self.accepted = 0
-        self.rejected = 0
-        self.randomed = 0
 
         for i in range(self.config.args.codon_iterations):
             self._metropolis_iteration(members, energies, sec_structs)
@@ -86,7 +86,9 @@ class MetropolisOptimizer(CodonOptimizer):
                     self.energies[j],
                     self.config.args.beta,
                 ):
-                    self._accept_changes(proposed_members, j, members, energies, sec_structs)
+                    self._accept_changes(
+                        proposed_members, j, members, energies, sec_structs
+                    )
                     break
                 else:
                     self.seq_rejections += 1
@@ -135,10 +137,10 @@ class MetropolisOptimizer(CodonOptimizer):
                 return old_genes
             # Use the code map to randomly change the codon
             while new_codon == old_codon:
-                #num_codons-1 because if randint returns num_codons, that is
-                #equivalent to the 0th index and only num_changes-1 will be
-                #truly applied, which could lead to errors
-                old_genes[indices[k]] = random.randint(0, num_codons-1)
+                # num_codons-1 because if randint returns num_codons, that is
+                # equivalent to the 0th index and only num_changes-1 will be
+                # truly applied, which could lead to errors
+                old_genes[indices[k]] = random.randint(0, num_codons - 1)
                 new_codon = old_genes[indices[k]]
         return old_genes
 

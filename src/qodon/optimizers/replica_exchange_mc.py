@@ -24,6 +24,9 @@ class REMCOptimizer(MetropolisOptimizer):
     def __init__(self, config):
         super().__init__(config)
         self.beta_list = self._generate_temperatures()
+        self.accepted_exchanges = 0
+        self.rejected_exchanges = 0
+        self.exchange_attempt = 0
 
     def _optimize(self):
         """
@@ -42,16 +45,15 @@ class REMCOptimizer(MetropolisOptimizer):
             sec_structs = ["" for i in range(self.config.args.population_size)]
 
         energies = self.energies
-        self.accepted = 0
-        self.rejected = 0
-        self.randomed = 0
-        self.accepted_exchanges = 0
-        self.rejected_exchanges = 0
-        self.exchange_attempt = 0
 
         for i in range(self.config.args.codon_iterations):
-            if i != 0 and i != self.config.args.codon_iterations - 1 and self.config.args.exchange_frequency % i == 0:
-                self._attempt_exchanges(i, members, energies)
+            if (
+                i != 0
+                and i != self.config.args.codon_iterations - 1
+                and self.config.args.exchange_frequency % i == 0
+            ):
+                self.exchange_attempt += 1
+                self._attempt_exchanges(self.exchange_attempt, members, energies)
             self._metropolis_iteration(members, energies, sec_structs)
             self._iterate(
                 members, energies, sec_structs
@@ -128,6 +130,6 @@ class REMCOptimizer(MetropolisOptimizer):
         lists so they will be associated with a new temperature in self.beta_list
 
         """
-        members[i-1], members[i] = members[i], members[i-1]
-        energies[i-1], energies[i] = energies[i], energies[i-1]
+        members[i - 1], members[i] = members[i], members[i - 1]
+        energies[i - 1], energies[i] = energies[i], energies[i - 1]
         self.accepted_exchanges += 1
