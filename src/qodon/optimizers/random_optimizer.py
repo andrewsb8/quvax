@@ -12,8 +12,6 @@ class RandomOptimizer(CodonOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
-        self._optimize()
-        self._post_process()
 
     def _optimize(self):
         """
@@ -26,3 +24,4 @@ class RandomOptimizer(CodonOptimizer):
         for i in range(self.config.args.codon_iterations):
             extra_sequences = self._generate_sequences(self.config.args.population_size)
             self._iterate(extra_sequences)
+        self._post_process()
