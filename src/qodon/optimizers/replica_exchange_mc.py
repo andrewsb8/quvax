@@ -8,6 +8,10 @@ class REMCOptimizer(MetropolisOptimizer):
 
     Parameters
     -----------
+    self.beta_list : list float
+        List of temperatures for each sequence in the population which has range
+        self.config.args.beta to self.config.args.beta_max and the interval is
+        the difference of those values divided by population size
 
     """
 
@@ -65,7 +69,9 @@ class REMCOptimizer(MetropolisOptimizer):
 
     def _generate_temperatures(self):
         """
-        define range of beta values in list
+        Define range of beta (1/kT) values in a list. The indices of this list
+        will correspond with sequences and energies of the same indices in
+        ```members``` and ```energies```
 
         """
         return [
@@ -80,10 +86,13 @@ class REMCOptimizer(MetropolisOptimizer):
 
     def _attempt_exchanges(self, iteration, members, energies):
         """
-        try to exchange systems to different temperatures
+        Try to exchange systems to different temperatures. If first digit of
+        iteration is even, only try to exchange even values of i with i+1. For
+        odd, try to exchange odd values of i with i+1. This strategy is inspired
+        by GROMACS (see here:
+        https://manual.gromacs.org/current/reference-manual/algorithms/replica-exchange.html)
 
         """
-        # if first digit is even, only try to exchange even indices
         if int(str(iteration)[0]) % 2 == 0:
             for i in range(1, self.config.args.population_size, 2):
                 if self._check_changes(
@@ -108,6 +117,11 @@ class REMCOptimizer(MetropolisOptimizer):
                     self.rejected_exchanges += 1
 
     def _accept_exchange(self, i, members, energies):
+        """
+        If systems can be exchanged, then swap the sequences and energies in the
+        lists so they will be associated with a new temperature in self.beta_list
+
+        """
         members[i-1], members[i] = members[i], members[i-1]
         energies[i-1], energies[i] = energies[i], energies[i-1]
         self.accepted_exchanges += 1

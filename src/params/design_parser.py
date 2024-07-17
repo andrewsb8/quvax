@@ -239,21 +239,21 @@ class DesignParser(object):
             "--sequence_rejections",
             default=3,
             type=int,
-            help="For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
+            help="For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
         )
         self.parser.add_argument(
             "-nc",
             "--num_sequence_changes",
             default=1,
             type=int,
-            help="For use with METRO optimizer only. Number of changes to propose for any given sequence. Default: 1.",
+            help="For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.",
         )
         self.parser.add_argument(
             "-b",
             "--beta",
             default=1,
             type=float,
-            help="For use with METRO optimizer only. Value for 1/kT. Default: 1.",
+            help="For use with METRO, REMC optimizers only. Value for 1/kT. Default: 1.",
         )
         self.parser.add_argument(
             "-bm",
@@ -416,12 +416,12 @@ class DesignParser(object):
 
         if self.args.codon_optimizer == "GA" and self.args.population_size < 2:
             raise ValueError(
-                "Population size (-n) for the genetic algorithm (-co GA) must be at least 2."
+                "Population size (-p) for the genetic algorithm (-co GA) must be at least 2."
             )
 
         if self.args.codon_optimizer == "TFDE" and self.args.population_size < 4:
             raise ValueError(
-                "Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
+                "Population size (-p) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
             )
 
         if self.args.checkpoint_interval > self.args.codon_iterations:
