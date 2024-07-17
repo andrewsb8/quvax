@@ -40,7 +40,7 @@ class REMCOptimizer(MetropolisOptimizer):
         self.exchange_attempt = 0
 
         for i in range(self.config.args.codon_iterations):
-            if i != 0 and self.config.args.exchange_frequency % i == 0:
+            if i != 0 and i != self.config.args.codon_iterations - 1 and self.config.args.exchange_frequency % i == 0:
                 self._attempt_exchanges(i, members, energies)
             self._metropolis_iteration(members, energies, sec_structs)
             self._iterate(

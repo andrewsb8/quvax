@@ -246,14 +246,14 @@ class DesignParser(object):
             "--num_sequence_changes",
             default=1,
             type=int,
-            help="For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.",
+            help="For use with METRO optimizer only. Number of changes to propose for any given sequence. Default: 1.",
         )
         self.parser.add_argument(
             "-b",
             "--beta",
             default=1,
             type=float,
-            help="For use with MC optimizer only. Value for 1/kT. Default: 1.",
+            help="For use with METRO optimizer only. Value for 1/kT. Default: 1.",
         )
         self.parser.add_argument(
             "-bm",
@@ -507,7 +507,8 @@ class DesignParser(object):
                  INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
-                 sequence_rejections INT, num_sequence_changes INT, beta FLOAT);"""
+                 sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
+                 beta_max FLOAT, exchange_frequency INT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -535,7 +536,7 @@ class DesignParser(object):
             random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
-            num_sequence_changes, beta) VALUES
+            num_sequence_changes, beta, beta_max, exchange_frequency) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -545,7 +546,8 @@ class DesignParser(object):
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
             '{self.args.checkpoint_interval}', '{self.args.convergence}',
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
-            '{self.args.num_sequence_changes}', '{self.args.beta}');"""
+            '{self.args.num_sequence_changes}', '{self.args.beta}',
+            '{self.args.beta_max}', '{self.args.exchange_frequency}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
