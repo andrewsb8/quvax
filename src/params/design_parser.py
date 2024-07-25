@@ -59,11 +59,16 @@ class DesignParser(object):
     database_ini : str
         Input file containing access information for postgres database.
     sequence_rejections : int,
-        For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.
+        For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
-        For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.
+        For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.
     beta : float,
-        For use with MC optimizer only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+        For use with METRO, REMC optimizers only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+    beta_max : float,
+        For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size.
+    exchange_frequency : int
+        For use with REMC optimizer only. Frequency at which replica exchange attempts are made during codon optimization in generations.
+
 
     """
 
@@ -234,21 +239,35 @@ class DesignParser(object):
             "--sequence_rejections",
             default=3,
             type=int,
-            help="For use with MC optimizer only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
+            help="For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.",
         )
         self.parser.add_argument(
             "-nc",
             "--num_sequence_changes",
             default=1,
             type=int,
-            help="For use with MC optimizer only. Number of changes to propose for any given sequence. Default: 1.",
+            help="For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.",
         )
         self.parser.add_argument(
             "-b",
             "--beta",
             default=1,
             type=float,
-            help="For use with MC optimizer only. Value for 1/kT. Default: 1.",
+            help="For use with METRO, REMC optimizers only. Value for 1/kT. Default: 1.",
+        )
+        self.parser.add_argument(
+            "-bm",
+            "--beta_max",
+            default=10,
+            type=float,
+            help="For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size. Default: 10.",
+        )
+        self.parser.add_argument(
+            "-ef",
+            "--exchange_frequency",
+            default=10,
+            type=int,
+            help="For use with REMC optimizer only. Frequency at which replica exchange attempts are made during codon optimization in generations. Default: 10.",
         )
         self.parser.add_argument(
             "-db",
@@ -397,12 +416,19 @@ class DesignParser(object):
 
         if self.args.codon_optimizer == "GA" and self.args.population_size < 2:
             raise ValueError(
-                "Population size (-n) for the genetic algorithm (-co GA) must be at least 2."
+                "Population size (-p) for the genetic algorithm (-co GA) must be at least 2."
             )
 
         if self.args.codon_optimizer == "TFDE" and self.args.population_size < 4:
             raise ValueError(
-                "Population size (-n) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
+                "Population size (-p) for the TF differential evolutionary optimizer (-co TFDE) must be at least 4."
+            )
+
+        if (
+            self.args.codon_optimizer == "METRO" or self.args.codon_optimizer == "REMC"
+        ) and self.args.num_sequence_changes > len(self.protein_sequence):
+            raise ValueError(
+                "The number of changes proposed to any codon sequence (-nc) must be <= the length of the input protein sequence."
             )
 
         if self.args.checkpoint_interval > self.args.codon_iterations:
@@ -414,6 +440,9 @@ class DesignParser(object):
 
             """
             )
+
+        if self.args.beta > self.args.beta_max:
+            raise ValueError("beta_max (-bm) must be larger than beta (-b).")
 
     def _log_args(self):
         self.log.info("\n\nList of Parameters:")
@@ -485,7 +514,8 @@ class DesignParser(object):
                  INT, min_loop_len INT, species VARCHAR, coeff_max_bond INT,
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
-                 sequence_rejections INT, num_sequence_changes INT, beta FLOAT);"""
+                 sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
+                 beta_max FLOAT, exchange_frequency INT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -513,7 +543,7 @@ class DesignParser(object):
             random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
-            num_sequence_changes, beta) VALUES
+            num_sequence_changes, beta, beta_max, exchange_frequency) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -523,7 +553,8 @@ class DesignParser(object):
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
             '{self.args.checkpoint_interval}', '{self.args.convergence}',
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
-            '{self.args.num_sequence_changes}', '{self.args.beta}');"""
+            '{self.args.num_sequence_changes}', '{self.args.beta}',
+            '{self.args.beta_max}', '{self.args.exchange_frequency}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value

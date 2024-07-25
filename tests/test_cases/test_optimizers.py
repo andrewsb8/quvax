@@ -23,7 +23,7 @@ def test_TFDE(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_TFDE")
-    TfDiffEv(parser)
+    TfDiffEv(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -53,7 +53,7 @@ def test_RAND(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_RAND")
-    RandomOptimizer(parser)
+    RandomOptimizer(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -83,7 +83,7 @@ def test_GA(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_GA")
-    GeneticAlgorithm(parser)
+    GeneticAlgorithm(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -113,7 +113,37 @@ def test_Metro(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_METRO")
-    MetropolisOptimizer(parser)
+    MetropolisOptimizer(parser)._optimize()
+    log_entry = (
+        "src.params.design_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Finished parsing optimized sequences.",
+    )
+    assert log_entry in caplog.record_tuples
+
+
+def test_REMC(caplog):
+    """
+    Test Replica Exchange Monte Carlo Optimizer runs correctly
+
+    """
+    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-p",
+        "4",
+        "-c",
+        "4",
+        "-ms",
+        "2",
+        "-co",
+        "REMC",
+    ]
+    parser = DesignParser(testargs)
+    parser.log.info("test_METRO")
+    REMCOptimizer(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -145,7 +175,7 @@ def test_GA_MCSolver(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_GA")
-    GeneticAlgorithm(parser)
+    GeneticAlgorithm(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -178,7 +208,7 @@ def test_GA_ExactSolver(caplog):
     ]
     parser = DesignParser(testargs)
     parser.log.info("test_GA")
-    GeneticAlgorithm(parser)
+    GeneticAlgorithm(parser)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -189,7 +219,7 @@ def test_GA_ExactSolver(caplog):
 
 def test_convergence(caplog):
     """
-    Test Genetic Algorithm Optimizer runs correctly
+    Test that convergence will be achieved
 
     """
     from src.qodon.optimizers.random_optimizer import RandomOptimizer
@@ -208,6 +238,6 @@ def test_convergence(caplog):
     ]
     parser = DesignParser(testargs)
     with pytest.raises(SystemExit) as s:
-        RandomOptimizer(parser)
+        RandomOptimizer(parser)._optimize()
     assert s.type == SystemExit
     assert s.value.code == 1

@@ -22,7 +22,7 @@ def test_resume(caplog):
         "3",
     ]
     config = DesignParser._resume(testargs)
-    GeneticAlgorithm(config)
+    GeneticAlgorithm(config)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -76,7 +76,7 @@ def test_resume_hash(caplog):
         "28ed1d88a9",
     ]
     config = DesignParser._resume(testargs)
-    GeneticAlgorithm(config)
+    GeneticAlgorithm(config)._optimize()
     log_entry = (
         "src.params.design_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -108,6 +108,7 @@ def test_resume_compare():
     ]
     config = DesignParser(testargs)
     opt = GeneticAlgorithm(config)
+    opt._optimize()
 
     # second optimization
     testargs2 = [
@@ -124,11 +125,13 @@ def test_resume_compare():
     ]
     config2 = DesignParser(testargs2)
     opt2 = GeneticAlgorithm(config2)
+    opt2._optimize()
 
     # resume second optimization
     testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
+    opt3._optimize()
 
     assert opt.list_seqs == opt3.list_seqs
 
@@ -158,6 +161,7 @@ def test_resume_compare_MC():
     ]
     config = DesignParser(testargs)
     opt = GeneticAlgorithm(config)
+    opt._optimize()
 
     # second optimization
     testargs2 = [
@@ -176,10 +180,12 @@ def test_resume_compare_MC():
     ]
     config2 = DesignParser(testargs2)
     opt2 = GeneticAlgorithm(config2)
+    opt2._optimize()
 
     # resume second optimization
     testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
     config3 = DesignParser._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
+    opt3._optimize()
 
     assert opt.list_seqs == opt3.list_seqs

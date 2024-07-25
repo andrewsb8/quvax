@@ -13,8 +13,6 @@ class GeneticAlgorithm(CodonOptimizer):
 
     def __init__(self, config):
         super().__init__(config)
-        self._optimize()
-        self._post_process()
 
     def _optimize(self):
         """
@@ -32,6 +30,7 @@ class GeneticAlgorithm(CodonOptimizer):
             # Introduce mutations
             members = self._procreate(members)
             self._iterate(members)
+        self._post_process()
 
     def _procreate(self, eligible_members):
         """

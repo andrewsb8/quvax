@@ -18,7 +18,9 @@ def test_SameInitialSequences_DefaultSeed():
     ]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
+    opt._optimize()
     opt2 = MockOptimizer(parser)
+    opt2._optimize()
     assert opt.initial_sequences == opt2.initial_sequences
 
 
@@ -37,7 +39,9 @@ def test_SameInitialSequences_NewSeed():
     ]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
+    opt._optimize()
     opt2 = MockOptimizer(parser)
+    opt2._optimize()
     assert opt.initial_sequences == opt2.initial_sequences
 
 
@@ -54,8 +58,10 @@ def test_InitialSequences_DifferentSeeds():
     ]
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
+    opt._optimize()
     parser.args.random_seed = 234524352
     opt2 = MockOptimizer(parser)
+    opt2._optimize()
     assert opt.initial_sequences != opt2.initial_sequences
 
 
@@ -78,7 +84,9 @@ def test_TfDiffEv_DefaultSeed():
     ]
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
+    opt._optimize()
     opt2 = TfDiffEv(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -103,7 +111,9 @@ def test_TfDiffEv_NewSeed():
     ]
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
+    opt._optimize()
     opt2 = TfDiffEv(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -130,7 +140,9 @@ def test_TfDiffEv_OneIteration():
     ]
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
+    opt._optimize()
     opt2 = TfDiffEv(parser)
+    opt2._optimize()
     assert (
         opt.optimization_process["sequences"][-1]
         == opt2.optimization_process["sequences"][-1]
@@ -158,7 +170,9 @@ def test_TfDiffEv_LongerSequence():
     ]
     parser = DesignParser(testargs)
     opt = TfDiffEv(parser)
+    opt._optimize()
     opt2 = TfDiffEv(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -183,7 +197,9 @@ def test_GA_DefaultSeed():
     ]
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
+    opt._optimize()
     opt2 = GeneticAlgorithm(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -208,7 +224,9 @@ def test_GA_NewSeed():
     ]
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
+    opt._optimize()
     opt2 = GeneticAlgorithm(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -233,7 +251,9 @@ def test_GA_OneIteration():
     ]
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
+    opt._optimize()
     opt2 = GeneticAlgorithm(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -258,7 +278,9 @@ def test_GA_LongerSequence():
     ]
     parser = DesignParser(testargs)
     opt = GeneticAlgorithm(parser)
+    opt._optimize()
     opt2 = GeneticAlgorithm(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -283,7 +305,9 @@ def test_RAND_DefaultSeed():
     ]
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
+    opt._optimize()
     opt2 = RandomOptimizer(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -308,7 +332,9 @@ def test_RAND_NewSeed():
     ]
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
+    opt._optimize()
     opt2 = RandomOptimizer(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -333,7 +359,9 @@ def test_RAND_OneIteration():
     ]
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
+    opt._optimize()
     opt2 = RandomOptimizer(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -358,7 +386,9 @@ def test_RAND_LongerSequence():
     ]
     parser = DesignParser(testargs)
     opt = RandomOptimizer(parser)
+    opt._optimize()
     opt2 = RandomOptimizer(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
 
@@ -383,5 +413,7 @@ def test_METRO_DefaultSeed():
     ]
     parser = DesignParser(testargs)
     opt = MetropolisOptimizer(parser)
+    opt._optimize()
     opt2 = MetropolisOptimizer(parser)
+    opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs

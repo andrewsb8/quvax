@@ -22,8 +22,6 @@ class TfDiffEv(CodonOptimizer):
         self.energies_tensor = tf.Variable(
             [0 for i in range(self.config.args.population_size)], dtype=np.float32
         )
-        self._optimize()
-        self._post_process()
 
     def _optimize(self):
         """
@@ -50,6 +48,7 @@ class TfDiffEv(CodonOptimizer):
             crossover_prob=0.1,
             func_tolerance=-1,  # force tensorflow to do max_iterations
         )
+        self._post_process()
 
     def _objective(self, members):
         """

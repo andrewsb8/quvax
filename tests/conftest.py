@@ -4,6 +4,8 @@ from src.qodon.optimizer import CodonOptimizer
 from src.params.design_parser import DesignParser
 from src.params.fold_parser import FoldParser
 from src.rna_folding.rna_folder import RNAFolder
+from src.params.analysis_parser import AnalysisParser
+from src.analysis.analysis import Analysis
 
 
 class MockOptimizer(CodonOptimizer):
@@ -21,6 +23,24 @@ def mock_optimizer():
     parser = DesignParser(testargs)
     opt = MockOptimizer(parser)
     return opt
+
+
+class MockAnalysis(Analysis):
+    def __init__(self, config):
+        super().__init__(config)
+
+    def _analyze(self):
+        pass
+
+
+@pytest.fixture
+def mock_analysis():
+    """
+    Mock analysis object used only to access certain functions. No config is
+    needed so None is passed to it.
+
+    """
+    return MockAnalysis(None)
 
 
 class MockFolder(RNAFolder):
