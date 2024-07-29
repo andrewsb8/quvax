@@ -45,7 +45,6 @@ class MetropolisOptimizer(CodonOptimizer):
         self._post_process()
 
     def _metropolis_iteration(self, members, energies, sec_structs):
-        print(members)
         for j, sequence in enumerate(members):
             seq_copy = copy.deepcopy(sequence)
             self.seq_rejections = 0
