@@ -722,7 +722,7 @@ class DesignParser(object):
             )
             self.args.codon_iterations += self.args.extend
             self.db_cursor.execute(
-                f"UPDATE SIM_DETAILS SET codon_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE protein_sequence = '{self.protein_sequence}';"
+                f"UPDATE SIM_DETAILS SET codon_iterations = '{self.args.codon_iterations + self.generations_sampled}' WHERE sim_key = '{self.sim_key}';"
             )
             self.db.commit()
         elif self.args.codon_iterations == 0 and self.args.extend == 0:
@@ -734,9 +734,12 @@ class DesignParser(object):
 
         # collect final generation of sequences from previous execution of design.py
         self.db_cursor.execute(
-            f"SELECT sequences, energies from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
+            f"SELECT sequences, energies, secondary_structure from OUTPUTS WHERE sim_key = '{self.sim_key}' and generation = '{self.generations_sampled}';"
         )
         data = self.db_cursor.fetchall()
+        if len(data) != self.args.population_size:
+            raise ValueError("Data set retrieved from Outputs is larger than population size.")
         self.initial_sequences = [data[i][0] for i in range(len(data))]
         self.energies = [data[j][1] for j in range(len(data))]
+        self.sec_structs = [data[k][2] for k in range(len(data))]
         self.log.info("Loaded info from database " + self.args.input)
