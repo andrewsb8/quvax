@@ -103,7 +103,7 @@ def test_number_changes(mock_analysis):
     )
 
 
-def test_number_changes():
+def test_random_sequence_generation():
     """
     Test the randomly generated sequence in the Metropolis function works correctly
 

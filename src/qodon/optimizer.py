@@ -45,6 +45,7 @@ class CodonOptimizer(ABC):
             self.initial_sequences = self._generate_sequences(
                 self.config.args.population_size
             )
+            self.members = deepcopy(self.initial_sequences)
             self.energies = [0 for member in self.members]
             self.sec_structs = ["" for member in self.members]
             self.min_free_energy = 1000000  # set min free energy to high number
@@ -52,15 +53,12 @@ class CodonOptimizer(ABC):
         else:
             self._load_random_state()
             self.min_free_energy = self.config.min_free_energy
-            self.initial_sequences = [
-                self._convert_codons_to_ints(s) for s in self.config.initial_sequences
-            ]
+            self.initial_sequences = [self._convert_codons_to_ints(s) for s in self.config.initial_sequences]
+            self.members = deepcopy(self.initial_sequences)
             self.energies = self.config.energies
             self.sec_structs = self.config.sec_structs
             if self.config.args.target is not None:
                 self.target_min_free_energy = self.config.target_min_free_energy
-
-        self.members = deepcopy(self.initial_sequences)
 
     @abstractmethod
     def _optimize(self):
