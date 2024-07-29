@@ -66,6 +66,7 @@ class MetropolisOptimizer(CodonOptimizer):
                 # if reach maximum rejects, randomly sample another sequence
                 if self.seq_rejections >= self.config.args.sequence_rejections:
                     rand_seq = self._generate_sequences(1)
+                    members[j] = rand_seq
                     self._fold_rna(self._convert_ints_to_codons(rand_seq[0]))
                     energies[j] = self.folder.best_score
                     sec_structs[j] = self.folder.dot_bracket
