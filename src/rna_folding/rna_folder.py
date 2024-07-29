@@ -26,9 +26,11 @@ class RNAFolder(ABC):
     pairs : list
         List of base pair interactions in the sequence
     twobody_penalty : int
-        Energetic penalty
+        Energetic penalty for overlapping stems
+    no_stem_penalty : int
+        Penalty for sequence with no possible stems for given min stem length/loop length
     pseudo_factor : float
-        description
+        Penalty for pseudoknots
 
     """
 
