@@ -42,9 +42,13 @@ class REMCOptimizer(MetropolisOptimizer):
                 and self.config.args.exchange_frequency % i == 0
             ):
                 self.exchange_attempt += 1
-                self._attempt_exchanges(self.exchange_attempt, self.members, self.energies)
+                self._attempt_exchanges(
+                    self.exchange_attempt, self.members, self.energies
+                )
             self._metropolis_iteration(self.members, self.energies, self.sec_structs)
-            self._iterate(fold_sequences=False)  # do not calculate folding energy and secondary structures
+            self._iterate(
+                fold_sequences=False
+            )  # do not calculate folding energy and secondary structures
 
         if self.config.args.resume:
             self.config.log.info(

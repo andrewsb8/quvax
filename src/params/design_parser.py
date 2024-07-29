@@ -738,7 +738,9 @@ class DesignParser(object):
         )
         data = self.db_cursor.fetchall()
         if len(data) != self.args.population_size:
-            raise ValueError("Data set retrieved from Outputs is larger than population size.")
+            raise ValueError(
+                "Data set retrieved from Outputs is larger than population size."
+            )
         self.initial_sequences = [data[i][0] for i in range(len(data))]
         self.energies = [data[j][1] for j in range(len(data))]
         self.sec_structs = [data[k][2] for k in range(len(data))]

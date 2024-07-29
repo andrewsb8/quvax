@@ -35,7 +35,9 @@ class MetropolisOptimizer(CodonOptimizer):
 
         for i in range(self.config.args.codon_iterations):
             self._metropolis_iteration(self.members, self.energies, self.sec_structs)
-            self._iterate(fold_sequences=False) #do not calculated folding energy or secondary structures
+            self._iterate(
+                fold_sequences=False
+            )  # do not calculated folding energy or secondary structures
         self.config.log.info(
             "MC stats are only kept track of in each individual execution of design.py and are not aggregated from previous runs if using --resume."
         )
