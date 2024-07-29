@@ -30,13 +30,7 @@ class TfDiffEv(CodonOptimizer):
 
         """
 
-        if self.config.args.resume:
-            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
-            members = tf.convert_to_tensor(([_ for _ in members]), np.float32)
-        else:
-            members = tf.convert_to_tensor(
-                ([_ for _ in self.initial_sequences]), np.float32
-            )
+        members = tf.convert_to_tensor(([_ for _ in self.members]), np.float32)
 
         # Differential_weight: controls strength of mutations. We basically want to turn this off.
         # Crossover_prob: set this low. Need to think more about why this helps.
@@ -61,8 +55,8 @@ class TfDiffEv(CodonOptimizer):
         """
 
         # Map continuous valued tensor to integers associated with RNA sequence
-        n_seqs = self._convert_to_ints(members)
-        self._iterate(n_seqs)
+        self.members = self._convert_to_ints(members)
+        self._iterate()
 
         # Return TF object
         return self.energies_tensor.assign(self.energies)

@@ -1,5 +1,6 @@
 from src.params.design_parser import DesignParser
 from abc import ABC, abstractmethod
+from copy import deepcopy
 import python_codon_tables as pct
 from Bio.Seq import Seq
 import random
@@ -44,12 +45,18 @@ class CodonOptimizer(ABC):
             self.initial_sequences = self._generate_sequences(
                 self.config.args.population_size
             )
+            self.members = deepcopy(self.initial_sequences)
+            self.energies = [0 for member in self.members]
+            self.sec_structs = ["" for member in self.members]
             self.min_free_energy = 1000000  # set min free energy to high number
+            self._iterate(update_counter=False)
         else:
             self._load_random_state()
             self.min_free_energy = self.config.min_free_energy
-            self.initial_sequences = self.config.initial_sequences
+            self.initial_sequences = [self._convert_codons_to_ints(s) for s in self.config.initial_sequences]
+            self.members = deepcopy(self.initial_sequences)
             self.energies = self.config.energies
+            self.sec_structs = self.config.sec_structs
             if self.config.args.target is not None:
                 self.target_min_free_energy = self.config.target_min_free_energy
 
@@ -252,7 +259,7 @@ class CodonOptimizer(ABC):
             for i, res in enumerate(self.config.protein_sequence)
         ]
 
-    def _iterate(self, sequences, energies=None, sec_structs=None, update_counter=True):
+    def _iterate(self, fold_sequences=True, update_counter=True):
         """
         Function containing references to the steps taken in each codon
         optimization iteration: convert codon integer sequences to codon
@@ -262,17 +269,12 @@ class CodonOptimizer(ABC):
         """
 
         self._update_codon_step(update_counter)
-        self.list_seqs = [self._convert_ints_to_codons(s) for s in sequences]
-        if energies is None:
-            self.energies = []
-            self.sec_structs = []
-            for s in self.list_seqs:
-                self._fold_rna(s)
-                self.energies.append(self.folder.best_score)
-                self.sec_structs.append(self.folder.dot_bracket)
-        else:
-            self.energies = energies
-            self.sec_structs = sec_structs
+        self.list_seqs = [self._convert_ints_to_codons(s) for s in self.members]
+        if fold_sequences:
+            for s in range(len(self.list_seqs)):
+                self._fold_rna(self.list_seqs[s])
+                self.energies[s] = self.folder.best_score
+                self.sec_structs[s] = self.folder.dot_bracket
         self._update_mfe(self.energies)
         self._write_output(self.list_seqs, self.energies, self.sec_structs)
         if self.config.args.convergence > 0:

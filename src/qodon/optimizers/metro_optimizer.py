@@ -33,22 +33,9 @@ class MetropolisOptimizer(CodonOptimizer):
 
         """
 
-        if not self.config.args.resume:
-            self._iterate(self.initial_sequences, update_counter=False)
-            members = self.initial_sequences
-            sec_structs = self.sec_structs
-        else:
-            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
-            # not loading previous secondary structure because they are not compared
-            sec_structs = ["" for i in range(self.config.args.population_size)]
-
-        energies = self.energies
-
         for i in range(self.config.args.codon_iterations):
-            self._metropolis_iteration(members, energies, sec_structs)
-            self._iterate(
-                members, energies, sec_structs
-            )  # pass energies and ss to _iterate to avoid refolding
+            self._metropolis_iteration(self.members, self.energies, self.sec_structs)
+            self._iterate(fold_sequences=False) #do not calculated folding energy or secondary structures
         self.config.log.info(
             "MC stats are only kept track of in each individual execution of design.py and are not aggregated from previous runs if using --resume."
         )
