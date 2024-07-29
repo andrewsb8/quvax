@@ -103,6 +103,30 @@ def test_number_changes(mock_analysis):
     )
 
 
+def test_number_changes():
+    """
+    Test the randomly generated sequence in the Metropolis function works correctly
+
+    """
+    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+
+    testargs = [
+        "-i",
+        "tests/test_files/test_sequences/GGGN.fasta",
+        "-p",
+        "1",
+        "-co",
+        "METRO",
+    ]
+    parser = DesignParser(testargs)
+    opt = MetropolisOptimizer(parser)
+    opt.seq_rejections = 1000  # trigger random sequence generation
+    opt.energies = [0]
+    seq_copy = deepcopy(opt.initial_sequences)
+    opt._metropolis_iteration(opt.initial_sequences, opt.energies, [""])
+    assert seq_copy[0] != opt.initial_sequences[0]  # confirm sequence is different
+
+
 def test_accepted_exchange_even(mock_analysis):
     """
     Test exchanges occur correctly in REMC
