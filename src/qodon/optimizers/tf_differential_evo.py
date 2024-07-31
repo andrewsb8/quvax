@@ -14,9 +14,6 @@ class TfDiffEv(CodonOptimizer):
     def __init__(self, config):
         super().__init__(config)
         tf.random.set_seed(self.config.args.random_seed)
-        # tensorflow counts initial pop as first step but others don't
-        # line below makes counting consistent among all optimizers
-        self.codon_optimize_step -= 1
         # initialize tensor to store energies and list to store its indices
         # see Scalar Updates here: https://www.tensorflow.org/api_docs/python/tf/tensor_scatter_nd_update
         self.energies_tensor = tf.Variable(
@@ -37,7 +34,7 @@ class TfDiffEv(CodonOptimizer):
         tfp.optimizer.differential_evolution_minimize(
             self._objective,
             initial_population=members,
-            max_iterations=self.config.args.codon_iterations,
+            max_iterations=self.config.args.codon_iterations-1,
             differential_weight=0.01,
             crossover_prob=0.1,
             func_tolerance=-1,  # force tensorflow to do max_iterations

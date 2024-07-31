@@ -49,7 +49,9 @@ class CodonOptimizer(ABC):
             self.energies = [0 for member in self.members]
             self.sec_structs = ["" for member in self.members]
             self.min_free_energy = 1000000  # set min free energy to high number
-            self._iterate(update_counter=False)
+            #tensorflow will calculate the energies for the initial population on its own
+            if self.config.args.codon_optimizer != "TFDE":
+                self._iterate(update_counter=False)
         else:
             self._load_random_state()
             self.min_free_energy = self.config.min_free_energy
