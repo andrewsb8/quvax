@@ -58,12 +58,14 @@ class DesignParser(object):
         String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
     database_ini : str
         Input file containing access information for postgres database.
+    mutation_chance : float
+        For use with GA optimizer only. Chance that a codon will randomly mutate in range [0, 1]. Default: 0.05.
     sequence_rejections : int,
         For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
         For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.
     beta : float,
-        For use with METRO, REMC optimizers only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+        For use with METRO, REMC optimizers only. Value for 1/kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
     beta_max : float,
         For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size.
     exchange_frequency : int
@@ -233,6 +235,13 @@ class DesignParser(object):
             default=0,
             type=int,
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
+        )
+        self.parser.add_argument(
+            "-mc",
+            "--mutation_chance",
+            default=0.05,
+            type=float,
+            help="For use with GA optimizer only. Chance that a codon will randomly mutate in range [0, 1]. Default: 0.05.",
         )
         self.parser.add_argument(
             "-sr",
@@ -440,6 +449,12 @@ class DesignParser(object):
 
             """
             )
+
+        if not 0 <= self.args.mutation_chance <= 1:
+            raise ValueError("mutation_chance (-mc) must be in the range [0, 1].")
+
+        if self.args.beta <= 0:
+            raise ValueError("beta (-b) cannot be negative.")
 
         if self.args.beta > self.args.beta_max:
             raise ValueError("beta_max (-bm) must be larger than beta (-b).")

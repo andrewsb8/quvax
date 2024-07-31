@@ -43,9 +43,7 @@ class GeneticAlgorithm(CodonOptimizer):
         for i_trial in range(len(eligible_members)):
             lucky_pair = random.sample(eligible_members, 2)
             new_members.append(
-                self._mutate_dna(
-                    self._mix_genes(lucky_pair[0], lucky_pair[1]), mutation_chance=0.05
-                )
+                self._mutate_dna(self._mix_genes(lucky_pair[0], lucky_pair[1]))
             )
         return new_members
 
@@ -63,8 +61,7 @@ class GeneticAlgorithm(CodonOptimizer):
                 new_genes.append(genes_xy[i])
         return new_genes
 
-    # mutate_chance should be defined elsewhere, probably yaml
-    def _mutate_dna(self, old_genes: list, mutation_chance=0.01):
+    def _mutate_dna(self, old_genes: list):
         """
         Randomly introduce mutations
 
@@ -73,7 +70,7 @@ class GeneticAlgorithm(CodonOptimizer):
         new_indices = []
         total_log_score = 0.0
         for i, res in enumerate(self.config.protein_sequence):
-            if mutation_chance > random.uniform(0.0, 1.0):
+            if self.config.args.mutation_chance > random.uniform(0.0, 1.0):
                 passing_indices = []
                 for j, chance in enumerate(self.code_map[res]["probs"]):
                     if chance > random.uniform(0.0, 1.0):
