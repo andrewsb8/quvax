@@ -237,13 +237,6 @@ class DesignParser(object):
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
         )
         self.parser.add_argument(
-            "-dw",
-            "--differential_weight",
-            default=0.01,
-            type=float,
-            help="For use with TFDE optimizer only. Controls chance of mutation. Default: 0.01."
-        )
-        self.parser.add_argument(
             "-cp",
             "--crossover_probability",
             default=0.10,
@@ -255,7 +248,7 @@ class DesignParser(object):
             "--mutation_chance",
             default=0.05,
             type=float,
-            help="For use with GA optimizer only. Chance that a codon will randomly mutate in range [0, 1]. Default: 0.05.",
+            help="For use with TFDE & GA optimizers only. Chance that a codon will randomly mutate in range [0, 1] ([0,2] for TFDE). Default: 0.05.",
         )
         self.parser.add_argument(
             "-sr",
@@ -544,7 +537,8 @@ class DesignParser(object):
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
                  sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
-                 beta_max FLOAT, exchange_frequency INT);"""
+                 beta_max FLOAT, exchange_frequency INT, mutation_chance FLOAT,
+                 crossover_probability FLOAT, convergence_count INT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -572,7 +566,8 @@ class DesignParser(object):
             random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
-            num_sequence_changes, beta, beta_max, exchange_frequency) VALUES
+            num_sequence_changes, beta, beta_max, exchange_frequency,
+            mutation_chance, crossover_probability) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -583,7 +578,8 @@ class DesignParser(object):
             '{self.args.checkpoint_interval}', '{self.args.convergence}',
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
             '{self.args.num_sequence_changes}', '{self.args.beta}',
-            '{self.args.beta_max}', '{self.args.exchange_frequency}');"""
+            '{self.args.beta_max}', '{self.args.exchange_frequency}',
+            '{self.args.mutation_chance}', '{self.args.crossover_probability}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value

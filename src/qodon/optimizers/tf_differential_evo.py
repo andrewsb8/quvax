@@ -42,7 +42,7 @@ class TfDiffEv(CodonOptimizer):
             self._objective,
             initial_population=members,
             max_iterations=self.config.args.codon_iterations,
-            differential_weight=self.config.args.differential_weight,
+            differential_weight=self.config.args.mutation_chance,
             crossover_prob=self.config.args.crossover_probability,
             func_tolerance=-1,  # force tensorflow to do max_iterations
         )
