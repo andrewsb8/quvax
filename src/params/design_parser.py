@@ -237,6 +237,20 @@ class DesignParser(object):
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
         )
         self.parser.add_argument(
+            "-dw",
+            "--differential_weight",
+            default=0.01,
+            type=float,
+            help="For use with TFDE optimizer only. Controls chance of mutation. Default: 0.01."
+        )
+        self.parser.add_argument(
+            "-cp",
+            "--crossover_probability",
+            default=0.10,
+            type=float,
+            help="For use with TFDE optimizer only. Probability of recombination for each codon in a sequence. Default: 0.10."
+        )
+        self.parser.add_argument(
             "-mc",
             "--mutation_chance",
             default=0.05,
