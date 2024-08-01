@@ -38,8 +38,6 @@ class TfDiffEv(CodonOptimizer):
                 ([_ for _ in self.initial_sequences]), np.float32
             )
 
-        # Differential_weight: controls strength of mutations. We basically want to turn this off.
-        # Crossover_prob: set this low. Need to think more about why this helps.
         tfp.optimizer.differential_evolution_minimize(
             self._objective,
             initial_population=members,
