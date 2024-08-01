@@ -567,7 +567,7 @@ class DesignParser(object):
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta, beta_max, exchange_frequency,
-            mutation_chance, crossover_probability) VALUES
+            mutation_chance, crossover_probability, convergence_count) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -575,11 +575,11 @@ class DesignParser(object):
             '{self.args.min_stem_len}', '{self.args.min_loop_len}',
             '{self.args.species}', '{self.args.coeff_max_bond}',
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
-            '{self.args.checkpoint_interval}', '{self.args.convergence}',
+            '{self.args.convergence}', '{self.args.checkpoint_interval}',
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
             '{self.args.num_sequence_changes}', '{self.args.beta}',
             '{self.args.beta_max}', '{self.args.exchange_frequency}',
-            '{self.args.mutation_chance}', '{self.args.crossover_probability}');"""
+            '{self.args.mutation_chance}', '{self.args.crossover_probability}', 0);"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
@@ -687,6 +687,7 @@ class DesignParser(object):
             )
         keys = self.db_cursor.fetchall()
         keys = [_[0] for _ in keys]  # make list from list of tuples
+        print(keys, len(keys))
 
         # get values of variables
         if self.args.hash_value is not None:
@@ -713,6 +714,7 @@ class DesignParser(object):
             )
 
         data = list(data[0])  # make list from tuple
+        print(data, len(data))
 
         # mapping values to member attributes
         # manually keeping track of values which are not considered cli arguments, so members of self not self.args
@@ -735,6 +737,11 @@ class DesignParser(object):
                 raise ValueError(
                     f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax."
                 )
+
+        print(self.args.convergence_count, self.args.convergence, self.args.checkpoint_interval)
+        if self.args.convergence_count == self.args.convergence:
+            self.log.info("Optimization was converged in previous run. By resuming, the convergence counter will be reset to zero and the same convergence criteria will be used again.")
+            self.args.convergence_count = 0
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
