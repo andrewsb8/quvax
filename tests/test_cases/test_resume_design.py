@@ -73,7 +73,7 @@ def test_resume_hash(caplog):
         "-e",
         "3",
         "-hv",
-        "28ed1d88a9",
+        "3de8de42d9",
     ]
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)._optimize()

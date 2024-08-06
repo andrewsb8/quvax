@@ -54,6 +54,7 @@ class CodonOptimizer(ABC):
                 self._iterate(update_counter=False)
         else:
             self._load_random_state()
+            self.convergence_count = self.config.args.convergence_count
             self.min_free_energy = self.config.min_free_energy
             self.initial_sequences = [self._convert_codons_to_ints(s) for s in self.config.initial_sequences]
             self.members = deepcopy(self.initial_sequences)
@@ -307,7 +308,10 @@ class CodonOptimizer(ABC):
             # add one to account for initial sequences
             num = self.codon_optimize_step
         self.config.db_cursor.execute(
-            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE protein_sequence = '{self.config.protein_sequence}';"
+            f"UPDATE SIM_DETAILS SET generations_sampled = '{num}' WHERE sim_key = '{self.config.sim_key}';"
+        )
+        self.config.db_cursor.execute(
+            f"UPDATE SIM_DETAILS SET convergence_count = '{self.convergence_count}' WHERE sim_key = '{self.config.sim_key}';"
         )
         self.config.db.commit()
         self._save_random_state()

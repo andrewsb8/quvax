@@ -58,12 +58,14 @@ class DesignParser(object):
         String to choose database type to use for storing optimization data. Default: sqlite. Options: sqlite, postgres.
     database_ini : str
         Input file containing access information for postgres database.
+    mutation_chance : float
+        For use with GA optimizer only. Chance that a codon will randomly mutate in range [0, 1]. Default: 0.05.
     sequence_rejections : int,
         For use with METRO, REMC optimizers only. Maximum number of rejections before a random sequence is proposed. Default: 3.
     num_sequence_changes : int,
         For use with METRO, REMC optimizers only. Number of changes to propose for any given sequence. Default: 1.
     beta : float,
-        For use with METRO, REMC optimizers only. Value for kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
+        For use with METRO, REMC optimizers only. Value for 1/kT to control "temperature" of optimization or acceptance probabilities. Lower beta (higher temperature) means changes are more likely to be accepted.
     beta_max : float,
         For use with REMC optimizer only. Max value of range for temperatures [beta, beta_max]. List of temperatures will be constructured with length equal to population size and interval (beta-max - beta)/population_size.
     exchange_frequency : int
@@ -233,6 +235,20 @@ class DesignParser(object):
             default=0,
             type=int,
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
+        )
+        self.parser.add_argument(
+            "-cp",
+            "--crossover_probability",
+            default=0.10,
+            type=float,
+            help="For use with TFDE optimizer only. Probability of recombination for each codon in a sequence. Default: 0.10."
+        )
+        self.parser.add_argument(
+            "-mc",
+            "--mutation_chance",
+            default=0.05,
+            type=float,
+            help="For use with TFDE & GA optimizers only. Chance that a codon will randomly mutate in range [0, 1] ([0,2] for TFDE). Default: 0.05.",
         )
         self.parser.add_argument(
             "-sr",
@@ -441,6 +457,12 @@ class DesignParser(object):
             """
             )
 
+        if not 0 <= self.args.mutation_chance <= 1:
+            raise ValueError("mutation_chance (-mc) must be in the range [0, 1].")
+
+        if self.args.beta <= 0:
+            raise ValueError("beta (-b) cannot be negative.")
+
         if self.args.beta > self.args.beta_max:
             raise ValueError("beta_max (-bm) must be larger than beta (-b).")
 
@@ -515,7 +537,8 @@ class DesignParser(object):
                  coeff_stem_len INT, generations_sampled INT, state_file
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
                  sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
-                 beta_max FLOAT, exchange_frequency INT);"""
+                 beta_max FLOAT, exchange_frequency INT, mutation_chance FLOAT,
+                 crossover_probability FLOAT, convergence_count INT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -543,7 +566,8 @@ class DesignParser(object):
             random_seed, solver, rna_iterations, min_stem_len,
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
-            num_sequence_changes, beta, beta_max, exchange_frequency) VALUES
+            num_sequence_changes, beta, beta_max, exchange_frequency,
+            mutation_chance, crossover_probability, convergence_count) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -551,10 +575,11 @@ class DesignParser(object):
             '{self.args.min_stem_len}', '{self.args.min_loop_len}',
             '{self.args.species}', '{self.args.coeff_max_bond}',
             '{self.args.coeff_stem_len}', '{self.args.state_file}',
-            '{self.args.checkpoint_interval}', '{self.args.convergence}',
+            '{self.args.convergence}', '{self.args.checkpoint_interval}',
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
             '{self.args.num_sequence_changes}', '{self.args.beta}',
-            '{self.args.beta_max}', '{self.args.exchange_frequency}');"""
+            '{self.args.beta_max}', '{self.args.exchange_frequency}',
+            '{self.args.mutation_chance}', '{self.args.crossover_probability}', 0);"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
@@ -710,6 +735,10 @@ class DesignParser(object):
                 raise ValueError(
                     f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax."
                 )
+
+        if self.args.convergence_count == self.args.convergence:
+            self.log.info("Optimization was converged in previous run. By resuming, the convergence counter will be reset to zero and the same convergence criteria will be used again.")
+            self.args.convergence_count = 0
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations
         self.args.codon_iterations = (
