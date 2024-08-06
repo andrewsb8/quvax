@@ -687,7 +687,6 @@ class DesignParser(object):
             )
         keys = self.db_cursor.fetchall()
         keys = [_[0] for _ in keys]  # make list from list of tuples
-        print(keys, len(keys))
 
         # get values of variables
         if self.args.hash_value is not None:
@@ -714,7 +713,6 @@ class DesignParser(object):
             )
 
         data = list(data[0])  # make list from tuple
-        print(data, len(data))
 
         # mapping values to member attributes
         # manually keeping track of values which are not considered cli arguments, so members of self not self.args
@@ -738,7 +736,6 @@ class DesignParser(object):
                     f"({key}, {val}) undefined. Check your database structure. You could be using an older version of QuVax."
                 )
 
-        print(self.args.convergence_count, self.args.convergence, self.args.checkpoint_interval)
         if self.args.convergence_count == self.args.convergence:
             self.log.info("Optimization was converged in previous run. By resuming, the convergence counter will be reset to zero and the same convergence criteria will be used again.")
             self.args.convergence_count = 0
