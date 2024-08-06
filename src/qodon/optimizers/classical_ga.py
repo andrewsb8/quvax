@@ -19,17 +19,12 @@ class GeneticAlgorithm(CodonOptimizer):
         Main method for codon optimization
 
         """
-        if not self.config.args.resume:
-            self._iterate(self.initial_sequences, update_counter=False)
-            members = self.initial_sequences
-        else:
-            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
 
         # Simulate evolution for number of codon_iterations specified by user
         for i in range(self.config.args.codon_iterations):
             # Introduce mutations
-            members = self._procreate(members)
-            self._iterate(members)
+            self.members = self._procreate(self.members)
+            self._iterate()
         self._post_process()
 
     def _procreate(self, eligible_members):
