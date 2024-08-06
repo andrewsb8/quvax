@@ -33,22 +33,11 @@ class MetropolisOptimizer(CodonOptimizer):
 
         """
 
-        if not self.config.args.resume:
-            self._iterate(self.initial_sequences, update_counter=False)
-            members = self.initial_sequences
-            sec_structs = self.sec_structs
-        else:
-            members = [self._convert_codons_to_ints(s) for s in self.initial_sequences]
-            # not loading previous secondary structure because they are not compared
-            sec_structs = ["" for i in range(self.config.args.population_size)]
-
-        energies = self.energies
-
         for i in range(self.config.args.codon_iterations):
-            self._metropolis_iteration(members, energies, sec_structs)
+            self._metropolis_iteration(self.members, self.energies, self.sec_structs)
             self._iterate(
-                members, energies, sec_structs
-            )  # pass energies and ss to _iterate to avoid refolding
+                fold_sequences=False
+            )  # do not calculated folding energy or secondary structures
         self.config.log.info(
             "MC stats are only kept track of in each individual execution of design.py and are not aggregated from previous runs if using --resume."
         )
@@ -65,8 +54,8 @@ class MetropolisOptimizer(CodonOptimizer):
             while True:
                 # if reach maximum rejects, randomly sample another sequence
                 if self.seq_rejections >= self.config.args.sequence_rejections:
-                    rand_seq = self._generate_sequences(1)
-                    self._fold_rna(self._convert_ints_to_codons(rand_seq[0]))
+                    members[j] = self._generate_sequences(1)[0]
+                    self._fold_rna(self._convert_ints_to_codons(members[j]))
                     energies[j] = self.folder.best_score
                     sec_structs[j] = self.folder.dot_bracket
                     self.randomed += 1

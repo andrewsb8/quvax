@@ -22,6 +22,6 @@ class RandomOptimizer(CodonOptimizer):
             self._iterate(self.initial_sequences, update_counter=False)
 
         for i in range(self.config.args.codon_iterations):
-            extra_sequences = self._generate_sequences(self.config.args.population_size)
-            self._iterate(extra_sequences)
+            self.members = self._generate_sequences(self.config.args.population_size)
+            self._iterate()
         self._post_process()

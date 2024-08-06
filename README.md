@@ -131,7 +131,7 @@ tf_keras==2.16.0
 
 ## Known Issues
 
-[Tensorflow does not support Mac](https://github.com/tensorflow/tensorflow/issues/61382) so you will have to use ```tensorflow==2.11``` and ```tensorflow-probability==0.19``` in ```requirements.md``` if installing via pip. All tests currently pass with these versions of the packages. Alternatively, you can try to install these packages manually via wheel from the PyPi repositories to have access to the newer versions.
+Installing tensorflow on Macs can have machine-dependent issues (x86 vs ARM, etc). Instead of pip, you may want to try installing via conda. Or, if you have an Intel (x86) Mac, try installing tensorflow 2.12. As a last resort, you can download the whl for the desired version from PyPi.
 
 ## References
 
