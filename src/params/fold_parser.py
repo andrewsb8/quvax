@@ -203,10 +203,10 @@ class FoldParser(object):
                 "Your target sequence includes stop codons UAG, UGA, or UAA!"
             )
 
-        if self.args.span > len(self.protein_sequence)*3:
+        if self.args.span > len(self.seq):
             self.log.warning("--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!")
 
-        if self.args.span < len(self.protein_sequence)*3*0.3:
+        if self.args.span < len(self.seq)*0.3:
             self.log.warning("--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation.")
 
         if self.args.rna_iterations < 1:
