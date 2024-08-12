@@ -37,6 +37,8 @@ class DesignParser(object):
         Coefficient for maximizing the number of bonds in RNA folding
     coeff_stem_len : int
         Coefficient for energetically penalizing short stems in RNA folding
+    span : int
+        Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.
     log_file_name : str
         String for log file for writing program outputs, warnings, and errors
     species : str
@@ -237,6 +239,13 @@ class DesignParser(object):
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
         )
         self.parser.add_argument(
+            "-sp",
+            "--span",
+            default=0,
+            type=int,
+            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
+        )
+        self.parser.add_argument(
             "-cp",
             "--crossover_probability",
             default=0.10,
@@ -352,6 +361,12 @@ class DesignParser(object):
 
         if set(self.protein_sequence).issubset(set("GCATU")):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
+
+        if self.args.span > len(self.protein_sequence)*3:
+            self.log.warning("--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!")
+
+        if self.args.span < len(self.protein_sequence)*3*0.3:
+            self.log.warning("--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation.")
 
         if self.args.target is not None:
             cs = "GCAU"
