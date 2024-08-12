@@ -111,7 +111,7 @@ class FoldParser(object):
             help="Coefficient for term penalizing short stems",
         )
         self.parser.add_argument(
-            "-sp",
+            "-sn",
             "--span",
             default=0,
             type=int,

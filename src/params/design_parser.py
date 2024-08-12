@@ -239,7 +239,7 @@ class DesignParser(object):
             help="Terminates optimization if new free energy minimum is not found within an integer number of generations.",
         )
         self.parser.add_argument(
-            "-sp",
+            "-sn",
             "--span",
             default=0,
             type=int,
@@ -553,7 +553,7 @@ class DesignParser(object):
                  VARCHAR, checkpoint_interval INT, convergence INT, hash_value VARCHAR,
                  sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
                  beta_max FLOAT, exchange_frequency INT, mutation_chance FLOAT,
-                 crossover_probability FLOAT, convergence_count INT);"""
+                 crossover_probability FLOAT, convergence_count INT, span INT);"""
             )
             self.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -582,7 +582,7 @@ class DesignParser(object):
             min_loop_len, species, coeff_max_bond, coeff_stem_len, state_file,
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta, beta_max, exchange_frequency,
-            mutation_chance, crossover_probability, convergence_count) VALUES
+            mutation_chance, crossover_probability, convergence_count, span) VALUES
             ('{self.args.input}', '{self.protein_sequence}', '{self.args.target}',
             '{self.args.population_size}', '{self.args.codon_iterations}',
             '{self.args.codon_optimizer}', '{self.args.random_seed}',
@@ -594,7 +594,8 @@ class DesignParser(object):
             '{self.args.hash_value}', '{self.args.sequence_rejections}',
             '{self.args.num_sequence_changes}', '{self.args.beta}',
             '{self.args.beta_max}', '{self.args.exchange_frequency}',
-            '{self.args.mutation_chance}', '{self.args.crossover_probability}', 0);"""
+            '{self.args.mutation_chance}', '{self.args.crossover_probability}', 0,
+            '{self.args.span}');"""
         )
         self.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value
