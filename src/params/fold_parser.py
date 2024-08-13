@@ -26,6 +26,8 @@ class FoldParser(object):
         Coefficient for maximizing the number of bonds in RNA folding
     coeff_stem_len : int
         Coefficient for energetically penalizing short stems in RNA folding
+    span : int
+        Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.
     log_file_name : str
         String for log file for writing program outputs, warnings, and errors
     species : str
@@ -107,6 +109,13 @@ class FoldParser(object):
             default=10,
             type=int,
             help="Coefficient for term penalizing short stems",
+        )
+        self.parser.add_argument(
+            "-sn",
+            "--span",
+            default=0,
+            type=int,
+            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
         )
         self.parser.add_argument(
             "-l",
@@ -193,6 +202,12 @@ class FoldParser(object):
             raise ValueError(
                 "Your target sequence includes stop codons UAG, UGA, or UAA!"
             )
+
+        if self.args.span > len(self.seq):
+            self.log.warning("--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!")
+
+        if self.args.span < len(self.seq)*0.3:
+            self.log.warning("--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation.")
 
         if self.args.rna_iterations < 1:
             raise ValueError(
