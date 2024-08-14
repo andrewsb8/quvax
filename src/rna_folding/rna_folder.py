@@ -86,7 +86,10 @@ class RNAFolder(ABC):
                 for k in range(self.n):
                     if i + k >= self.n:
                         break
-                    if (j - k) - (i + k) < self.config.args.min_loop_len or (self.config.args.span > 0 and (j - k) - (i + k) > self.config.args.span):
+                    if (j - k) - (i + k) < self.config.args.min_loop_len or (
+                        self.config.args.span > 0
+                        and (j - k) - (i + k) > self.config.args.span
+                    ):
                         break
                     if (self.nseq[i + k], self.nseq[j - k]) in self.interactions:
                         if (

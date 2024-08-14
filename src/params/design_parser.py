@@ -250,7 +250,7 @@ class DesignParser(object):
             "--crossover_probability",
             default=0.10,
             type=float,
-            help="For use with TFDE optimizer only. Probability of recombination for each codon in a sequence. Default: 0.10."
+            help="For use with TFDE optimizer only. Probability of recombination for each codon in a sequence. Default: 0.10.",
         )
         self.parser.add_argument(
             "-mc",
@@ -362,11 +362,21 @@ class DesignParser(object):
         if set(self.protein_sequence).issubset(set("GCATU")):
             self.log.warning("Input protein sequence looks like an DNA sequence!")
 
-        if self.args.span > len(self.protein_sequence)*3:
-            self.log.warning("--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!")
+        if self.args.span < 0:
+            raise TypeError("Span (-sn) cannot be less than zero.")
 
-        if self.args.span < len(self.protein_sequence)*3*0.3:
-            self.log.warning("--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation.")
+        if self.args.span > len(self.protein_sequence) * 3:
+            self.log.warning(
+                "--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!"
+            )
+
+        if (
+            self.args.span != 0
+            and self.args.span < len(self.protein_sequence) * 3 * 0.3
+        ):
+            self.log.warning(
+                "--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation."
+            )
 
         if self.args.target is not None:
             cs = "GCAU"
@@ -457,9 +467,12 @@ class DesignParser(object):
 
         if (
             self.args.codon_optimizer == "METRO" or self.args.codon_optimizer == "REMC"
-        ) and self.args.num_sequence_changes > len(self.protein_sequence):
+        ) and (
+            self.args.num_sequence_changes < 1
+            or self.args.num_sequence_changes > len(self.protein_sequence)
+        ):
             raise ValueError(
-                "The number of changes proposed to any codon sequence (-nc) must be <= the length of the input protein sequence."
+                "The number of changes proposed to any codon sequence (-nc) must be > 0 and <= the length of the input protein sequence."
             )
 
         if self.args.checkpoint_interval > self.args.codon_iterations:
@@ -753,7 +766,9 @@ class DesignParser(object):
                 )
 
         if self.args.convergence_count == self.args.convergence:
-            self.log.info("Optimization was converged in previous run. By resuming, the convergence counter will be reset to zero and the same convergence criteria will be used again.")
+            self.log.info(
+                "Optimization was converged in previous run. By resuming, the convergence counter will be reset to zero and the same convergence criteria will be used again."
+            )
             self.args.convergence_count = 0
 
         # originally set the codon iterations to the original number set by user minus the number sampled in previous iterations

@@ -49,14 +49,16 @@ class CodonOptimizer(ABC):
             self.energies = [0 for member in self.members]
             self.sec_structs = ["" for member in self.members]
             self.min_free_energy = 1000000  # set min free energy to high number
-            #tensorflow will calculate the energies for the initial population on its own
+            # tensorflow will calculate the energies for the initial population on its own
             if self.config.args.codon_optimizer != "TFDE":
                 self._iterate(update_counter=False)
         else:
             self._load_random_state()
             self.convergence_count = self.config.args.convergence_count
             self.min_free_energy = self.config.min_free_energy
-            self.initial_sequences = [self._convert_codons_to_ints(s) for s in self.config.initial_sequences]
+            self.initial_sequences = [
+                self._convert_codons_to_ints(s) for s in self.config.initial_sequences
+            ]
             self.members = deepcopy(self.initial_sequences)
             self.energies = self.config.energies
             self.sec_structs = self.config.sec_structs

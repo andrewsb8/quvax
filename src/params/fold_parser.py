@@ -194,20 +194,18 @@ class FoldParser(object):
 
         seq_reshape = [[self.seq[i : i + 3]] for i in range(0, len(self.seq), 3)]
 
-        if (
-            any("UAA" in codon for codon in seq_reshape)
-            or any("UAG" in codon for codon in seq_reshape)
-            or any("UGA" in codon for codon in seq_reshape)
-        ):
-            raise ValueError(
-                "Your target sequence includes stop codons UAG, UGA, or UAA!"
-            )
+        if self.args.span < 0:
+            raise TypeError("Span (-sn) cannot be less than zero.")
 
         if self.args.span > len(self.seq):
-            self.log.warning("--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!")
+            self.log.warning(
+                "--span is longer than the codon sequence length. This is equivalent to span = 0. Check to make sure you used the correct value!"
+            )
 
-        if self.args.span < len(self.seq)*0.3:
-            self.log.warning("--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation.")
+        if self.args.span != 0 and self.args.span < len(self.seq) * 0.3:
+            self.log.warning(
+                "--span is less than 30% of the sequence length. Low span value could prohibit secondary structure formation."
+            )
 
         if self.args.rna_iterations < 1:
             raise ValueError(
