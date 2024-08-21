@@ -1,6 +1,7 @@
 from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 import math
 
+
 class CoTranscriptSA(SimulatedAnnealer):
     def __init__(self, config):
         super().__init__(config)
@@ -10,11 +11,11 @@ class CoTranscriptSA(SimulatedAnnealer):
         self.stem_dict = None
         old_stems = []
 
-        for i in range(math.ceil(len(sequence)/transcript_rate)):
-            if (i+1)*transcript_rate > len(sequence):
+        for i in range(math.ceil(len(sequence) / transcript_rate)):
+            if (i + 1) * transcript_rate > len(sequence):
                 self._fold_prep(sequence)
             else:
-                self._fold_prep(sequence[0:(i+1)*transcript_rate])
+                self._fold_prep(sequence[0 : (i + 1) * transcript_rate])
             if self.len_stem_list > 0:
                 if i > 0:
                     if self.stem_dict is None:

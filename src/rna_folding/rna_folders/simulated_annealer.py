@@ -38,9 +38,14 @@ class SimulatedAnnealer(RNAFolder):
         Q = self.J
         Q.update(h2)
         sampleset = self.sampler.sample_qubo(
-            Q, num_reads=nr, num_sweeps=self.config.args.rna_iterations, initial_states=istates, initial_states_generator=isg, seed=self.config.args.random_seed
+            Q,
+            num_reads=nr,
+            num_sweeps=self.config.args.rna_iterations,
+            initial_states=istates,
+            initial_states_generator=isg,
+            seed=self.config.args.random_seed,
         )
-        self.stem_dict = sampleset.first.sample # used for cotranscript folding
+        self.stem_dict = sampleset.first.sample  # used for cotranscript folding
         self.stems_used = [
             _
             for it, _ in enumerate(self.stems)
