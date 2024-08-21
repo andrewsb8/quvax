@@ -10,6 +10,10 @@ if __name__ == "__main__":
         from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
         fold = SimulatedAnnealer(config)
+    elif config.args.solver == "CTSA":
+        from src.rna_folding.rna_folders.cotranscript_sa import CoTranscriptSA
+
+        fold = CoTranscriptSA(config)
     elif config.args.solver == "MC":
         from src.rna_folding.rna_folders.classical_mc import MC
 
