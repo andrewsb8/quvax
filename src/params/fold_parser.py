@@ -36,6 +36,8 @@ class FoldParser(object):
         Sets random seed for all optimizers and packages
     output : str
         File name to store folding energy, codon sequence, and secondary structure
+    output_type : str
+        Option to specify output type. Default: dot-bracket. Options: dot-bracket, connect_table, all.
 
     """
 
@@ -141,9 +143,16 @@ class FoldParser(object):
         self.parser.add_argument(
             "-o",
             "--output",
-            default="quvax.dot",
+            default="quvax.dot"
             type=str,
-            help="String to name output dot-bracket file. Includes energy, sequence, and secondary structure. Default: quvax.dot",
+            help="String to name output dot-bracket file. Includes energy, sequence, and secondary structure. Default: quvax.dot (quvax.ct if --output_type is connect_table).",
+        )
+        self.parser.add_argument(
+            "-ot",
+            "--output_type",
+            default="dot-bracket",
+            type=str,
+            help="Option to specify output type. Default: dot-bracket. Options: dot-bracket, connect_table, all.",
         )
 
         if args is None:
