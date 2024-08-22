@@ -150,9 +150,9 @@ class FoldParser(object):
         self.parser.add_argument(
             "-ot",
             "--output_type",
-            default="dot-bracket",
+            default="dot_bracket",
             type=str,
-            help="Option to specify output type. Default: dot-bracket. Options: dot-bracket, connect_table, all.",
+            help="Option to specify output type. Default: dot-bracket. Options: dot_bracket, connect_table, all.",
         )
 
         if args is None:

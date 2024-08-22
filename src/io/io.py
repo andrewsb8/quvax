@@ -7,7 +7,7 @@ class IO(object):
         output.close()
 
     def _write_connect_table(self, output_file, sequence, pairs):
-        #pairs is a list, see rna_folder for definition
+        # pairs is a list, see rna_folder for definition
         output = open(output_file, "w")
         output.write(f"{len(sequence):5} output from QuVax\n")
         for i in range(len(pairs)):
