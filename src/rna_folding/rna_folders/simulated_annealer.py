@@ -38,7 +38,10 @@ class SimulatedAnnealer(RNAFolder):
         Q = self.J
         Q.update(h2)
         sampleset = self.sampler.sample_qubo(
-            Q, num_reads=10, num_sweeps=self.config.args.rna_iterations
+            Q,
+            num_reads=10,
+            num_sweeps=self.config.args.rna_iterations,
+            seed=self.config.args.random_seed,
         )
         self.stems_used = [
             _

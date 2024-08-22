@@ -213,10 +213,17 @@ class RNAFolder(ABC, IO):
         self.dot_bracket = "".join(dot_bracket)
 
     def _stems_to_connect_list(self, sequence_len, stems):
-        # pair array is represented as follows:
-        # index + 1 is the number of the base
-        # the value at index is the sequence number of the
-        # base pair
+        """
+        Helper function to create a "connect list" from a list of
+        stems.
+
+        pair : list
+            list where the index+1 refers to base sequence number and the
+            value at that index indicates the base pair sequence number.
+            zero refers to unpaired base. This is passed to class IO in
+            src.io.io to help write connectivity table files.
+
+        """
         pair = [0 for i in range(sequence_len)]
         for stem in stems:
             stem_pair_list = self._stem_to_pair_list(stem)
