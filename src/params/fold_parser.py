@@ -143,7 +143,7 @@ class FoldParser(object):
         self.parser.add_argument(
             "-o",
             "--output",
-            default="quvax.dot"
+            default="quvax.dot",
             type=str,
             help="String to name output dot-bracket file. Includes energy, sequence, and secondary structure. Default: quvax.dot (quvax.ct if --output_type is connect_table).",
         )

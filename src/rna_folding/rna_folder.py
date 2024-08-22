@@ -1,9 +1,10 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from src.params.design_parser import DesignParser
+from src.io.io import IO
 
 
-class RNAFolder(ABC):
+class RNAFolder(ABC, IO):
     """
     Parent class for all RNA folding classes.
 

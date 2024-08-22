@@ -31,9 +31,4 @@ if __name__ == "__main__":
         "Folding energy of input codon sequence: " + str(fold.best_score)
     )
     fold.config.log.info("Folded secondary structure: " + str(fold.dot_bracket))
-
-    output = open(fold.config.args.output, "w")
-    output.write("> Folded energy: " + str(fold.best_score) + "\n")
-    output.write(fold.config.seq + "\n")
-    output.write(fold.dot_bracket + "\n")
-    output.close()
+    fold._write_dot_bracket(fold.config.args.output, fold.best_score, fold.config.seq, fold.dot_bracket)
