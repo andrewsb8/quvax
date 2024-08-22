@@ -211,3 +211,15 @@ class RNAFolder(ABC, IO):
                         dot_bracket[stem_pair_list[k][1] - 1] = "]"
 
         self.dot_bracket = "".join(dot_bracket)
+
+    def _stems_to_connect_list(self, sequence_len, stems):
+        # pair array is represented as follows:
+        # index + 1 is the number of the base
+        # the value at index is the sequence number of the
+        # base pair
+        pair = [0 for i in range(sequence_len)]
+        for stem in stems:
+            stem_pair_list = self._stem_to_pair_list(stem)
+            for i in range(len(stem_pair_list)):
+                pair[stem_pair_list[i][0]-1] = stem_pair_list[i][1]
+        return pair

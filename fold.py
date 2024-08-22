@@ -32,3 +32,4 @@ if __name__ == "__main__":
     )
     fold.config.log.info("Folded secondary structure: " + str(fold.dot_bracket))
     fold._write_dot_bracket(fold.config.args.output, fold.best_score, fold.config.seq, fold.dot_bracket)
+    fold._write_connect_table("quvax.ct", fold.config.seq, fold._stems_to_connect_list(fold.n, fold.stems_used))
