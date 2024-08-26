@@ -90,17 +90,14 @@ class MC(RNAFolder):
     def _generate_init_ss_guess(self):
         """
         Generate an initial plausable RNA starting point from random
-        selection of stem pair list. Sample size is set to math.floor(self.len_stem_list/5)
-        to avoid small subset of stems for larger sequences. 5 was an arbitrary
-        choice.
+        selection of stem pair list. Sample size is set to 3 so that
+
 
         TODO: Number of initial stems can probably be guessed by GC content.
 
         """
 
-        self.stem_idx = random.sample(
-            range(1, self.len_stem_list), math.floor(self.len_stem_list / 5)
-        )
+        self.stem_idx = random.sample(range(1, self.len_stem_list), 3)
         self.score = self._calc_score(self.stem_idx)
 
     def _calc_score(self, idx):
@@ -132,44 +129,44 @@ class MC(RNAFolder):
             self.score = newscore
             self.accept_swap = self.accept_swap + 1
 
-    def _do_mc(self, nsteps=100, T0=1.0):
+    def _do_mc(self, T0=1.0):
         """Do some simple MC"""
 
-        onethird: float = 1 / 3.0
-        twothird: float = 2 / 3.0
+        onethird = 1 / 3.0
+        twothird = 2 / 3.0
 
-        for inter in range(self.config.args.rna_iterations):
-            ## Acceptance Ratio
-            self.accept_add = 0
-            self.accept_del = 0
-            self.accept_swap = 0
+        ## Acceptance Ratio
+        self.accept_add = 0
+        self.accept_del = 0
+        self.accept_swap = 0
 
-            ## Initial Temperature
-            self.T0 = T0
+        ## Initial Temperature
+        self.T0 = T0
 
-            ## Inital random guess for hairpins
-            self._generate_init_ss_guess()
+        ## Inital random guess for hairpins
+        self._generate_init_ss_guess()
 
-            for i in range(nsteps):
-                ## Cool the system exponentially for now because it's easy
-                self.T = self.T0 * np.exp(-i / nsteps)
+        for i in range(self.config.args.rna_iterations):
+            ## Cool the system exponentially for now because it's easy
+            self.T = self.T0 * np.exp(-i / self.config.args.rna_iterations)
 
-                ## Choose a swap, insertion or deletion based on rando
-                random_chance = random.uniform(0.0, 1.0)
+            ## Choose a swap, insertion or deletion based on rando
+            random_chance = random.uniform(0.0, 1.0)
 
-                if random_chance <= onethird:
-                    ## Attempt addition of stem pair
-                    stems = self._add_pair()
-                elif onethird < random_chance <= twothird:
-                    ## Attempt removal of stem pair
-                    stems = self._del_pair()
-                else:
-                    ## Attempt swap of stem pair from population
-                    stems = self._swap_pair()
+            if random_chance <= onethird:
+                ## Attempt addition of stem pair
+                stems = self._add_pair()
+            elif onethird < random_chance <= twothird:
+                ## Attempt removal of stem pair
+                stems = self._del_pair()
+            else:
+                ## Attempt swap of stem pair from population
+                stems = self._swap_pair()
 
-                if stems != self.stem_idx:
-                    self._update_stems(stems)
+            if stems != self.stem_idx:
+                self._update_stems(stems)
 
             # self.best_score is returned to optimizer
-            self.best_score = self.score
-        self.stems_used = [self.stems[s] for s in self.stem_idx]
+            if self.score < self.best_score:
+                self.best_score = self.score
+                self.stems_used = [self.stems[s] for s in self.stem_idx]

@@ -47,6 +47,7 @@ class RNAFolder(ABC):
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
+        self.best_score = 1e10
 
     def _fold_prep(self, sequence):
         self.nseq = sequence
