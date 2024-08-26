@@ -429,6 +429,8 @@ def test_Fold_MC():
     testargs = [
         "-i",
         "AUGACUAGGUAUCUAUCUUAU",
+        "-r",
+        "20000"
     ]
     parser = FoldParser(testargs)
     folder = MC(parser)

@@ -96,7 +96,7 @@ class MC(RNAFolder):
         TODO: Number of initial stems can probably be guessed by GC content.
 
         """
-
+        random.seed(self.config.args.random_seed) # need for random.sample reproducibility
         self.stem_idx = random.sample(range(1, self.len_stem_list), 3)
         self.score = self._calc_score(self.stem_idx)
 
