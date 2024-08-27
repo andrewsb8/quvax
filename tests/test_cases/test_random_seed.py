@@ -419,7 +419,7 @@ def test_METRO_DefaultSeed():
     assert opt.list_seqs == opt2.list_seqs
 
 
-def test_Fold_MC():
+def test_fold_MC():
     """
     Test to verify the same minimum energy and secondary structure are reached
     on repeated runs of fold.py

@@ -100,9 +100,10 @@ class MC(RNAFolder):
             self.config.args.random_seed
         )  # need for random.sample reproducibility
         self.stem_idx = random.sample(
-            range(1, self.len_stem_list), math.ceil((self.len_stem_list) / 5)
+            range(1, self.len_stem_list), math.floor((self.len_stem_list) / 5)
         )
         self.score = self._calc_score(self.stem_idx)
+        self.best_score = self.score
 
     def _calc_score(self, idx):
         """
