@@ -418,7 +418,7 @@ def test_METRO_DefaultSeed():
     opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
-def test_Fold_SA():
+def test_fold_SA():
     """
     Test to verify the same minimum energy and secondary structure are reached
     on repeated runs of fold.py
@@ -437,3 +437,22 @@ def test_Fold_SA():
     folder2 = SimulatedAnnealer(parser)
     folder2._fold(folder2.config.args.input)
     assert folder.best_score == folder2.best_score and folder.dot_bracket == folder2.dot_bracket
+
+def test_fold_MC():
+    """
+    Test to verify the same minimum energy and secondary structure are reached
+    on repeated runs of fold.py
+    """
+    from src.params.fold_parser import FoldParser
+    from src.rna_folding.rna_folders.classical_mc import MC
+
+    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "20000"]
+    parser = FoldParser(testargs)
+    folder = MC(parser)
+    folder._fold(folder.config.args.input)
+    folder2 = MC(parser)
+    folder2._fold(folder2.config.args.input)
+    assert (
+        folder.best_score == folder2.best_score
+        and folder.dot_bracket == folder2.dot_bracket
+    )
