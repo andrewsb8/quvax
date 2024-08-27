@@ -1,9 +1,10 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from src.params.design_parser import DesignParser
+from src.structure_io.structure_io import StructureIO
 
 
-class RNAFolder(ABC):
+class RNAFolder(ABC, StructureIO):
     """
     Parent class for all RNA folding classes.
 
@@ -210,3 +211,22 @@ class RNAFolder(ABC):
                         dot_bracket[stem_pair_list[k][1] - 1] = "]"
 
         self.dot_bracket = "".join(dot_bracket)
+
+    def _stems_to_connect_list(self, sequence_len, stems):
+        """
+        Helper function to create a "connect list" from a list of
+        stems.
+
+        pair : list
+            list where the index+1 refers to base sequence number and the
+            value at that index indicates the base pair sequence number.
+            zero refers to unpaired base. This is passed to class IO in
+            src.io.io to help write connectivity table files.
+
+        """
+        pair = [0 for i in range(sequence_len)]
+        for stem in stems:
+            stem_pair_list = self._stem_to_pair_list(stem)
+            for i in range(len(stem_pair_list)):
+                pair[stem_pair_list[i][0] - 1] = stem_pair_list[i][1]
+        return pair

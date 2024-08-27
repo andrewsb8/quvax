@@ -26,14 +26,36 @@ if __name__ == "__main__":
             "Please select a valid folder. See python fold.py -h for details."
         )
 
-    fold._fold(fold.config.seq)
+    fold._fold(fold.nseq)
     fold.config.log.info(
         "Folding energy of input codon sequence: " + str(fold.best_score)
     )
     fold.config.log.info("Folded secondary structure: " + str(fold.dot_bracket))
-
-    output = open(fold.config.args.output, "w")
-    output.write("> Folded energy: " + str(fold.best_score) + "\n")
-    output.write(fold.config.seq + "\n")
-    output.write(fold.dot_bracket + "\n")
-    output.close()
+    if fold.config.args.output_type == "dot_bracket":
+        fold._write_dot_bracket(
+            fold.config.args.output, fold.best_score, fold.nseq, fold.dot_bracket
+        )
+    elif fold.config.args.output_type == "connect_table":
+        fold._write_connect_table(
+            fold.config.args.output,
+            fold.nseq,
+            fold.best_score,
+            fold._stems_to_connect_list(fold.n, fold.stems_used),
+        )
+    elif fold.config.args.output_type == "all":
+        fold._write_dot_bracket(
+            str(fold.config.args.output + ".dot"),
+            fold.best_score,
+            fold.nseq,
+            fold.dot_bracket,
+        )
+        fold._write_connect_table(
+            str(fold.config.args.output + ".ct"),
+            fold.nseq,
+            fold.best_score,
+            fold._stems_to_connect_list(fold.n, fold.stems_used),
+        )
+    else:
+        raise ValueError(
+            "Output type (-ot, --output_type) invalid. See python fold.py -h for details."
+        )
