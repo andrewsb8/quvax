@@ -1,4 +1,4 @@
-class IO(object):
+class StructureIO(object):
     """
     Class containing logic for reading and writing specific output file
     types
