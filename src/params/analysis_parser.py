@@ -40,7 +40,9 @@ class AnalysisParser(Logging, Database):
         self.log = self._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
-        self.db, self.db_cursor = self._connect_to_db(self.args.database_type, self.args.input, self.log, self.args.database_ini)
+        self.db, self.db_cursor = self._connect_to_db(
+            self.args.database_type, self.args.input, self.log, self.args.database_ini
+        )
         self._validate()
         self._log_args(self.log, arg_list=vars(self.args))
         self.sim_details = self._get_sim_details(self)

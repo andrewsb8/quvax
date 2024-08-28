@@ -88,7 +88,13 @@ class DesignParser(Logging, Database):
         self._log_args(
             self.log, arg_list=vars(self.args), protein_sequence=self.protein_sequence
         )
-        self.db, self.db_cursor = self._connect_to_db(self.args.database_type, self.args.output, self.log, self.args.database_ini, create=True)
+        self.db, self.db_cursor = self._connect_to_db(
+            self.args.database_type,
+            self.args.output,
+            self.log,
+            self.args.database_ini,
+            create=True,
+        )
         self._prepare_db(self)
 
     @classmethod
@@ -101,7 +107,9 @@ class DesignParser(Logging, Database):
             cls.__prog__, cls.__version__, cls.args.log_file_name
         )
         db_obj = Database()
-        cls.db, cls.db_cursor = db_obj._connect_to_db(cls.args.database_type, cls.args.input, cls.log, cls.args.database_ini)
+        cls.db, cls.db_cursor = db_obj._connect_to_db(
+            cls.args.database_type, cls.args.input, cls.log, cls.args.database_ini
+        )
         db_obj._load_db(cls)
         log_obj._log_args(
             cls.log, arg_list=vars(cls.args), protein_sequence=cls.protein_sequence
