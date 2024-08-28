@@ -4,19 +4,19 @@ from src.params.analysis_parser import AnalysisParser
 if __name__ == "__main__":
     config = AnalysisParser()
 
-    if config.args.analysis_type == "fe_landscape":
+    if config.args.command == "fe_landscape":
         from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
 
         FreeEnergyLandscape(config)
-    elif config.args.analysis_type == "fe_generation":
+    elif config.args.command == "fe_generation":
         from src.analysis.analyses.fe_generation import FreeEnergyGeneration
 
         FreeEnergyGeneration(config)
-    elif config.args.analysis_type == "fe_trajectory":
+    elif config.args.command == "fe_trajectory":
         from src.analysis.analyses.fe_trajectory import FreeEnergyTrajectory
 
         FreeEnergyTrajectory(config)
-    elif config.args.analysis_type == "codon_trajectory":
+    elif config.args.command == "codon_trajectory":
         from src.analysis.analyses.codon_trajectory import CodonTrajectory
 
         CodonTrajectory(config)
