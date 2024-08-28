@@ -26,7 +26,7 @@ if __name__ == "__main__":
             "Please select a valid folder. See python fold.py -h for details."
         )
 
-    fold._fold(fold.nseq)
+    fold._fold(config.seq)
     fold.config.log.info(
         "Folding energy of input codon sequence: " + str(fold.best_score)
     )
