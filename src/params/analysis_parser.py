@@ -5,9 +5,10 @@ import pickle
 import datetime
 from src.version.version import __version__
 from src.logging.logging import Logging
+from src.database.database import Database
 
 
-class AnalysisParser(object):
+class AnalysisParser(Logging, Database):
     """
     Parses command line inputs using argparse.
 
@@ -36,14 +37,13 @@ class AnalysisParser(object):
         self.__prog__ = "analyze.py"
         self.__version__ = __version__
         self._parse(args)
-        log_obj = Logging()
-        self.log = log_obj._create_log(
+        self.log = self._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
-        self._connect_to_db()
+        self.db, self.db_cursor = self._connect_to_db(self.args.database_type, self.args.input, self.log, self.args.database_ini)
         self._validate()
-        log_obj._log_args(self.log, arg_list=vars(self.args))
-        self._query_details()
+        self._log_args(self.log, arg_list=vars(self.args))
+        self.sim_details = self._get_sim_details(self)
 
     def _parse(self, args=None):
         """
@@ -120,31 +120,6 @@ class AnalysisParser(object):
         else:
             self.args = self.parser.parse_args(args)
 
-    def _connect_to_db(self):
-        if self.args.database_type == "sqlite":
-            import sqlite3
-
-            self.log.info("Connecting to database " + self.args.input)
-            self.db = sqlite3.connect(self.args.input)
-        elif self.args.database_type == "postgres":
-            import psycopg2
-            from configparser import ConfigParser
-
-            # parse ini file
-            parser = ConfigParser()
-            parser.read(self.args.database_ini)
-            ini_data = {_[0]: _[1] for _ in parser.items("postgresql")}
-            self.db = psycopg2.connect(
-                f"user={ini_data['user']} password={ini_data['password']} dbname={self.args.input}"
-            )
-        else:
-            raise NotImplementedError(
-                "Database type (-db) "
-                + self.args.database
-                + " not implemented. Options: sqlite, postgres."
-            )
-        self.db_cursor = self.db.cursor()
-
     def _validate(self):
         """
         Validate user input. TO DO: need to validate database structure?
@@ -152,38 +127,3 @@ class AnalysisParser(object):
         """
 
         return
-
-    def _query_details(self):
-        # query to get sim_detail columns info
-        if self.args.database_type == "sqlite":
-            self.db_cursor.execute(
-                f"SELECT name FROM pragma_table_info('SIM_DETAILS');"
-            )
-        elif self.args.database_type == "postgres":
-            # table name must be lower case for postgres!
-            self.db_cursor.execute(
-                f"SELECT column_name FROM information_schema.columns WHERE table_name='sim_details' ORDER BY ordinal_position;"
-            )
-        keys = self.db_cursor.fetchall()
-        if self.args.hash_value:
-            query = f"SELECT * FROM SIM_DETAILS WHERE hash_value = '{self.args.hash_value}';"
-        else:
-            query = f"SELECT * FROM SIM_DETAILS;"
-        self.db_cursor.execute(query)
-        sim_details = self.db_cursor.fetchall()
-        if len(sim_details) == 0:
-            self.log.error(
-                "No data retrieved from database. Check your inputs or database structure."
-            )
-            raise ValueError(
-                "No data retrieved from database. Check your inputs or database structure."
-            )
-        elif len(sim_details) > 1 and self.args.hash_value is None:
-            self.log.info(
-                "No hash value was specified and multiple optimizations are in the database. Using the first listed."
-            )
-        self.sim_details = {}  # dict to store details for later access
-        self.log.info("Input Optimization Details:")
-        for i in range(len(keys)):
-            self.log.info(keys[i][0] + " : " + str(sim_details[0][i]))
-            self.sim_details[keys[i][0]] = sim_details[0][i]
