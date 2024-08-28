@@ -418,6 +418,7 @@ def test_METRO_DefaultSeed():
     opt2._optimize()
     assert opt.list_seqs == opt2.list_seqs
 
+
 def test_fold_SA():
     """
     Test to verify the same minimum energy and secondary structure are reached
@@ -436,7 +437,11 @@ def test_fold_SA():
     folder._fold(folder.config.args.input)
     folder2 = SimulatedAnnealer(parser)
     folder2._fold(folder2.config.args.input)
-    assert folder.best_score == folder2.best_score and folder.dot_bracket == folder2.dot_bracket
+    assert (
+        folder.best_score == folder2.best_score
+        and folder.dot_bracket == folder2.dot_bracket
+    )
+
 
 def test_fold_MC():
     """

@@ -82,10 +82,14 @@ class DesignParser(object):
         self.__version__ = __version__
         self._parse(args)
         log_obj = Logging()
-        self.log= log_obj._create_log(self.__prog__, self.__version__, self.args.log_file_name)
+        self.log = log_obj._create_log(
+            self.__prog__, self.__version__, self.args.log_file_name
+        )
         self._load_input()
         self._validate()
-        log_obj._log_args(self.log, arg_list=vars(self.args), protein_sequence=self.protein_sequence)
+        log_obj._log_args(
+            self.log, arg_list=vars(self.args), protein_sequence=self.protein_sequence
+        )
         self._prepare_db()
 
     @classmethod
@@ -94,9 +98,13 @@ class DesignParser(object):
         cls.__version__ = __version__
         cls._parse_resume(cls, args)
         log_obj = Logging()
-        cls.log= log_obj._create_log(cls.__prog__, cls.__version__, cls.args.log_file_name)
+        cls.log = log_obj._create_log(
+            cls.__prog__, cls.__version__, cls.args.log_file_name
+        )
         cls._load_db(cls)
-        log_obj._log_args(cls.log, arg_list=vars(cls.args), protein_sequence=cls.protein_sequence)
+        log_obj._log_args(
+            cls.log, arg_list=vars(cls.args), protein_sequence=cls.protein_sequence
+        )
         return cls
 
     def _parse(self, args=None):

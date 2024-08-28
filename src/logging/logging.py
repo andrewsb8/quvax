@@ -3,6 +3,7 @@ import sys
 import logging
 import datetime
 
+
 class Logging(object):
     def __init__(self):
         pass
@@ -14,9 +15,7 @@ class Logging(object):
         log.addHandler(handler)
         if os.path.isfile(log_file_name):
             logging.warning(
-                "Log file "
-                + log_file_name
-                + " exists and will be overwritten."
+                "Log file " + log_file_name + " exists and will be overwritten."
             )
         log.info("Program Version : " + __version__)
         log.info("Execution Time : " + str(datetime.datetime.now()))

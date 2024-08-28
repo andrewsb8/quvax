@@ -47,7 +47,9 @@ class FoldParser(object):
         self.__version__ = __version__
         self._parse(args)
         log_obj = Logging()
-        self.log= log_obj._create_log(self.__prog__, self.__version__, self.args.log_file_name)
+        self.log = log_obj._create_log(
+            self.__prog__, self.__version__, self.args.log_file_name
+        )
         self._load_input()
         self._validate()
         log_obj._log_args(self.log, arg_list=vars(self.args))
