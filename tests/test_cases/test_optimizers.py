@@ -25,7 +25,7 @@ def test_TFDE(caplog):
     parser.log.info("test_TFDE")
     TfDiffEv(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -55,7 +55,7 @@ def test_RAND(caplog):
     parser.log.info("test_RAND")
     RandomOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -85,7 +85,7 @@ def test_GA(caplog):
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -115,7 +115,7 @@ def test_Metro(caplog):
     parser.log.info("test_METRO")
     MetropolisOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -145,7 +145,7 @@ def test_REMC(caplog):
     parser.log.info("test_METRO")
     REMCOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -177,7 +177,7 @@ def test_GA_MCSolver(caplog):
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -210,7 +210,7 @@ def test_GA_ExactSolver(caplog):
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )

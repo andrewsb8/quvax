@@ -44,7 +44,7 @@ def test_input_seq_warning(caplog):
     testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta"]
     DesignParser(testargs)
     warning_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         30,  # 30 indicates WARNING, 20 indicates INFO
         "Input protein sequence looks like an DNA sequence!",
     )
@@ -83,7 +83,7 @@ def test_target_start_codon_withM_noerror(caplog):
     testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AAAAUGAAA"]
     DesignParser(testargs)
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 30 indicates WARNING, 20 indicates INFO
         "\n\nList of Parameters:",
     )

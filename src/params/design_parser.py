@@ -3,10 +3,11 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 import os
 import sys
-import logging
-import datetime
 import hashlib
+import datetime
 from src.exceptions.exceptions import InvalidSequenceError
+from src.version.version import __version__
+from src.logging.logging import Logging
 
 
 class DesignParser(object):
@@ -77,30 +78,34 @@ class DesignParser(object):
     """
 
     def __init__(self, args=None):
+        self.__prog__ = "design.py"
+        self.__version__ = __version__
         self._parse(args)
-        self._logging()
+        log_obj = Logging()
+        self.log= log_obj._create_log(self.__prog__, self.__version__, self.args.log_file_name)
         self._load_input()
         self._validate()
-        self._log_args()
+        log_obj._log_args(self.log, arg_list=vars(self.args), protein_sequence=self.protein_sequence)
         self._prepare_db()
 
     @classmethod
     def _resume(cls, args=None):
+        cls.__prog__ = "design.py"
+        cls.__version__ = __version__
         cls._parse_resume(cls, args)
-        cls._logging(cls)
+        log_obj = Logging()
+        cls.log= log_obj._create_log(cls.__prog__, cls.__version__, cls.args.log_file_name)
         cls._load_db(cls)
-        cls._log_args(cls)
+        log_obj._log_args(cls.log, arg_list=vars(cls.args), protein_sequence=cls.protein_sequence)
         return cls
 
     def _parse(self, args=None):
         """
         Define command line arguments. Long options are used as variable names.
         """
-        self.__version__ = "QuVax v0.0.1"
-        self.prog = "design.py"
 
         self.parser = argparse.ArgumentParser(
-            prog=self.prog,
+            prog=self.__prog__,
             description="QuVax: mRNA design guided by folding potential",
             epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
         )
@@ -326,24 +331,6 @@ class DesignParser(object):
         if self.args.target is not None:
             self.args.target = self.args.target.upper()
 
-    def _logging(self):
-        self.log = logging.getLogger(__name__)
-        self.log.setLevel(logging.DEBUG)
-        handler = logging.FileHandler(self.args.log_file_name, mode="w+")
-        self.log.addHandler(handler)
-        if os.path.isfile(self.args.log_file_name):
-            logging.warning(
-                "Log file "
-                + self.args.log_file_name
-                + " exists and will be overwritten."
-            )
-        self.log.info("Program Version : " + self.__version__)
-        self.log.info("Execution Time : " + str(datetime.datetime.now()))
-        self.log.info(
-            "Command line: python " + self.prog + " " + " ".join(sys.argv[1:]) + "\n\n"
-        )
-        self.log.info("Warnings and Errors:\n")
-
     def _validate(self):
         """
         Validate user input.
@@ -493,14 +480,6 @@ class DesignParser(object):
 
         if self.args.beta > self.args.beta_max:
             raise ValueError("beta_max (-bm) must be larger than beta (-b).")
-
-    def _log_args(self):
-        self.log.info("\n\nList of Parameters:")
-        self.log.info("Protein Sequence : " + self.protein_sequence)
-        iterable_args = vars(self.args)
-        for k in iterable_args:
-            self.log.info(k + " : " + str(iterable_args[k]))
-        self.log.info("\n\n")
 
     def _connect_to_db(self, database):
         if self.args.database_type == "sqlite":

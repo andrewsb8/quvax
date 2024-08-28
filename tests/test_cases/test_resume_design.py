@@ -24,7 +24,7 @@ def test_resume(caplog):
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -78,7 +78,7 @@ def test_resume_hash(caplog):
     config = DesignParser._resume(testargs)
     GeneticAlgorithm(config)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )

@@ -2,8 +2,9 @@ import argparse
 import os
 import sys
 import pickle
-import logging
 import datetime
+from src.version.version import __version__
+from src.logging.logging import Logging
 
 
 class AnalysisParser(object):
@@ -32,22 +33,23 @@ class AnalysisParser(object):
     """
 
     def __init__(self, args=None):
+        self.__prog__ = "analyze.py"
+        self.__version__ = __version__
         self._parse(args)
-        self._logging()
+        log_obj = Logging()
+        self.log= log_obj._create_log(self.__prog__, self.__version__, self.args.log_file_name)
         self._connect_to_db()
         self._validate()
-        self._log_args()
+        log_obj._log_args(self.log, arg_list=vars(self.args))
         self._query_details()
 
     def _parse(self, args=None):
         """
         Define command line arguments. Long options are used as variable names.
         """
-        self.__version__ = "QuVax v0.0.1"
-        self.prog = "analyze.py"
 
         self.parser = argparse.ArgumentParser(
-            prog=self.prog,
+            prog=self.__prog__,
             description="QuVax: mRNA design guided by folding potential",
             epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
         )
@@ -116,24 +118,6 @@ class AnalysisParser(object):
         else:
             self.args = self.parser.parse_args(args)
 
-    def _logging(self):
-        self.log = logging.getLogger(__name__)
-        self.log.setLevel(logging.DEBUG)
-        handler = logging.FileHandler(self.args.log_file_name, mode="w+")
-        self.log.addHandler(handler)
-        if os.path.isfile(self.args.log_file_name):
-            logging.warning(
-                "Log file "
-                + self.args.log_file_name
-                + " exists and will be overwritten."
-            )
-        self.log.info("Program Version : " + self.__version__)
-        self.log.info("Execution Time : " + str(datetime.datetime.now()))
-        self.log.info(
-            "Command line: python " + self.prog + " " + " ".join(sys.argv[1:]) + "\n\n"
-        )
-        self.log.info("Warnings and Errors:\n")
-
     def _connect_to_db(self):
         if self.args.database_type == "sqlite":
             import sqlite3
@@ -166,13 +150,6 @@ class AnalysisParser(object):
         """
 
         return
-
-    def _log_args(self):
-        self.log.info("\n\nList of Parameters:")
-        iterable_args = vars(self.args)
-        for k in iterable_args:
-            self.log.info(k + " : " + str(iterable_args[k]))
-        self.log.info("\n")
 
     def _query_details(self):
         # query to get sim_detail columns info
