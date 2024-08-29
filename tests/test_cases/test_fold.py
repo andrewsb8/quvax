@@ -75,8 +75,8 @@ def test_fold_ES(caplog):
 
 def test_fold_SA_no_stems(caplog):
     """
-    Test that fold.py will run with the Exact Solver Folder, including all
-    outputs, with no errors.
+    Test that fold.py will run, including all outputs, with a sequence where
+    no stems are found
 
     """
     from src.params.fold_parser import FoldParser
