@@ -6,10 +6,11 @@ class CoTranscriptSA(SimulatedAnnealer):
     def __init__(self, config):
         super().__init__(config)
 
-    def _fold(self, sequence):
+    def _fold(self, sequence, post_process=False):
         transcript_rate = 10
         self.stem_dict = None
         old_stems = []
+        self.stems_used = []
 
         for i in range(math.ceil(len(sequence) / transcript_rate)):
             if (i + 1) * transcript_rate > len(sequence):
@@ -31,3 +32,7 @@ class CoTranscriptSA(SimulatedAnnealer):
                 self.stem_dict = {}
                 self._stems_to_dot_bracket(self.n, [])
             old_stems = self.stems
+
+        if post_process:  # equates to "if call was from fold.py"
+            self._stems_to_connect_list(self.n, self.stems_used)
+            self._post_process()

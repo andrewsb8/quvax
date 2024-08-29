@@ -32,7 +32,7 @@ class MC(RNAFolder):
         if self.len_stem_list > 0:
             self._do_mc()
         self._stems_to_dot_bracket(self.n, self.stems_used)
-        if post_process:
+        if post_process:  # equates to "if call was from fold.py"
             self._stems_to_connect_list(self.n, self.stems_used)
             self._post_process()
 

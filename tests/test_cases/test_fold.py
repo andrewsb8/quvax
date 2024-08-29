@@ -73,6 +73,28 @@ def test_fold_ES(caplog):
     assert log_entry in caplog.record_tuples
 
 
+def test_fold_CTSA(caplog):
+    """
+    Test that fold.py will run with the Cotranscriptional SA Folder, including all
+    outputs, with no errors.
+
+    """
+    from src.params.fold_parser import FoldParser
+    from src.rna_folding.rna_folders.cotranscript_sa import CoTranscriptSA
+
+    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "2000", "-ot", "all"]
+    parser = FoldParser(testargs)
+    folder = CoTranscriptSA(parser)
+    folder._fold(folder.config.args.input, post_process=True)
+    log_entry = (
+        "src.params.fold_parser",
+        20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
+        "Folded secondary structure: ((((.((((..))))..))))",  # Interesting to note that this output was different than the other folders!!
+    )
+    print(caplog.record_tuples)
+    assert log_entry in caplog.record_tuples
+
+
 def test_fold_SA_no_stems(caplog):
     """
     Test that fold.py will run, including all outputs, with a sequence where
