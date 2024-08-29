@@ -26,13 +26,15 @@ class MC(RNAFolder):
     def __init__(self, config):
         super().__init__(config)
 
-    def _fold(self, sequence):
+    def _fold(self, sequence, post_process=False):
         self._fold_prep(sequence)
+        self.stems_used = []
         if self.len_stem_list > 0:
             self._do_mc()
-            self._stems_to_dot_bracket(self.n, self.stems_used)
-        else:
-            self._stems_to_dot_bracket(self.n, [])
+        self._stems_to_dot_bracket(self.n, self.stems_used)
+        if post_process:
+            self._stems_to_connect_list(self.n, self.stems_used)
+            self._post_process()
 
     def _add_pair(self):
         ## Grab a stem at random

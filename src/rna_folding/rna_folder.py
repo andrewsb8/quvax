@@ -224,9 +224,47 @@ class RNAFolder(ABC, StructureIO):
             src.io.io to help write connectivity table files.
 
         """
-        pair = [0 for i in range(sequence_len)]
+        self.connect_list = [0 for i in range(sequence_len)]
         for stem in stems:
             stem_pair_list = self._stem_to_pair_list(stem)
             for i in range(len(stem_pair_list)):
                 pair[stem_pair_list[i][0] - 1] = stem_pair_list[i][1]
-        return pair
+
+    def _post_process(self):
+        """
+        Method that will be called to log and write output files for
+        the output of fold.py
+
+        """
+        self.config.log.info(
+            "Folding energy of input codon sequence: " + str(self.best_score)
+        )
+        self.config.log.info("Folded secondary structure: " + str(self.dot_bracket))
+        if self.config.args.output_type == "dot_bracket":
+            self._write_dot_bracket(
+                self.config.args.output, self.best_score, self.nseq, self.dot_bracket
+            )
+        elif self.config.args.output_type == "connect_table":
+            self._write_connect_table(
+                self.config.args.output,
+                self.nseq,
+                self.best_score,
+                self.connect_list,
+            )
+        elif self.config.args.output_type == "all":
+            self._write_dot_bracket(
+                str(self.config.args.output + ".dot"),
+                self.best_score,
+                self.nseq,
+                self.dot_bracket,
+            )
+            self._write_connect_table(
+                str(self.config.args.output + ".ct"),
+                self.nseq,
+                self.best_score,
+                self.connect_list,
+            )
+        else:
+            raise ValueError(
+                "Output type (-ot, --output_type) invalid. See python fold.py -h for details."
+            )
