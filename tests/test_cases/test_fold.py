@@ -14,8 +14,6 @@ def test_fold_SA(caplog):
     parser = FoldParser(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
-    folder2 = SimulatedAnnealer(parser)
-    folder2._fold(folder2.config.args.input, post_process=True)
     log_entry = (
         "src.params.fold_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -38,8 +36,6 @@ def test_fold_MC(caplog):
     parser = FoldParser(testargs)
     folder = MC(parser)
     folder._fold(folder.config.args.input, post_process=True)
-    folder2 = MC(parser)
-    folder2._fold(folder2.config.args.input, post_process=True)
     log_entry = (
         "src.params.fold_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -62,8 +58,6 @@ def test_fold_ES(caplog):
     parser = FoldParser(testargs)
     folder = ExactSolver(parser)
     folder._fold(folder.config.args.input, post_process=True)
-    folder2 = ExactSolver(parser)
-    folder2._fold(folder2.config.args.input, post_process=True)
     log_entry = (
         "src.params.fold_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
@@ -86,8 +80,6 @@ def test_fold_SA_no_stems(caplog):
     parser = FoldParser(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
-    folder2 = SimulatedAnnealer(parser)
-    folder2._fold(folder2.config.args.input, post_process=True)
     log_entry = (
         "src.params.fold_parser",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
