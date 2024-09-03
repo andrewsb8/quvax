@@ -10,7 +10,16 @@ def test_fold_SA(caplog):
     from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
-    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "2000", "-ot", "all"]
+    testargs = [
+        "-i",
+        "AUGACUAGGUAUCUAUCUUAU",
+        "-r",
+        "2000",
+        "-ot",
+        "all",
+        "-o",
+        "quvax",
+    ]
     parser = FoldParser(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
@@ -32,7 +41,16 @@ def test_fold_MC(caplog):
     from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.classical_mc import MC
 
-    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "2000", "-ot", "all"]
+    testargs = [
+        "-i",
+        "AUGACUAGGUAUCUAUCUUAU",
+        "-r",
+        "2000",
+        "-ot",
+        "all",
+        "-o",
+        "quvax",
+    ]
     parser = FoldParser(testargs)
     folder = MC(parser)
     folder._fold(folder.config.args.input, post_process=True)
@@ -54,7 +72,16 @@ def test_fold_ES(caplog):
     from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.exact_solver import ExactSolver
 
-    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "2000", "-ot", "all"]
+    testargs = [
+        "-i",
+        "AUGACUAGGUAUCUAUCUUAU",
+        "-r",
+        "2000",
+        "-ot",
+        "all",
+        "-o",
+        "quvax",
+    ]
     parser = FoldParser(testargs)
     folder = ExactSolver(parser)
     folder._fold(folder.config.args.input, post_process=True)
@@ -76,7 +103,7 @@ def test_fold_SA_no_stems(caplog):
     from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
-    testargs = ["-i", "AAAAAAAAAAAAA", "-r", "2000", "-ot", "all"]
+    testargs = ["-i", "AAAAAAAAAAAAA", "-r", "2000", "-ot", "all", "-o", "quvax"]
     parser = FoldParser(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)

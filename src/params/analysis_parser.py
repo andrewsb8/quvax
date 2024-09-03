@@ -57,9 +57,7 @@ class AnalysisParser(Logging, Database):
             description="Analysis tool with modules to analyze outputs of design.py and fold.py. There are tools to compare sequences, energies, and secondary structures. See descriptions of the available commands below.",
             epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
         )
-        parser.add_argument(
-            "--version", action="version", version=self.__version__
-        )
+        parser.add_argument("--version", action="version", version=self.__version__)
 
         # currently there are two types of analyses:
         # - analyses that take information from a database
@@ -112,12 +110,28 @@ class AnalysisParser(Logging, Database):
             help="database .ini file to connect to postgres database.",
         )
 
-        #subparsers for each analysis which relies on a database
-        subparsers = parser.add_subparsers(dest='command')
-        parser_fe_landscape = subparsers.add_parser('fe_landscape', parents=[db_parser], help='Calculate the relative 2D free energy landscape relative to the minimum energy sampled during design.')
-        parser_fe_trajectory = subparsers.add_parser('fe_trajectory', parents=[db_parser], help='Print the evolution of the free energy over each generation for each population member.')
-        parser_fe_generation = subparsers.add_parser('fe_generation', parents=[db_parser], help='Prints the relative free energy of a population member compared to the previous generation for each population member and for all generations.')
-        parser_codon_trajectory = subparsers.add_parser('codon_trajectory', parents=[db_parser], help='Prints the number different codons in an RNA sequence relative to the previous generation for each population member and for all generations.')
+        # subparsers for each analysis which relies on a database
+        subparsers = parser.add_subparsers(dest="command")
+        parser_fe_landscape = subparsers.add_parser(
+            "fe_landscape",
+            parents=[db_parser],
+            help="Calculate the relative 2D free energy landscape relative to the minimum energy sampled during design.",
+        )
+        parser_fe_trajectory = subparsers.add_parser(
+            "fe_trajectory",
+            parents=[db_parser],
+            help="Print the evolution of the free energy over each generation for each population member.",
+        )
+        parser_fe_generation = subparsers.add_parser(
+            "fe_generation",
+            parents=[db_parser],
+            help="Prints the relative free energy of a population member compared to the previous generation for each population member and for all generations.",
+        )
+        parser_codon_trajectory = subparsers.add_parser(
+            "codon_trajectory",
+            parents=[db_parser],
+            help="Prints the number different codons in an RNA sequence relative to the previous generation for each population member and for all generations.",
+        )
 
         if args is None:
             self.args = parser.parse_args()
