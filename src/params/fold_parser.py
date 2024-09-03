@@ -57,7 +57,7 @@ class FoldParser(object):
 
         self.parser = argparse.ArgumentParser(
             prog=self.prog,
-            description="QuVax: mRNA design guided by folding potential",
+            description="Determine secondary structure of an RNA sequence",
             epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
         )
         self.parser.add_argument(
