@@ -83,10 +83,12 @@ Most options for ```design.py``` are read from the database. The input database 
 The data in the database can be viewed with any database editor (Heidi, DBeaver, etc.). Custom python or SQL scripts can be written to analyze an optimization process since all of the information is stored in a standard SQLite database format. However, QuVax includes some analysis modules in ```analyze.py```. Example execution of ```analyze.py```:
 
 ```
-$ python analyze.py -i quvax.db -at fe_trajectory
+$ python analyze.py command [OPTIONS]
+$ python analyze.py fe_trajectory -i quvax.db
 ```
 
 For analysis options: ```$ python analyze.py -h```
+For analysis command options: ```$ python analyze.py [command] -h```
 
 ### Folding Individual Codon Sequences
 

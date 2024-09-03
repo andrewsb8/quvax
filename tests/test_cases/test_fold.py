@@ -15,7 +15,7 @@ def test_fold_SA(caplog):
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -37,7 +37,7 @@ def test_fold_MC(caplog):
     folder = MC(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -59,7 +59,7 @@ def test_fold_ES(caplog):
     folder = ExactSolver(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -81,7 +81,7 @@ def test_fold_SA_no_stems(caplog):
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: .............",
     )

@@ -12,10 +12,9 @@ def test_fe_trajectory():
     from src.analysis.analyses.fe_trajectory import FreeEnergyTrajectory
 
     testargs = [
+        "fe_trajectory",
         "-i",
         "tests/test_files/test_analysis/quvax.db",
-        "-at",
-        "fe_trajectory",
         "-o",
         "test_traj_out.txt",
     ]
@@ -43,10 +42,9 @@ def test_fe_landscape():
     from src.analysis.analyses.fe_landscape import FreeEnergyLandscape
 
     testargs = [
+        "fe_landscape",
         "-i",
         "tests/test_files/test_analysis/quvax.db",
-        "-at",
-        "fe_landscape",
         "-o",
         "test_felandscape_out.txt",
     ]
@@ -69,10 +67,9 @@ def test_codon_trajectory():
     from src.analysis.analyses.codon_trajectory import CodonTrajectory
 
     testargs = [
+        "codon_trajectory",
         "-i",
         "tests/test_files/test_analysis/quvax.db",
-        "-at",
-        "codon_trajectory",
         "-o",
         "test_traj_out.txt",
     ]
@@ -100,10 +97,9 @@ def test_fe_generation():
     from src.analysis.analyses.fe_generation import FreeEnergyGeneration
 
     testargs = [
+        "fe_generation",
         "-i",
         "tests/test_files/test_analysis/quvax.db",
-        "-at",
-        "fe_generation",
         "-o",
         "test_fegeneration_out.txt",
     ]
@@ -126,10 +122,9 @@ def test_hash_analysis():
     from src.analysis.analyses.fe_generation import FreeEnergyGeneration
 
     testargs = [
+        "fe_generation",
         "-i",
         "tests/test_files/test_analysis/quvax2.db",
-        "-at",
-        "fe_generation",
         "-o",
         "test_fegeneration_out.txt",
         "-hv",
