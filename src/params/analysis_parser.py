@@ -46,64 +46,59 @@ class AnalysisParser(object):
         self.__version__ = "QuVax v0.0.1"
         self.prog = "analyze.py"
 
-        self.parser = argparse.ArgumentParser(
+        parser = argparse.ArgumentParser(
             prog=self.prog,
-            description="QuVax: mRNA design guided by folding potential",
+            description="Analysis tool with modules to analyze outputs of design.py and fold.py. There are tools to compare sequences, energies, and secondary structures. See descriptions of the available commands below.",
             epilog="Please report bugs to: https://github.com/andrewsb8/quvax/issues",
         )
-        self.parser.add_argument(
+        parser.add_argument(
             "--version", action="version", version=self.__version__
         )
-        self.parser.add_argument(
+
+        # currently there are two types of analyses:
+        # - analyses that take information from a database
+        # - analyses that take information from a structure file or pair of structure files
+        # going to create parsers with typical shared options for each group and then individual
+        #   subparsers can have extra options which are unique to each analysis
+
+        # database analysis shared options parser
+        db_parser = argparse.ArgumentParser(add_help=False)
+        db_parser.add_argument(
             "-i",
             "--input",
             required=True,
             type=str,
             help="Input (SQLite or Postgres) database from output of design.py",
         )
-        self.parser.add_argument(
-            "-at",
-            "--analysis_type",
-            default="fe_landscape",
-            type=str,
-            help="Specify type of analysis. Values: fe_landscape, fe_generation, fe_trajectory, codon_trajectory",
-        )
-        self.parser.add_argument(
+        db_parser.add_argument(
             "-hv",
             "--hash_value",
             default=None,
             type=str,
             help="Hash value of an optimization. If none provided, the first optimization in the database will be used.",
         )
-        self.parser.add_argument(
+        db_parser.add_argument(
             "-l",
             "--log_file_name",
             default="quvax.log",
             type=str,
             help="Log file for recording certain output, warnings, and errors",
         )
-        self.parser.add_argument(
+        db_parser.add_argument(
             "-o",
             "--output",
             default="analysis_out.txt",
             type=str,
             help="Specify output file",
         )
-        self.parser.add_argument(
-            "-sd",
-            "--random_seed",
-            default=1,
-            type=int,
-            help="Random seed for sequence generation, optimization, and folding",
-        )
-        self.parser.add_argument(
+        db_parser.add_argument(
             "-db",
             "--database_type",
             default="sqlite",
             type=str,
             help="Option to choose database type. Default: sqlite. Options: sqlite, postgres.",
         )
-        self.parser.add_argument(
+        db_parser.add_argument(
             "-in",
             "--database_ini",
             default=None,
@@ -111,10 +106,17 @@ class AnalysisParser(object):
             help="database .ini file to connect to postgres database.",
         )
 
+        #subparsers for each analysis which relies on a database
+        subparsers = parser.add_subparsers(dest='command')
+        parser_fe_landscape = subparsers.add_parser('fe_landscape', parents=[db_parser], help='Calculate the relative 2D free energy landscape relative to the minimum energy sampled during design.')
+        parser_fe_trajectory = subparsers.add_parser('fe_trajectory', parents=[db_parser], help='Print the evolution of the free energy over each generation for each population member.')
+        parser_fe_generation = subparsers.add_parser('fe_generation', parents=[db_parser], help='Prints the relative free energy of a population member compared to the previous generation for each population member and for all generations.')
+        parser_codon_trajectory = subparsers.add_parser('codon_trajectory', parents=[db_parser], help='Prints the number different codons in an RNA sequence relative to the previous generation for each population member and for all generations.')
+
         if args is None:
-            self.args = self.parser.parse_args()
+            self.args = parser.parse_args()
         else:
-            self.args = self.parser.parse_args(args)
+            self.args = parser.parse_args(args)
 
     def _logging(self):
         self.log = logging.getLogger(__name__)
