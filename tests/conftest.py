@@ -68,6 +68,9 @@ def test_cleanup():
         "quvax.log",
         "test_felandscape_out.txt",
         "test_fegeneration_out.txt",
+        "quvax.dot",
+        "quvax.ct",
+        "test_traj_out.txt",
     ]
     for file in files:
         if os.path.exists(file):
