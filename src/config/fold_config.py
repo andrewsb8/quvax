@@ -10,7 +10,7 @@ from src.logging.logging import Log
 from src.version.version import __version__
 
 
-class FoldConfig(Config, Log):
+class FoldConfig(Config):
     """
     Parses command line inputs using argparse.
 
@@ -47,12 +47,13 @@ class FoldConfig(Config, Log):
         self.__prog__ = "fold.py"
         self.__version__ = __version__
         self._parse(args)
-        self.log = self._create_log(
+        log_obj = Log()
+        self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
         self._load_input()
         self._validate()
-        self._log_args(self.log, arg_list=vars(self.args))
+        log_obj._log_args(self.log, arg_list=vars(self.args))
 
     def _parse(self, args=None):
         """

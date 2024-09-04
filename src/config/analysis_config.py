@@ -9,7 +9,7 @@ from src.logging.logging import Log
 from src.database.database import Database
 
 
-class AnalysisConfig(Config, Log, Database):
+class AnalysisConfig(Config):
     """
     Parses command line inputs using argparse.
 
@@ -38,15 +38,17 @@ class AnalysisConfig(Config, Log, Database):
         self.__prog__ = "analyze.py"
         self.__version__ = __version__
         self._parse(args)
-        self.log = self._create_log(
+        log_obj = Log()
+        self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
-        self.db, self.db_cursor = self._connect_to_db(
+        db_obj = Database()
+        self.db, self.db_cursor = db_obj._connect_to_db(
             self.args.database_type, self.args.input, self.log, self.args.database_ini
         )
         self._validate()
-        self._log_args(self.log, arg_list=vars(self.args))
-        self.sim_details = self._get_sim_details(self)
+        log_obj._log_args(self.log, arg_list=vars(self.args))
+        self.sim_details = db_obj._get_sim_details(self)
 
     def _parse(self, args=None):
         """
