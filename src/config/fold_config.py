@@ -46,7 +46,7 @@ class FoldConfig(Config):
     def __init__(self, args=None):
         self.__prog__ = "fold.py"
         self.__version__ = __version__
-        self._parse(args)
+        self.args = self._parse(args)
         log_obj = Log()
         self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
@@ -161,9 +161,9 @@ class FoldConfig(Config):
         )
 
         if args is None:
-            self.args = self.parser.parse_args()
+            return self.parser.parse_args()
         else:
-            self.args = self.parser.parse_args(args)
+            return self.parser.parse_args(args)
 
     def _load_input(self):
         # Folders take sequence string so no need to convert

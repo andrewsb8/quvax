@@ -80,7 +80,7 @@ class DesignConfig(Config):
     def __init__(self, args=None):
         self.__prog__ = "design.py"
         self.__version__ = __version__
-        self._parse(args)
+        self.args = self._parse(args)
         log_obj = Log()
         self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
@@ -104,7 +104,7 @@ class DesignConfig(Config):
     def _resume(cls, args=None):
         cls.__prog__ = "design.py"
         cls.__version__ = __version__
-        cls._parse_resume(cls, args)
+        cls.args = cls._parse_resume(cls, args)
         log_obj = Log()
         cls.log = log_obj._create_log(
             cls.__prog__, cls.__version__, cls.args.log_file_name
@@ -342,9 +342,9 @@ class DesignConfig(Config):
         )
 
         if args is None:
-            self.args = self.parser.parse_args()
+            return self.parser.parse_args()
         else:
-            self.args = self.parser.parse_args(args)
+            return self.parser.parse_args(args)
 
     def _load_input(self):
         self.protein_sequence = str(SeqIO.read(self.args.input, "fasta").seq)
@@ -572,6 +572,6 @@ class DesignConfig(Config):
         )
 
         if args is None:
-            self.args = self.parser.parse_args()
+            return self.parser.parse_args()
         else:
-            self.args = self.parser.parse_args(args)
+            return self.parser.parse_args(args)
