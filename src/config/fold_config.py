@@ -4,12 +4,13 @@ from Bio import SeqIO
 import os
 import sys
 import datetime
+from src.config.config import Config
 from src.exceptions.exceptions import InvalidSequenceError
 from src.logging.logging import Log
 from src.version.version import __version__
 
 
-class FoldParser(Log):
+class FoldConfig(Config, Log):
     """
     Parses command line inputs using argparse.
 

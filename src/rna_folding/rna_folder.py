@@ -1,6 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from src.params.design_parser import DesignParser
+from src.config.config import Config
 from src.structure_io.structure_io import StructureIO
 
 
@@ -35,7 +35,7 @@ class RNAFolder(ABC, StructureIO):
 
     """
 
-    def __init__(self, config: DesignParser):
+    def __init__(self, config: Config):
         self.config = config
         self.interactions = [
             ("A", "U"),

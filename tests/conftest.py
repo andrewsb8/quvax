@@ -1,10 +1,10 @@
 import os
 import pytest
 from src.qodon.optimizer import CodonOptimizer
-from src.params.design_parser import DesignParser
-from src.params.fold_parser import FoldParser
+from src.config.design_config import DesignConfig
+from src.config.fold_config import FoldConfig
 from src.rna_folding.rna_folder import RNAFolder
-from src.params.analysis_parser import AnalysisParser
+from src.config.analysis_config import AnalysisConfig
 from src.analysis.analysis import Analysis
 
 
@@ -20,7 +20,7 @@ class MockOptimizer(CodonOptimizer):
 def mock_optimizer():
     """Mock optimizer"""
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-p", "5"]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = MockOptimizer(parser)
     return opt
 

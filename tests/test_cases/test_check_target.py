@@ -1,6 +1,6 @@
 import pytest
 import sqlite3
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 from tests.conftest import MockOptimizer
 
 

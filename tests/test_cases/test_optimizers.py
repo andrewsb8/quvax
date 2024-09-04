@@ -1,5 +1,5 @@
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 
 
 def test_TFDE(caplog):
@@ -21,7 +21,7 @@ def test_TFDE(caplog):
         "-co",
         "TFDE",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_TFDE")
     TfDiffEv(parser)._optimize()
     log_entry = (
@@ -51,7 +51,7 @@ def test_RAND(caplog):
         "-co",
         "RAND",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_RAND")
     RandomOptimizer(parser)._optimize()
     log_entry = (
@@ -81,7 +81,7 @@ def test_GA(caplog):
         "-co",
         "GA",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
@@ -111,7 +111,7 @@ def test_Metro(caplog):
         "-co",
         "METRO",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_METRO")
     MetropolisOptimizer(parser)._optimize()
     log_entry = (
@@ -141,7 +141,7 @@ def test_REMC(caplog):
         "-co",
         "REMC",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_METRO")
     REMCOptimizer(parser)._optimize()
     log_entry = (
@@ -173,7 +173,7 @@ def test_GA_MCSolver(caplog):
         "-s",
         "MC",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
@@ -206,7 +206,7 @@ def test_GA_ExactSolver(caplog):
         "-s",
         "ES",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
@@ -236,7 +236,7 @@ def test_convergence(caplog):
         "-cc",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     with pytest.raises(SystemExit) as s:
         RandomOptimizer(parser)._optimize()
     assert s.type == SystemExit

@@ -3,13 +3,14 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 import os
 import sys
+from src.config.config import Config
 from src.exceptions.exceptions import InvalidSequenceError
 from src.version.version import __version__
 from src.logging.logging import Log
 from src.database.database import Database
 
 
-class DesignParser(Log, Database):
+class DesignConfig(Config, Log, Database):
     """
     Parses command line inputs using argparse.
 

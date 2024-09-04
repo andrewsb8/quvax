@@ -1,4 +1,4 @@
-from src.params.design_parser import DesignParser
+from src.config.config import Config
 from abc import ABC, abstractmethod
 from copy import deepcopy
 import python_codon_tables as pct
@@ -26,7 +26,7 @@ class CodonOptimizer(ABC):
 
     """
 
-    def __init__(self, config: DesignParser):
+    def __init__(self, config: Config):
         self.config = config
         random.seed(self.config.args.random_seed)
         self.codon_optimize_step = 0

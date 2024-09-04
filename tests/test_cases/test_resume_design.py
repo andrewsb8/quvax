@@ -1,6 +1,6 @@
 import shutil
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 
 
 def test_resume(caplog):
@@ -21,7 +21,7 @@ def test_resume(caplog):
         "-e",
         "3",
     ]
-    config = DesignParser._resume(testargs)
+    config = DesignConfig._resume(testargs)
     GeneticAlgorithm(config)._optimize()
     log_entry = (
         "src.logging.logging",
@@ -51,7 +51,7 @@ def test_resume_hash_fail():
         "0",
     ]
     with pytest.raises(ValueError):
-        DesignParser._resume(testargs)
+        DesignConfig._resume(testargs)
 
 
 def test_resume_hash(caplog):
@@ -75,7 +75,7 @@ def test_resume_hash(caplog):
         "-hv",
         "3de8de42d9",
     ]
-    config = DesignParser._resume(testargs)
+    config = DesignConfig._resume(testargs)
     GeneticAlgorithm(config)._optimize()
     log_entry = (
         "src.logging.logging",
@@ -106,7 +106,7 @@ def test_resume_compare():
         "-co",
         "GA",
     ]
-    config = DesignParser(testargs)
+    config = DesignConfig(testargs)
     opt = GeneticAlgorithm(config)
     opt._optimize()
 
@@ -123,13 +123,13 @@ def test_resume_compare():
         "-co",
         "GA",
     ]
-    config2 = DesignParser(testargs2)
+    config2 = DesignConfig(testargs2)
     opt2 = GeneticAlgorithm(config2)
     opt2._optimize()
 
     # resume second optimization
     testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
-    config3 = DesignParser._resume(testargs3)
+    config3 = DesignConfig._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
     opt3._optimize()
 
@@ -159,7 +159,7 @@ def test_resume_compare_MC():
         "-co",
         "GA",
     ]
-    config = DesignParser(testargs)
+    config = DesignConfig(testargs)
     opt = GeneticAlgorithm(config)
     opt._optimize()
 
@@ -178,13 +178,13 @@ def test_resume_compare_MC():
         "-co",
         "GA",
     ]
-    config2 = DesignParser(testargs2)
+    config2 = DesignConfig(testargs2)
     opt2 = GeneticAlgorithm(config2)
     opt2._optimize()
 
     # resume second optimization
     testargs3 = ["-i", "second.db", "--resume", "-e", "5"]
-    config3 = DesignParser._resume(testargs3)
+    config3 = DesignConfig._resume(testargs3)
     opt3 = GeneticAlgorithm(config3)
     opt3._optimize()
 

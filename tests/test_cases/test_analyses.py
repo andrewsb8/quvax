@@ -1,5 +1,5 @@
 import pytest
-from src.params.analysis_parser import AnalysisParser
+from src.config.analysis_config import AnalysisConfig
 import os
 import filecmp
 
@@ -18,7 +18,7 @@ def test_fe_trajectory():
         "-o",
         "test_traj_out.txt",
     ]
-    config = AnalysisParser(testargs)
+    config = AnalysisConfig(testargs)
     analysis = FreeEnergyTrajectory(config)
 
     for i in range(analysis.config.sim_details["generation_size"]):
@@ -48,7 +48,7 @@ def test_fe_landscape():
         "-o",
         "test_felandscape_out.txt",
     ]
-    config = AnalysisParser(testargs)
+    config = AnalysisConfig(testargs)
     analysis = FreeEnergyLandscape(config)
 
     assert (
@@ -73,7 +73,7 @@ def test_codon_trajectory():
         "-o",
         "test_traj_out.txt",
     ]
-    config = AnalysisParser(testargs)
+    config = AnalysisConfig(testargs)
     analysis = CodonTrajectory(config)
 
     for i in range(analysis.config.sim_details["generation_size"]):
@@ -103,7 +103,7 @@ def test_fe_generation():
         "-o",
         "test_fegeneration_out.txt",
     ]
-    config = AnalysisParser(testargs)
+    config = AnalysisConfig(testargs)
     analysis = FreeEnergyGeneration(config)
 
     assert (
@@ -130,7 +130,7 @@ def test_hash_analysis():
         "-hv",
         "7224012419568161126",
     ]
-    config = AnalysisParser(testargs)
+    config = AnalysisConfig(testargs)
     analysis = FreeEnergyGeneration(config)
 
     assert (

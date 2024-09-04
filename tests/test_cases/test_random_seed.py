@@ -1,5 +1,5 @@
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 from tests.conftest import MockOptimizer
 
 
@@ -16,7 +16,7 @@ def test_SameInitialSequences_DefaultSeed():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = MockOptimizer(parser)
     opt._optimize()
     opt2 = MockOptimizer(parser)
@@ -37,7 +37,7 @@ def test_SameInitialSequences_NewSeed():
         "-sd",
         "1098760354",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = MockOptimizer(parser)
     opt._optimize()
     opt2 = MockOptimizer(parser)
@@ -56,7 +56,7 @@ def test_InitialSequences_DifferentSeeds():
         "-p",
         "4",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = MockOptimizer(parser)
     opt._optimize()
     parser.args.random_seed = 234524352
@@ -82,7 +82,7 @@ def test_TfDiffEv_DefaultSeed():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = TfDiffEv(parser)
     opt._optimize()
     opt2 = TfDiffEv(parser)
@@ -109,7 +109,7 @@ def test_TfDiffEv_NewSeed():
         "-sd",
         "2546345746583",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = TfDiffEv(parser)
     opt._optimize()
     opt2 = TfDiffEv(parser)
@@ -138,7 +138,7 @@ def test_TfDiffEv_OneIteration():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = TfDiffEv(parser)
     opt._optimize()
     opt2 = TfDiffEv(parser)
@@ -168,7 +168,7 @@ def test_TfDiffEv_LongerSequence():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = TfDiffEv(parser)
     opt._optimize()
     opt2 = TfDiffEv(parser)
@@ -195,7 +195,7 @@ def test_GA_DefaultSeed():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = GeneticAlgorithm(parser)
     opt._optimize()
     opt2 = GeneticAlgorithm(parser)
@@ -222,7 +222,7 @@ def test_GA_NewSeed():
         "-sd",
         "2546345746583",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = GeneticAlgorithm(parser)
     opt._optimize()
     opt2 = GeneticAlgorithm(parser)
@@ -249,7 +249,7 @@ def test_GA_OneIteration():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = GeneticAlgorithm(parser)
     opt._optimize()
     opt2 = GeneticAlgorithm(parser)
@@ -276,7 +276,7 @@ def test_GA_LongerSequence():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = GeneticAlgorithm(parser)
     opt._optimize()
     opt2 = GeneticAlgorithm(parser)
@@ -303,7 +303,7 @@ def test_RAND_DefaultSeed():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = RandomOptimizer(parser)
     opt._optimize()
     opt2 = RandomOptimizer(parser)
@@ -330,7 +330,7 @@ def test_RAND_NewSeed():
         "-sd",
         "2546345746583",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = RandomOptimizer(parser)
     opt._optimize()
     opt2 = RandomOptimizer(parser)
@@ -357,7 +357,7 @@ def test_RAND_OneIteration():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = RandomOptimizer(parser)
     opt._optimize()
     opt2 = RandomOptimizer(parser)
@@ -384,7 +384,7 @@ def test_RAND_LongerSequence():
         "-sd",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = RandomOptimizer(parser)
     opt._optimize()
     opt2 = RandomOptimizer(parser)
@@ -411,7 +411,7 @@ def test_METRO_DefaultSeed():
         "-co",
         "METRO",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     opt = MetropolisOptimizer(parser)
     opt._optimize()
     opt2 = MetropolisOptimizer(parser)
@@ -425,14 +425,14 @@ def test_fold_SA():
     on repeated runs of fold.py
 
     """
-    from src.params.fold_parser import FoldParser
+    from src.config.fold_config import FoldConfig
     from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
     testargs = [
         "-i",
         "AUGACUAGGUAUCUAUCUUAU",
     ]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input)
     folder2 = SimulatedAnnealer(parser)
@@ -448,11 +448,11 @@ def test_fold_MC():
     Test to verify the same minimum energy and secondary structure are reached
     on repeated runs of fold.py
     """
-    from src.params.fold_parser import FoldParser
+    from src.config.fold_config import FoldConfig
     from src.rna_folding.rna_folders.classical_mc import MC
 
     testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "20000"]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = MC(parser)
     folder._fold(folder.config.args.input)
     folder2 = MC(parser)
