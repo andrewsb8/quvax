@@ -5,11 +5,11 @@ import os
 import sys
 import datetime
 from src.exceptions.exceptions import InvalidSequenceError
-from src.logging.logging import Logging
+from src.logging.logging import Log
 from src.version.version import __version__
 
 
-class FoldParser(Logging):
+class FoldParser(Log):
     """
     Parses command line inputs using argparse.
 

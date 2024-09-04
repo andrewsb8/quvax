@@ -4,11 +4,11 @@ import sys
 import pickle
 import datetime
 from src.version.version import __version__
-from src.logging.logging import Logging
+from src.logging.logging import Log
 from src.database.database import Database
 
 
-class AnalysisParser(Logging, Database):
+class AnalysisParser(Log, Database):
     """
     Parses command line inputs using argparse.
 

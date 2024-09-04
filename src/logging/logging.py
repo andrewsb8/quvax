@@ -4,7 +4,7 @@ import logging
 import datetime
 
 
-class Logging(object):
+class Log(object):
     def __init__(self):
         pass
 

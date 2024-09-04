@@ -5,11 +5,11 @@ import os
 import sys
 from src.exceptions.exceptions import InvalidSequenceError
 from src.version.version import __version__
-from src.logging.logging import Logging
+from src.logging.logging import Log
 from src.database.database import Database
 
 
-class DesignParser(Logging, Database):
+class DesignParser(Log, Database):
     """
     Parses command line inputs using argparse.
 
@@ -102,7 +102,7 @@ class DesignParser(Logging, Database):
         cls.__prog__ = "design.py"
         cls.__version__ = __version__
         cls._parse_resume(cls, args)
-        log_obj = Logging()
+        log_obj = Log()
         cls.log = log_obj._create_log(
             cls.__prog__, cls.__version__, cls.args.log_file_name
         )
