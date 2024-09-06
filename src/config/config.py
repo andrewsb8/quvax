@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Config(ABC):
     def __init__(self):
         pass

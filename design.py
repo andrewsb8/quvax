@@ -1,9 +1,6 @@
 import sys
 from src.config.design_config import DesignConfig
 
-global __program__
-__program__ = "design.py"
-
 
 if __name__ == "__main__":
     if "--resume" in sys.argv:
