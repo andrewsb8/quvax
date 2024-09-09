@@ -9,23 +9,23 @@ if __name__ == "__main__":
         config = DesignConfig()
 
     if config.args.codon_optimizer == "TFDE":
-        from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+        from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
         TfDiffEv(config)._optimize()
     elif config.args.codon_optimizer == "GA":
-        from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+        from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
         GeneticAlgorithm(config)._optimize()
     elif config.args.codon_optimizer == "RAND":
-        from src.qodon.optimizers.random_optimizer import RandomOptimizer
+        from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
         RandomOptimizer(config)._optimize()
     elif config.args.codon_optimizer == "METRO":
-        from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+        from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
         MetropolisOptimizer(config)._optimize()
     elif config.args.codon_optimizer == "REMC":
-        from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+        from src.codon_opt.optimizers.replica_exchange_mc import REMCOptimizer
 
         REMCOptimizer(config)._optimize()
     else:

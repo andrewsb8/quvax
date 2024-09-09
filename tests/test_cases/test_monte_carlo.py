@@ -9,7 +9,7 @@ def test_accept_changes():
     to both METRO and REMC optimizers
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -28,7 +28,7 @@ def test_accept_changes_diff_betas():
     exchange occurs in REMC.
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -46,7 +46,7 @@ def test_reject_changes():
     to both METRO and REMC optimizers
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -65,7 +65,7 @@ def test_reject_changes_diff_betas():
     exchange occurs in REMC.
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -82,7 +82,7 @@ def test_number_changes(mock_analysis):
     Test the correct number of codons are changed in a sequence
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -108,7 +108,7 @@ def test_random_sequence_generation():
     Test the randomly generated sequence in the Metropolis function works correctly
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -132,7 +132,7 @@ def test_accepted_exchange_even(mock_analysis):
     Test exchanges occur correctly in REMC
 
     """
-    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+    from src.codon_opt.optimizers.replica_exchange_mc import REMCOptimizer
 
     testargs = [
         "-i",
@@ -156,7 +156,7 @@ def test_reject_exchange_even(mock_analysis):
     Test exchanges occur correctly in REMC
 
     """
-    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+    from src.codon_opt.optimizers.replica_exchange_mc import REMCOptimizer
 
     testargs = [
         "-i",
@@ -180,7 +180,7 @@ def test_accepted_exchange_odd(mock_analysis):
     Test exchanges occur correctly in REMC
 
     """
-    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+    from src.codon_opt.optimizers.replica_exchange_mc import REMCOptimizer
 
     testargs = [
         "-i",

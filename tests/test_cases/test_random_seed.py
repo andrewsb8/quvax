@@ -70,7 +70,7 @@ def test_TfDiffEv_DefaultSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed and Tensorflow Evolution Optimizer
 
     """
-    from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+    from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
     testargs = [
         "-i",
@@ -95,7 +95,7 @@ def test_TfDiffEv_NewSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with nondefault seed and Tensorflow Evolution Optimizer
 
     """
-    from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+    from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
     testargs = [
         "-i",
@@ -124,7 +124,7 @@ def test_TfDiffEv_OneIteration():
     Test to verify the same sequence change occurs after one iteration of optimization with default seed with Tensorflow Differential Evolution Optimizer
 
     """
-    from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+    from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
     testargs = [
         "-i",
@@ -154,7 +154,7 @@ def test_TfDiffEv_LongerSequence():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed for a longer protein sequence and Tensorflow Evolution Optimizer
 
     """
-    from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+    from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
     testargs = [
         "-i",
@@ -181,7 +181,7 @@ def test_GA_DefaultSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed for Genetic Algorithm
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -208,7 +208,7 @@ def test_GA_NewSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with nondefault seed for Genetic Algorithm
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -235,7 +235,7 @@ def test_GA_OneIteration():
     Test to verify the same sequence change occurs after one iteration of optimization with default seed with Genetic Algorithm
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -262,7 +262,7 @@ def test_GA_LongerSequence():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed for a longer protein sequence and Genetic Algorithm
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -289,7 +289,7 @@ def test_RAND_DefaultSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed for Random Optimizer
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -316,7 +316,7 @@ def test_RAND_NewSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with nondefault seed for Random Optimizer
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -343,7 +343,7 @@ def test_RAND_OneIteration():
     Test to verify the same sequence change occurs after one iteration of optimization with default seed with Random Optimizer
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -370,7 +370,7 @@ def test_RAND_LongerSequence():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed for a longer protein sequence and Random Optimizer
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -397,7 +397,7 @@ def test_METRO_DefaultSeed():
     Test to verify the same minimum energy codon sequence is reached in separate optimizations with default seed and Tensorflow Evolution Optimizer
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",

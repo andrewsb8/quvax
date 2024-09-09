@@ -8,7 +8,7 @@ def test_resume(caplog):
     Test to verify successful execution of resuming optimization
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     # copy database so test does not add information to test file
     # it will be deleted after test is completed
@@ -60,7 +60,7 @@ def test_resume_hash(caplog):
     hash in a database containing data from multiple optimizations
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     # copy database so test does not add information to test file
     # it will be deleted after test is completed
@@ -91,7 +91,7 @@ def test_resume_compare():
     optimization that is done with a single execution of design.py
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     # first optimization
     testargs = [
@@ -142,7 +142,7 @@ def test_resume_compare_MC():
     optimization that is done with a single execution of design.py
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     # first optimization
     testargs = [
