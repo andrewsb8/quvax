@@ -1,6 +1,6 @@
 import pytest
 import sqlite3
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 from tests.conftest import MockOptimizer
 
 
@@ -16,7 +16,7 @@ def test_target_detected(mock_optimizer, caplog):
 
     mock_optimizer._check_target()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "The target codon sequence is in the list of minimum free energy sequences!",
     )
@@ -35,7 +35,7 @@ def test_target_detected_not_mfe(mock_optimizer, caplog):
 
     mock_optimizer._check_target()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         30,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "The target codon sequence was sampled but was not the lowest free energy sequence.",
     )
@@ -56,7 +56,7 @@ def test_target_not_detected(mock_optimizer, caplog):
 
     mock_optimizer._check_target()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         40,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "The target codon sequence was NOT sampled.",
     )

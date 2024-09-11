@@ -1,8 +1,8 @@
-from src.params.analysis_parser import AnalysisParser
+from src.config.analysis_config import AnalysisConfig
 
 
 if __name__ == "__main__":
-    config = AnalysisParser()
+    config = AnalysisConfig()
 
     if config.args.command == "fe_landscape":
         from src.analysis.analyses.fe_landscape import FreeEnergyLandscape

@@ -1,4 +1,4 @@
-from src.qodon.optimizer import CodonOptimizer
+from src.codon_opt.codon_optimizer import CodonOptimizer
 import numpy as np
 from typing import List
 import tensorflow as tf

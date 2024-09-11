@@ -1,5 +1,5 @@
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 from src.exceptions.exceptions import InvalidSequenceError
 
 
@@ -10,7 +10,7 @@ def test_input_seq_str():
     """
     testargs = ["-i", "tests/test_files/test_sequences/integer_sequence.fasta"]
     with pytest.raises(InvalidSequenceError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_input_seq_partial_str():
@@ -20,7 +20,7 @@ def test_input_seq_partial_str():
     """
     testargs = ["-i", "tests/test_files/test_sequences/some_integers.fasta"]
     with pytest.raises(InvalidSequenceError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_input_seq_wrong_letter():
@@ -31,7 +31,7 @@ def test_input_seq_wrong_letter():
     """
     testargs = ["-i", "tests/test_files/test_sequences/non_aminoacid_letter.fasta"]
     with pytest.raises(InvalidSequenceError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_input_seq_warning(caplog):
@@ -42,9 +42,9 @@ def test_input_seq_warning(caplog):
     """
 
     testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta"]
-    DesignParser(testargs)
+    DesignConfig(testargs)
     warning_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         30,  # 30 indicates WARNING, 20 indicates INFO
         "Input protein sequence looks like an DNA sequence!",
     )
@@ -59,7 +59,7 @@ def test_target_start_codon():
 
     testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-t", "AUGAAAAAA"]
     with pytest.raises(ValueError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_target_start_codon_withM():
@@ -70,7 +70,7 @@ def test_target_start_codon_withM():
 
     testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AUGAUGAAA"]
     with pytest.raises(ValueError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_target_start_codon_withM_noerror(caplog):
@@ -81,9 +81,9 @@ def test_target_start_codon_withM_noerror(caplog):
     """
 
     testargs = ["-i", "tests/test_files/test_sequences/GMG.fasta", "-t", "AAAAUGAAA"]
-    DesignParser(testargs)
+    DesignConfig(testargs)
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 30 indicates WARNING, 20 indicates INFO
         "\n\nList of Parameters:",
     )
@@ -100,4 +100,4 @@ def test_target_stop_codon():
     for stop in stop_codons:
         testargs = ["-i", "tests/test_files/test_sequences/GAG.fasta", "-t", stop]
         with pytest.raises(ValueError):
-            DesignParser(testargs)
+            DesignConfig(testargs)

@@ -1,6 +1,6 @@
 import difflib
 from abc import ABC, abstractmethod
-from src.params.analysis_parser import AnalysisParser
+from src.config.config import Config
 
 
 class Analysis(ABC):
@@ -15,7 +15,7 @@ class Analysis(ABC):
 
     """
 
-    def __init__(self, config: AnalysisParser):
+    def __init__(self, config: Config):
         self.config = config
 
     @abstractmethod

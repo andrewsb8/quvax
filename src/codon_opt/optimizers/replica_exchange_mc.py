@@ -1,4 +1,4 @@
-from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 import random
 
 

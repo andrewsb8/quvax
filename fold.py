@@ -1,9 +1,9 @@
 import random
-from src.params.fold_parser import FoldParser
+from src.config.fold_config import FoldConfig
 
 
 if __name__ == "__main__":
-    config = FoldParser()
+    config = FoldConfig()
     random.seed(config.args.random_seed)
 
     if config.args.solver == "SA":

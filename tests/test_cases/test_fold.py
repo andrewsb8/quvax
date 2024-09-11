@@ -1,4 +1,5 @@
 import pytest
+from src.config.fold_config import FoldConfig
 
 
 def test_fold_SA(caplog):
@@ -7,7 +8,6 @@ def test_fold_SA(caplog):
     outputs, with no errors.
 
     """
-    from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
     testargs = [
@@ -20,11 +20,11 @@ def test_fold_SA(caplog):
         "-o",
         "quvax",
     ]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -38,7 +38,6 @@ def test_fold_MC(caplog):
     outputs, with no errors.
 
     """
-    from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.classical_mc import MC
 
     testargs = [
@@ -51,11 +50,11 @@ def test_fold_MC(caplog):
         "-o",
         "quvax",
     ]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = MC(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -69,7 +68,6 @@ def test_fold_ES(caplog):
     outputs, with no errors.
 
     """
-    from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.exact_solver import ExactSolver
 
     testargs = [
@@ -82,11 +80,11 @@ def test_fold_ES(caplog):
         "-o",
         "quvax",
     ]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = ExactSolver(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: ((((...((((..))))))))",
     )
@@ -122,15 +120,14 @@ def test_fold_SA_no_stems(caplog):
     no stems are found
 
     """
-    from src.params.fold_parser import FoldParser
     from src.rna_folding.rna_folders.simulated_annealer import SimulatedAnnealer
 
     testargs = ["-i", "AAAAAAAAAAAAA", "-r", "2000", "-ot", "all", "-o", "quvax"]
-    parser = FoldParser(testargs)
+    parser = FoldConfig(testargs)
     folder = SimulatedAnnealer(parser)
     folder._fold(folder.config.args.input, post_process=True)
     log_entry = (
-        "src.params.fold_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Folded secondary structure: .............",
     )
