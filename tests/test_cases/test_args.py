@@ -1,5 +1,5 @@
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 from tests.conftest import MockOptimizer
 
 
@@ -10,7 +10,7 @@ def test_arg_codon_iterations():
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-c", "0"]
     with pytest.raises(ValueError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_arg_rna_iterations():
@@ -20,7 +20,7 @@ def test_arg_rna_iterations():
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-r", "0"]
     with pytest.raises(ValueError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_arg_ntrials():
@@ -30,7 +30,7 @@ def test_arg_ntrials():
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-p", "0"]
     with pytest.raises(ValueError):
-        DesignParser(testargs)
+        DesignConfig(testargs)
 
 
 def test_lenNTrials_5(mock_optimizer):
@@ -48,6 +48,6 @@ def test_lenNTrials_str():
     """
     testargs = ["-i", "tests/test_files/test_sequences/GGGN.fasta", "-p", "4"]
     with pytest.raises(TypeError):
-        parser = DesignParser(testargs)
+        parser = DesignConfig(testargs)
         parser.args.population_size = str(parser.args.population_size)
         MockOptimizer(parser)

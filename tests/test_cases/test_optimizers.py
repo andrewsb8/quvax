@@ -1,5 +1,5 @@
 import pytest
-from src.params.design_parser import DesignParser
+from src.config.design_config import DesignConfig
 
 
 def test_TFDE(caplog):
@@ -7,7 +7,7 @@ def test_TFDE(caplog):
     Test Tensorflow Differential Evolution Optimizer runs correctly
 
     """
-    from src.qodon.optimizers.tf_differential_evo import TfDiffEv
+    from src.codon_opt.optimizers.tf_differential_evo import TfDiffEv
 
     testargs = [
         "-i",
@@ -21,11 +21,11 @@ def test_TFDE(caplog):
         "-co",
         "TFDE",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_TFDE")
     TfDiffEv(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -37,7 +37,7 @@ def test_RAND(caplog):
     Test Random Optimizer runs correctly
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -51,11 +51,11 @@ def test_RAND(caplog):
         "-co",
         "RAND",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_RAND")
     RandomOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -67,7 +67,7 @@ def test_GA(caplog):
     Test Genetic Algorithm Optimizer runs correctly
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -81,11 +81,11 @@ def test_GA(caplog):
         "-co",
         "GA",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -97,7 +97,7 @@ def test_Metro(caplog):
     Test Metropolis Algorithm Optimizer runs correctly
 
     """
-    from src.qodon.optimizers.metro_optimizer import MetropolisOptimizer
+    from src.codon_opt.optimizers.metro_optimizer import MetropolisOptimizer
 
     testargs = [
         "-i",
@@ -111,11 +111,11 @@ def test_Metro(caplog):
         "-co",
         "METRO",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_METRO")
     MetropolisOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -127,7 +127,7 @@ def test_REMC(caplog):
     Test Replica Exchange Monte Carlo Optimizer runs correctly
 
     """
-    from src.qodon.optimizers.replica_exchange_mc import REMCOptimizer
+    from src.codon_opt.optimizers.replica_exchange_mc import REMCOptimizer
 
     testargs = [
         "-i",
@@ -141,11 +141,11 @@ def test_REMC(caplog):
         "-co",
         "REMC",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_METRO")
     REMCOptimizer(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -157,7 +157,7 @@ def test_GA_MCSolver(caplog):
     Test Genetic Algorithm Optimizer runs correctly with Monte Carlo RNA folding
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -173,11 +173,11 @@ def test_GA_MCSolver(caplog):
         "-s",
         "MC",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -190,7 +190,7 @@ def test_GA_ExactSolver(caplog):
     folding
 
     """
-    from src.qodon.optimizers.classical_ga import GeneticAlgorithm
+    from src.codon_opt.optimizers.classical_ga import GeneticAlgorithm
 
     testargs = [
         "-i",
@@ -206,11 +206,11 @@ def test_GA_ExactSolver(caplog):
         "-s",
         "ES",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     parser.log.info("test_GA")
     GeneticAlgorithm(parser)._optimize()
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Finished parsing optimized sequences.",
     )
@@ -222,7 +222,7 @@ def test_convergence(caplog):
     Test that convergence will be achieved
 
     """
-    from src.qodon.optimizers.random_optimizer import RandomOptimizer
+    from src.codon_opt.optimizers.random_optimizer import RandomOptimizer
 
     testargs = [
         "-i",
@@ -236,7 +236,7 @@ def test_convergence(caplog):
         "-cc",
         "1",
     ]
-    parser = DesignParser(testargs)
+    parser = DesignConfig(testargs)
     with pytest.raises(SystemExit) as s:
         RandomOptimizer(parser)._optimize()
     assert s.type == SystemExit

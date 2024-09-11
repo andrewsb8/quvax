@@ -9,7 +9,7 @@ def test_NoTranslate(mock_optimizer, caplog):
     mock_optimizer.final_codons = "ATGTTCGTATTCTTAGTGTTACTGCCGCTCGTA"
     mock_optimizer._verify_dna(mock_optimizer.final_codons)
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         40,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Error: Codon sequence did not translate properly! Sequence: ATGTTCGTATTCTTAGTGTTACTGCCGCTCGTA",
     )
@@ -24,7 +24,7 @@ def test_WillTranslate(mock_optimizer, caplog):
     mock_optimizer.final_codons = "GGCGGCGGGAAC"
     mock_optimizer._verify_dna(mock_optimizer.final_codons)
     log_entry = (
-        "src.params.design_parser",
+        "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
         "Codon sequence translated properly.",
     )
