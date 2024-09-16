@@ -47,7 +47,8 @@ class SimulatedAnnealer(RNAFolder):
             initial_states_generator=isg,
             seed=self.config.args.random_seed,
         )
-        self.stem_dict = sampleset.first.sample  # used for cotranscript folding
+        # dict containing 0s and 1s for unused and used stems, respectively, used for cotranscript folding
+        self.stem_dict = sampleset.first.sample
         self.stems_used = [
             _
             for it, _ in enumerate(self.stems)
