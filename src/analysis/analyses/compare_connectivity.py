@@ -1,104 +1,74 @@
-#Script to compare connectivity tables from output of design.py with known connectivity tables from a database
 import pandas as pd
 
-#Step 0 is to create a function that can input a ct table and converts it into a dataframe. 
 
 def ct_to_dataframe(ct_file):
+    """
+    This function takes base connectivity data in the form of .ct files and converts it to
+    a data frame.
+    
+    """
     df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
     df.columns = ["Index", "Nucleotide", "Previous", "Next", "Paired With", "Counter"]
     return df
 
 #accessing the files from my desktop, will have to be changed when it enters the codebase
-ct_file_path_target = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_archiveII.ct'
-ct_file_path_quvax = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_quvax.ct'
-
-
-#Step 1 is to load in the target connectivities, as well as the ones from the Quvax codebase. Indeces is just the column that shows which nucleotide index that one is paired with.
+#ct_file_path_target = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_archiveII.ct'
+#ct_file_path_quvax = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_quvax.ct'
 
 targetct = ct_to_dataframe(ct_file_path_target)
 targetpairings = targetct["Paired With"]
-
 
 quvaxct = ct_to_dataframe(ct_file_path_quvax)
 quvaxpairings = quvaxct["Paired With"]
 
 
-#Step 2 is to write an overall function called "compare_tables" that outputs sensitivity, PPV, F1 score, and the specificity
+def compare_tables(test_pairings, ref_pairings):
+    """
+    Function that inputs the base pairing data from both our code and from a reference database, 
+    and outputs the sensitivity, PPV, F1 score, specificity, bases correctly paired, and .
 
+    """
+#    truepos, trueneg, falsepos, falseneg = truthvalues(test_pairings,ref_pairings)
+    print("Bases correctly paired: ", truepos)
+    print("Bases with misidentified pairings (either missed or incorrect pairing): ", falsepos + falseneg)
+    print("Sensitivity: ", sensitivity(test_pairings, ref_pairings), " ; PPV: ", PPV(test_pairings, ref_pairings)," ; F1: ", F1(test_pairings, ref_pairings), " ; Specificity: ", specificity(test_pairings, ref_pairings))
 
-def compare_tables(pairings1, pairings2):
-    print("Bases correctly paired: ", truepos(pairings1, pairings2))
-    print("Bases with misidentified pairings (either missed or incorrect pairing): ", falsepos(pairings1, pairings2)+falseneg(pairings1, pairings2))
-    print("Sensitivity: ", sensitivity(pairings1, pairings2), " ; PPV: ", PPV(pairings1, pairings2)," ; F1: ", F1(pairings1, pairings2), " ; Specificity: ", specificity(pairings1, pairings2))
+def sensitivity(test_pairings, ref_pairings):
+    return truepos/(truepos+falseneg)
+
+def PPV(test_pairings, ref_pairings):
+    return truepos/(truepos+falsepos)
     
+def F1(test_pairings, ref_pairings):
+    return 2*truepos/(2*truepos + falsepos + falseneg)
 
-#Step 3 is to create functions that calculate the sensitivity, PPV, F1 score, and the specificity given the inputs 
-
-def sensitivity(pairings1, pairings2):
-    sens = truepos(pairings1, pairings2)/(truepos(pairings1, pairings2)+falseneg(pairings1, pairings2))
-    return sens
-
-def PPV(pairings1, pairings2):
-    ppv = truepos(pairings1, pairings2)/(truepos(pairings1, pairings2)+falsepos(pairings1, pairings2))
-    return ppv
-
-def F1(pairings1, pairings2):
-    f = 2*sensitivity(pairings1, pairings2)*PPV(pairings1, pairings2)/(sensitivity(pairings1, pairings2)+PPV(pairings1, pairings2))
-    return f
-
-def specificity(pairings1, pairings2):
-    spec = trueneg(pairings1, pairings2)/(trueneg(pairings1, pairings2)+falsepos(pairings1, pairings2))
-    return spec
-
-#Step 4 is to zoom even further to create functions that gather data directly from the tables. 
-#Want to know how many true positives, true negatives, false positives, and false negatives there are. 
-
-def truepos(pairings1, pairings2):
+def specificity(test_pairings, ref_pairings):
+    return trueneg/(trueneg+falsepos)
+    
+  
+def truthvalues(test_pairings, ref_pairings):
+    """
+    This function gathers data from the tables to find how many true positives, true negatives, 
+    false positives, and false negatives there are given both data sets . 
+    
+    """
     numtruepos = 0
-    for i in range(len(pairings1)):
-        if pairings1[i] == 0:
-            numtruepos += 0
-        if pairings1[i] != 0:
-            if pairings1[i] == pairings2[i]:
-                numtruepos += 1
-            else:
-                numtruepos += 0
-    return numtruepos
-
-def trueneg(pairings1, pairings2):
     numtrueneg = 0
-    for i in range(len(pairings1)):
-        if pairings1[i] == 0:
-            if pairings2[i] == 0:
-                numtrueneg += 1
-            else:
-                numtrueneg += 0
-        if pairings1[i] != 0:
-            numtrueneg += 0
-    return numtrueneg
-
-def falsepos(pairings1, pairings2):
     numfalsepos = 0
-    for i in range(len(pairings1)):
-        if pairings1[i] == 0:
-            numfalsepos += 0
-        if pairings1[i] != 0:
-            if pairings1[i] != pairings2[i]:
-                numfalsepos += 1
-            else:
-                numfalsepos += 0
-    return numfalsepos
-
-def falseneg(pairings1, pairings2):
     numfalseneg = 0
-    for i in range(len(pairings1)):
-        if pairings1[i] == 0:
-            if pairings2[i] != 0:
-                numfalseneg += 1
-            else:
-                numfalseneg += 0
-        if pairings1[i] != 0:
-            numfalseneg += 0
-    return numfalseneg
+    for i in range(len(test_pairings)):
+        if test_pairings[i] != 0 and test_pairings[i] == ref_pairings[i]:
+            numtruepos += 1
+    for i in range(len(test_pairings)):
+        if test_pairings[i] == 0 and ref_pairings[i] == 0:
+            numtrueneg += 1
+    for i in range(len(test_pairings)):
+        if test_pairings[i] != 0 and test_pairings[i] != ref_pairings[i]:
+            numfalsepos += 1
+    for i in range(len(test_pairings)):
+        if test_pairings[i] == 0 and ref_pairings[i] != 0:
+            numfalseneg += 1
+    return numtruepos, numtrueneg, numfalsepos, numfalseneg
 
+truepos, trueneg, falsepos, falseneg = truthvalues(quvaxpairings,targetpairings)
 compare_tables(quvaxpairings,targetpairings) #first entry should be our data, and the second should be the database
