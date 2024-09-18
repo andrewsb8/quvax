@@ -24,7 +24,7 @@ class CompareCT(Analysis):
 
     def ct_to_dataframe(self, ct_file):
         """
-        Takes base connectivity data in the form of .ct files and converts it to a data frame.
+        Converts connectivity table file to a data frame.
 
         """
         df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
