@@ -1,67 +1,86 @@
+#Class version 
+from src.analysis.analysis import Analysis
 import pandas as pd
 
-def ct_to_dataframe(ct_file):
+class Compare_CT(Analysis):
     """
-    Takes base connectivity data in the form of .ct files and converts it to a data frame.
+    Analyzes CT table output from Quvax and compares with database. Outputs sensitivity, PPV, 
+    F1 score, specificity, bases correctly paired, and bases with incorrect pairing.
+
+    Parameters
+    ----------
+    config : AnalysisParser
+        Object containing user inputs
+
+    """
     
-    """
-    df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
-    df.columns = ["Index", "Nucleotide", "Previous", "Next", "Paired With", "Counter"]
-    return df
+    def __init__(self, config):
+        super().__init__(config)
+        self._analyze()
 
-#accessing the files from my desktop, will have to be changed when it enters the codebase
-ct_file_path_target = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_archiveII.ct'
-ct_file_path_quvax = '/Users/jakeabraham/Desktop/5s_Acetobacter-sp.-1_quvax.ct'
+    def _analyze(self):
+        self.get_pairings(self.config.quvax_ct_file, self.config.target_ct_file)
+        truepos, trueneg, falsepos, falseneg = self.truthvalues(quvaxpairings,targetpairings)
+        self.compare_tables(quvaxpairings,targetpairings) 
+        
+    def ct_to_dataframe(self, ct_file):
+        """
+        Takes base connectivity data in the form of .ct files and converts it to a data frame.
+        
+        """
+        df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
+        df.columns = ["Index", "Nucleotide", "Previous", "Next", "Paired With", "Counter"]
+        return df
 
-targetct = ct_to_dataframe(ct_file_path_target)
-targetpairings = targetct["Paired With"]
+    def get_pairings(self, quvax_ct_file, target_ct_file)
+        """
+        Takes user-input .ct files and obtains base pairing data from it.
+        
+        """
+        targetct = self.ct_to_dataframe(target_ct_file) 
+        targetpairings = targetct["Paired With"]
+        quvaxct = self.ct_to_dataframe(quvax_ct_file)
+        quvaxpairings = quvaxct["Paired With"]
 
-quvaxct = ct_to_dataframe(ct_file_path_quvax)
-quvaxpairings = quvaxct["Paired With"]
-
-def compare_tables(test_pairings, ref_pairings):
-    """
-    Inputs the data frame, outputs the sensitivity, PPV, F1 score, 
-    specificity, bases correctly paired, and bases with incorrect pairing.
-
-    """
-    print("Bases correctly paired: ", truepos)
-    print("Bases with misidentified pairings (either missed or incorrect pairing): ", falsepos + falseneg)
-    print("Sensitivity: ", sensitivity(truepos, falseneg), " ; PPV: ", PPV(truepos, falsepos)," ; F1: ", F1(truepos, falsepos, falseneg), " ; Specificity: ", specificity(trueneg, falsepos))
-
-def sensitivity(truepos, falseneg):
-    return truepos/(truepos+falseneg)
-
-def PPV(truepos, falsepos):
-    return truepos/(truepos+falsepos)
+    def compare_tables(self, test_pairings, ref_pairings):
+        """
+        Inputs the data frame, outputs the sensitivity, PPV, F1 score, 
+        specificity, bases correctly paired, and bases with incorrect pairing.
     
-
-def F1(truepos, falsepos, falseneg):
-    return 2*truepos/(2*truepos + falsepos + falseneg)
-
-def specificity(trueneg, falsepos):
-    return trueneg/(trueneg+falsepos)
+        """
+        print("Bases correctly paired: ", str(truepos))
+        print("Bases with misidentified pairings (either missed or incorrect pairing): ", str(falsepos + falseneg))
+        print("Sensitivity: ", str(self.sensitivity(truepos, falseneg)), " ; PPV: ", str(self.PPV(truepos, falsepos))," ; F1: ", str(self.F1(truepos, falsepos, falseneg)), " ; Specificity: ", str(self.specificity(trueneg, falsepos)))
+        
+    def sensitivity(self, truepos, falseneg):
+        return truepos/(truepos+falseneg)
     
-def truthvalues(test_pairings, ref_pairings):
-    """
-    Gathers data from the tables to find how many true positives, true negatives, 
-    false positives, and false negatives there are given both data sets . 
+    def PPV(self, truepos, falsepos):
+        return truepos/(truepos+falsepos)
     
-    """
-    numtruepos = 0
-    numtrueneg = 0
-    numfalsepos = 0
-    numfalseneg = 0
-    for i in range(len(test_pairings)):
-        if test_pairings[i] != 0 and test_pairings[i] == ref_pairings[i]:
-            numtruepos += 1
-        if test_pairings[i] == 0 and ref_pairings[i] == 0:
-            numtrueneg += 1
-        if test_pairings[i] != 0 and test_pairings[i] != ref_pairings[i]:
+    def F1(self, truepos, falsepos, falseneg):
+        return 2*truepos/(2*truepos + falsepos + falseneg)
+    
+    def specificity(self, trueneg, falsepos):
+        return trueneg/(trueneg+falsepos)
+    
+    def truthvalues(self, test_pairings, ref_pairings):
+        """
+        Gathers data from the tables to find how many true positives, true negatives, 
+        false positives, and false negatives there are given both data sets . 
+        
+        """
+        numtruepos = 0
+        numtrueneg = 0
+        numfalsepos = 0
+        numfalseneg = 0
+        for i in range(len(test_pairings)):
+            if test_pairings[i] != 0 and test_pairings[i] == ref_pairings[i]:
+                numtruepos += 1
+            if test_pairings[i] == 0 and ref_pairings[i] == 0:
+                numtrueneg += 1
+            if test_pairings[i] != 0 and test_pairings[i] != ref_pairings[i]:
                 numfalsepos += 1
-        if test_pairings[i] == 0 and ref_pairings[i] != 0:
-            numfalseneg += 1
-    return numtruepos, numtrueneg, numfalsepos, numfalseneg
-
-truepos, trueneg, falsepos, falseneg = truthvalues(quvaxpairings,targetpairings)
-compare_tables(quvaxpairings,targetpairings) 
+            if test_pairings[i] == 0 and ref_pairings[i] != 0:
+                numfalseneg += 1
+        return numtruepos, numtrueneg, numfalsepos, numfalseneg
