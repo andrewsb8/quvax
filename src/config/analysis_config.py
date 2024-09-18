@@ -113,6 +113,30 @@ class AnalysisConfig(Config):
             help="database .ini file to connect to postgres database.",
         )
 
+        #shared parser options for secondary structure analysis methods
+        ss_parser = argparse.ArgumentParser(add_help=False)
+        ss_parser.add_argument(
+            "-i",
+            "--input",
+            required=True,
+            type=str,
+            help="Input secondary structure file (ex: connectivity table).",
+        )
+        ss_parser.add_argument(
+            "-r",
+            "--ref",
+            required=True,
+            type=str,
+            help="Reference secondary structure file (ex: connectivity table).",
+        )
+        ss_parser.add_argument(
+            "-l",
+            "--log_file_name",
+            default="quvax.log",
+            type=str,
+            help="Log file for recording certain output, warnings, and errors",
+        )
+
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
         parser_fe_landscape = subparsers.add_parser(
@@ -134,6 +158,11 @@ class AnalysisConfig(Config):
             "codon_trajectory",
             parents=[db_parser],
             help="Prints the number different codons in an RNA sequence relative to the previous generation for each population member and for all generations.",
+        )
+        parser_compare_ct= subparsers.add_parser(
+            "compare_ct",
+            parents=[ss_parser],
+            help="Compares two connectivity tables by calculating metrics such as f1 score.",
         )
 
         if args is None:
