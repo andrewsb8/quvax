@@ -5,8 +5,8 @@ from src.config.config import Config
 
 class Analysis(ABC):
     """
-    Parent class for all analyses. Will read output file from optimization
-    process.
+    Parent class for all analyses. Contains methods used by multiple
+    analyses.
 
     Parameters
     ----------

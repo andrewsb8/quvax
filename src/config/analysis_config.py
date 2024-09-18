@@ -42,13 +42,14 @@ class AnalysisConfig(Config):
         self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
-        db_obj = Database()
-        self.db, self.db_cursor = db_obj._connect_to_db(
-            self.args.database_type, self.args.input, self.log, self.args.database_ini
-        )
+        if hasattr(self.args, 'database_type'):
+            db_obj = Database()
+            self.db, self.db_cursor = db_obj._connect_to_db(
+                self.args.database_type, self.args.input, self.log, self.args.database_ini
+            )
+            self.sim_details = db_obj._get_sim_details(self)
         self._validate()
         log_obj._log_args(self.log, arg_list=vars(self.args))
-        self.sim_details = db_obj._get_sim_details(self)
 
     def _parse(self, args=None):
         """
