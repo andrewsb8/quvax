@@ -125,7 +125,7 @@ class AnalysisConfig(Config):
         )
         ss_parser.add_argument(
             "-r",
-            "--ref",
+            "--reference",
             required=True,
             type=str,
             help="Reference secondary structure file (ex: connectivity table).",
