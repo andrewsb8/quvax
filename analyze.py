@@ -21,7 +21,9 @@ if __name__ == "__main__":
 
         CodonTrajectory(config)
     elif config.args.command == "compare_ct":
-        print("placeholder")
+        from src.analysis.analyses.compare_ct import CompareCT
+
+        CompareCT(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
