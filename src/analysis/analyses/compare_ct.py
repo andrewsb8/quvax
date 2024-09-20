@@ -1,8 +1,7 @@
-#Class version 
 from src.analysis.analysis import Analysis
 import pandas as pd
 
-class Compare_CT(Analysis):
+class CompareCT(Analysis):
     """
     Analyzes CT table output from Quvax and compares with database. Outputs sensitivity, PPV, 
     F1 score, specificity, bases correctly paired, and bases with incorrect pairing.
@@ -23,11 +22,11 @@ class Compare_CT(Analysis):
         self._analyze()
 
     def _analyze(self):
-        input_pairings, reference_pairings = self.get_pairings(self.config.args.input, self.config.args.reference)
-        truepos, trueneg, falsepos, falseneg = self.truthvalues(input_pairings,reference_pairings)
-        self.compare_tables(self.truepos, self.trueneg, self.falsepos, self.falseneg) 
+        input_pairings, reference_pairings = self._get_pairings(self.config.args.input, self.config.args.reference)
+        self._truth_values(input_pairings, reference_pairings)
+        self._compare_cts(self.truepos, self.trueneg, self.falsepos, self.falseneg) 
         
-    def ct_to_dataframe(self, ct_file):
+    def _ct_to_dataframe(self, ct_file):
         """
         Takes base connectivity data in the form of .ct files and converts it to a data frame.
         
@@ -36,18 +35,18 @@ class Compare_CT(Analysis):
         df.columns = ["Index", "Nucleotide", "Previous", "Next", "Paired With", "Counter"]
         return df
 
-    def get_pairings(self, input_ct_file, reference_ct_file)
+    def _get_pairings(self, input_ct_file, reference_ct_file):
         """
         Takes user-input .ct files and obtains base pairing data from it.
         
         """
-        reference_ct = self.ct_to_dataframe(reference_ct_file) 
+        reference_ct = self._ct_to_dataframe(reference_ct_file) 
         ref_pairings = reference_ct["Paired With"]
         input_ct = self.ct_to_dataframe(input_ct_file)
         in_pairings = input_ct["Paired With"]
         return in_pairings, ref_pairings
 
-    def compare_tables(self, truepos, trueneg, falsepos, falseneg):
+    def _compare_cts(self, truepos, trueneg, falsepos, falseneg):
         """
         Inputs the data frame, outputs the sensitivity, PPV, F1 score, 
         specificity, bases correctly paired, and bases with incorrect pairing.
@@ -55,21 +54,21 @@ class Compare_CT(Analysis):
         """
         print("Bases correctly paired: ", str(truepos))
         print("Bases with misidentified pairings (either missed or incorrect pairing): ", str(falsepos + falseneg))
-        print("Sensitivity: ", str(self.sensitivity(truepos, falseneg)), " ; PPV: ", str(self.PPV(truepos, falsepos))," ; F1: ", str(self.F1(truepos, falsepos, falseneg)), " ; Specificity: ", str(self.specificity(trueneg, falsepos)))
+        print("Sensitivity: ", str(self._sensitivity(truepos, falseneg)), " ; PPV: ", str(self._pos_predict_val(truepos, falsepos))," ; F1: ", str(self._f1(truepos, falsepos, falseneg)), " ; Specificity: ", str(self._specificity(trueneg, falsepos)))
         
-    def sensitivity(self, truepos, falseneg):
+    def _sensitivity(self, truepos, falseneg):
         return truepos/(truepos+falseneg)
     
-    def PPV(self, truepos, falsepos):
+    def _pos_predict_val(self, truepos, falsepos):
         return truepos/(truepos+falsepos)
     
-    def F1(self, truepos, falsepos, falseneg):
+    def _f1(self, truepos, falsepos, falseneg):
         return 2*truepos/(2*truepos + falsepos + falseneg)
     
-    def specificity(self, trueneg, falsepos):
+    def _specificity(self, trueneg, falsepos):
         return trueneg/(trueneg+falsepos)
     
-    def truthvalues(self, test_pairings, ref_pairings):
+    def _truth_values(self, test_pairings, ref_pairings):
         """
         Gathers data from the tables to find how many true positives, true negatives, 
         false positives, and false negatives there are given both data sets . 
@@ -77,11 +76,11 @@ class Compare_CT(Analysis):
         """
         for i in range(len(test_pairings)):
             if test_pairings[i] != 0 and test_pairings[i] == ref_pairings[i]:
-                self.numtruepos += 1
+                self.truepos += 1
             if test_pairings[i] == 0 and ref_pairings[i] == 0:
-                self.numtrueneg += 1
+                self.trueneg += 1
             if test_pairings[i] != 0 and test_pairings[i] != ref_pairings[i]:
-                self.numfalsepos += 1
+                self.falsepos += 1
             if test_pairings[i] == 0 and ref_pairings[i] != 0:
-                self.numfalseneg += 1
+                self.falseneg += 1
         return
