@@ -42,7 +42,7 @@ class CompareCT(Analysis):
         """
         reference_ct = self._ct_to_dataframe(reference_ct_file) 
         ref_pairings = reference_ct["Paired With"]
-        input_ct = self._ct_to_dataframe(input_ct_file)
+        input_ct = self.ct_to_dataframe(input_ct_file)
         in_pairings = input_ct["Paired With"]
         return in_pairings, ref_pairings
 
