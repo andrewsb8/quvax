@@ -139,3 +139,28 @@ def test_hash_analysis():
             "tests/test_files/test_analysis/test_fe_generation_output/analysis_out.txt",
         )
     ) == True
+
+
+def test_compare_ct():
+    """
+    Test compare connectivity tables for the same file
+
+    """
+    from src.analysis.analyses.compare_ct import CompareCT
+
+    testargs = [
+        "compare_ct",
+        "-i",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table.ct",
+        "-r",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = CompareCT(config)
+
+    assert (
+        analysis.sensitivity == 1
+        and analysis.specificity == 1
+        and analysis.f1 == 1
+        and analysis.pos_predict_val == 1
+    )
