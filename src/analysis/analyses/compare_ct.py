@@ -62,6 +62,10 @@ class CompareCT(Analysis):
 
     def _print_metrics(self):
         list = vars(self)
+        for k in list:
+            if list[k] == None:
+                self.config.log.warning("""Value for """ + k + """ is undefined. """
+                """Multiple truth values are zero which led to division by zero.""")
         self.config.log.info(", ".join([k for k in list if k != "config"]))
         vals = ", ".join([str(list[k]) for k in list if k != "config"])
         self.config.log.info(vals)
