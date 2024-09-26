@@ -54,19 +54,41 @@ class CompareCT(Analysis):
         """
         print("Bases correctly paired: ", str(truepos))
         print("Bases with misidentified pairings (either missed or incorrect pairing): ", str(falsepos + falseneg))
-        print("Sensitivity: ", str(self._sensitivity(truepos, falseneg)), " ; PPV: ", str(self._pos_predict_val(truepos, falsepos))," ; F1: ", str(self._f1(truepos, falsepos, falseneg)), " ; Specificity: ", str(self._specificity(trueneg, falsepos)))
+        print("Sensitivity: ", self._sensitivity(truepos, falseneg), " ; PPV: ", self._pos_predict_val(truepos, falsepos)," ; F1: ", self._f1(truepos, falsepos, falseneg), " ; Specificity: ", self._specificity(trueneg, falsepos))
+        if self._sensitivity(truepos, falseneg) == None:
+            print("WARNING: There are no correct base pairing matches or missed pairs. Please check that your inputs are valid.")
+        if self._pos_predict_val(truepos, falsepos) == None:
+            print("WARNING: There are no base pairings in your input file.")
+        if self._f1(truepos, falsepos, falseneg) == None:
+            print("WARNING: Infeasible result, please be sure your inputs are valid files.")
+        if self._specificity(trueneg, falsepos) == None:
+            print("WARNING: Every base in the reference file is paired.")
+
+
 
     def _sensitivity(self, truepos, falseneg):
-        return truepos/(truepos+falseneg)
+        try:
+            return truepos/(truepos+falseneg)
+        except ZeroDivisionError:
+            return None
 
     def _pos_predict_val(self, truepos, falsepos):
-        return truepos/(truepos+falsepos)
+        try:
+            return truepos/(truepos+falsepos)
+        except ZeroDivisionError:
+            return None
 
     def _f1(self, truepos, falsepos, falseneg):
-        return 2*truepos/(2*truepos + falsepos + falseneg)
+        try:
+            return 2*truepos/(2*truepos + falsepos + falseneg)
+        except ZeroDivisionError:
+            return None
 
     def _specificity(self, trueneg, falsepos):
-        return trueneg/(trueneg+falsepos)
+        try:
+            return trueneg/(trueneg+falsepos)
+        except ZeroDivisionError:
+            return None
 
     def _truth_values(self, test_pairings, ref_pairings):
         """
