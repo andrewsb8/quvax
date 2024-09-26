@@ -42,10 +42,13 @@ class AnalysisConfig(Config):
         self.log = log_obj._create_log(
             self.__prog__, self.__version__, self.args.log_file_name
         )
-        if hasattr(self.args, 'database_type'):
+        if hasattr(self.args, "database_type"):
             db_obj = Database()
             self.db, self.db_cursor = db_obj._connect_to_db(
-                self.args.database_type, self.args.input, self.log, self.args.database_ini
+                self.args.database_type,
+                self.args.input,
+                self.log,
+                self.args.database_ini,
             )
             self.sim_details = db_obj._get_sim_details(self)
         self._validate()
@@ -114,7 +117,7 @@ class AnalysisConfig(Config):
             help="database .ini file to connect to postgres database.",
         )
 
-        #shared parser options for secondary structure analysis methods
+        # shared parser options for secondary structure analysis methods
         ss_parser = argparse.ArgumentParser(add_help=False)
         ss_parser.add_argument(
             "-i",
@@ -160,7 +163,7 @@ class AnalysisConfig(Config):
             parents=[db_parser],
             help="Prints the number different codons in an RNA sequence relative to the previous generation for each population member and for all generations.",
         )
-        parser_compare_ct= subparsers.add_parser(
+        parser_compare_ct = subparsers.add_parser(
             "compare_ct",
             parents=[ss_parser],
             help="Compares two connectivity tables by calculating metrics such as f1 score.",
