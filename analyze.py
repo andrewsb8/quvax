@@ -20,6 +20,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.codon_trajectory import CodonTrajectory
 
         CodonTrajectory(config)
+    elif config.args.command == "compare_ct":
+        from src.analysis.analyses.compare_ct import CompareCT
+
+        CompareCT(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
