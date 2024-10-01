@@ -39,3 +39,13 @@ class Metrics(object):
             return trueneg / (trueneg + falsepos)
         except ZeroDivisionError:
             return None
+
+    def _calculate_metrics(self, truepos, trueneg, falsepos, falseneg):
+        """
+        Calculates sensitivity, specificity, positive predictive value, F1 score
+
+        """
+        self.sensitivity = self._sensitivity(truepos, falseneg)
+        self.specificity = self._specificity(trueneg, falsepos)
+        self.f1 = self._f1(truepos, falsepos, falseneg)
+        self.pos_predict_val = self._pos_predict_val(truepos, falsepos)

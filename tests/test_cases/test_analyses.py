@@ -159,10 +159,10 @@ def test_compare_identical_ct():
     analysis = CompareCT(config)
 
     assert (
-        analysis.sensitivity == 1
-        and analysis.specificity == 1
-        and analysis.f1 == 1
-        and analysis.pos_predict_val == 1
+        analysis.metrics.sensitivity == 1
+        and analysis.metrics.specificity == 1
+        and analysis.metrics.f1 == 1
+        and analysis.metrics.pos_predict_val == 1
     )
 
 
@@ -184,10 +184,10 @@ def test_compare_diff_ct():
     analysis = CompareCT(config)
 
     assert (
-        analysis.sensitivity == 0.9
-        and round(analysis.specificity, 2) == 0.33
-        and analysis.f1 == 0.9
-        and analysis.pos_predict_val == 0.9
+        analysis.metrics.sensitivity == 0.9
+        and round(analysis.metrics.specificity, 2) == 0.33
+        and analysis.metrics.f1 == 0.9
+        and analysis.metrics.pos_predict_val == 0.9
     )
 
 
@@ -210,10 +210,10 @@ def test_compare_nostem_ct():
     analysis = CompareCT(config)
 
     assert (
-        analysis.sensitivity == 0
-        and analysis.specificity == 1
-        and analysis.f1 == 0
-        and analysis.pos_predict_val == None
+        analysis.metrics.sensitivity == 0
+        and analysis.metrics.specificity == 1
+        and analysis.metrics.f1 == 0
+        and analysis.metrics.pos_predict_val == None
     )
 
 
@@ -236,8 +236,8 @@ def test_compare_allstem_ct():
     analysis = CompareCT(config)
 
     assert (
-        analysis.sensitivity == 1
-        and analysis.specificity == None
-        and analysis.f1 == 1
-        and analysis.pos_predict_val == 1
+        analysis.metrics.sensitivity == 1
+        and analysis.metrics.specificity == None
+        and analysis.metrics.f1 == 1
+        and analysis.metrics.pos_predict_val == 1
     )

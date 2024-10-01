@@ -24,7 +24,7 @@ class CompareCT(Analysis):
         input_pairings = self._get_pairings(self.config.args.input)
         reference_pairings = self._get_pairings(self.config.args.reference)
         self._truth_values(input_pairings, reference_pairings)
-        self._calculate_metrics(
+        self.metrics._calculate_metrics(
             self.metrics.truepos, self.metrics.trueneg, self.metrics.falsepos, self.metrics.falseneg
         )
         self._print_metrics()
@@ -67,16 +67,6 @@ class CompareCT(Analysis):
         self.config.log.info(vals)
         # printing output values to stdout so it can be piped to file in bulk analysis
         print(vals)
-
-    def _calculate_metrics(self, truepos, trueneg, falsepos, falseneg):
-        """
-        Calculates sensitivity, specificity, positive predictive value, F1 score
-
-        """
-        self.sensitivity = self.metrics._sensitivity(truepos, falseneg)
-        self.specificity = self.metrics._specificity(trueneg, falsepos)
-        self.f1 = self.metrics._f1(truepos, falsepos, falseneg)
-        self.pos_predict_val = self.metrics._pos_predict_val(truepos, falsepos)
 
     def _truth_values(self, test_pairings, ref_pairings):
         """
