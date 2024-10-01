@@ -1,4 +1,5 @@
 from src.analysis.analysis import Analysis
+from src.analysis.metrics.metrics import Metrics
 import pandas as pd
 
 
@@ -16,14 +17,7 @@ class CompareCT(Analysis):
 
     def __init__(self, config):
         super().__init__(config)
-        self.truepos = 0
-        self.trueneg = 0
-        self.falsepos = 0
-        self.falseneg = 0
-        self.sensitivity = 0
-        self.specificity = 0
-        self.f1 = 0
-        self.pos_predict_val = 0
+        self.metrics = Metrics()
         self._analyze()
 
     def _analyze(self):
@@ -31,7 +25,7 @@ class CompareCT(Analysis):
         reference_pairings = self._get_pairings(self.config.args.reference)
         self._truth_values(input_pairings, reference_pairings)
         self._calculate_metrics(
-            self.truepos, self.trueneg, self.falsepos, self.falseneg
+            self.metrics.truepos, self.metrics.trueneg, self.metrics.falsepos, self.metrics.falseneg
         )
         self._print_metrics()
 
@@ -61,15 +55,15 @@ class CompareCT(Analysis):
         return pairings
 
     def _print_metrics(self):
-        list = vars(self)
+        list = vars(self.metrics)
         for k in list:
             if list[k] == None:
                 self.config.log.warning(
                     """Value for """ + k + """ is undefined. """
                     """Multiple truth values are zero which led to division by zero."""
                 )
-        self.config.log.info(", ".join([k for k in list if k != "config"]))
-        vals = ", ".join([str(list[k]) for k in list if k != "config"])
+        self.config.log.info(", ".join([k for k in list]))
+        vals = ", ".join([str(list[k]) for k in list])
         self.config.log.info(vals)
         # printing output values to stdout so it can be piped to file in bulk analysis
         print(vals)
@@ -79,34 +73,10 @@ class CompareCT(Analysis):
         Calculates sensitivity, specificity, positive predictive value, F1 score
 
         """
-        self.sensitivity = self._sensitivity(truepos, falseneg)
-        self.specificity = self._specificity(trueneg, falsepos)
-        self.f1 = self._f1(truepos, falsepos, falseneg)
-        self.pos_predict_val = self._pos_predict_val(truepos, falsepos)
-
-    def _sensitivity(self, truepos, falseneg):
-        try:
-            return truepos / (truepos + falseneg)
-        except ZeroDivisionError:
-            return None
-
-    def _pos_predict_val(self, truepos, falsepos):
-        try:
-            return truepos / (truepos + falsepos)
-        except ZeroDivisionError:
-            return None
-
-    def _f1(self, truepos, falsepos, falseneg):
-        try:
-            return 2 * truepos / (2 * truepos + falsepos + falseneg)
-        except ZeroDivisionError:
-            return None
-
-    def _specificity(self, trueneg, falsepos):
-        try:
-            return trueneg / (trueneg + falsepos)
-        except ZeroDivisionError:
-            return None
+        self.sensitivity = self.metrics._sensitivity(truepos, falseneg)
+        self.specificity = self.metrics._specificity(trueneg, falsepos)
+        self.f1 = self.metrics._f1(truepos, falsepos, falseneg)
+        self.pos_predict_val = self.metrics._pos_predict_val(truepos, falsepos)
 
     def _truth_values(self, test_pairings, ref_pairings):
         """
@@ -116,11 +86,11 @@ class CompareCT(Analysis):
         """
         for i in range(len(test_pairings)):
             if test_pairings[i] != 0 and test_pairings[i] == ref_pairings[i]:
-                self.truepos += 1
+                self.metrics.truepos += 1
             elif test_pairings[i] == 0 and ref_pairings[i] == 0:
-                self.trueneg += 1
+                self.metrics.trueneg += 1
             elif test_pairings[i] != 0 and test_pairings[i] != ref_pairings[i]:
-                self.falsepos += 1
+                self.metrics.falsepos += 1
             elif test_pairings[i] == 0 and ref_pairings[i] != 0:
-                self.falseneg += 1
+                self.metrics.falseneg += 1
         return

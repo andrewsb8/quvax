@@ -194,7 +194,7 @@ def test_compare_diff_ct():
 def test_compare_nostem_ct():
     """
     Test compare connectivity tables where one table has
-    no stems (no true positives)
+    no stems (no true or false positives)
 
     """
     from src.analysis.analyses.compare_ct import CompareCT
