@@ -1,5 +1,5 @@
-   23 Energy: -75.0 output from QuVax, Folded secondary structure: ((((([[[[[.)))))..]]]]]
-    1 A     0     2    16     1
+   23 Manually modified for tests, Folded secondary structure: .(((([[[[[.)))).()]]]]]
+    1 A     0     2     0     1
     2 U     1     3    15     2
     3 A     2     4    14     3
     4 U     3     5    13     4
@@ -14,9 +14,9 @@
    13 A    12    14     4    13
    14 U    13    15     3    14
    15 A    14    16     2    15
-   16 U    15    17     1    16
-   17 A    16    18     0    17
-   18 G    17    19     0    18
+   16 U    15    17     0    16
+   17 A    16    18    18    17
+   18 G    17    19    17    18
    19 U    18    20    10    19
    20 A    19    21     9    20
    21 U    20    22     8    21

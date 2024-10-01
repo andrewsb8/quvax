@@ -141,7 +141,7 @@ def test_hash_analysis():
     ) == True
 
 
-def test_compare_ct():
+def test_compare_identical_ct():
     """
     Test compare connectivity tables for the same file
 
@@ -161,6 +161,83 @@ def test_compare_ct():
     assert (
         analysis.sensitivity == 1
         and analysis.specificity == 1
+        and analysis.f1 == 1
+        and analysis.pos_predict_val == 1
+    )
+
+
+def test_compare_diff_ct():
+    """
+    Test compare connectivity tables for the different structures
+
+    """
+    from src.analysis.analyses.compare_ct import CompareCT
+
+    testargs = [
+        "compare_ct",
+        "-i",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table_diff.ct",
+        "-r",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = CompareCT(config)
+
+    assert (
+        analysis.sensitivity == 0.9
+        and round(analysis.specificity, 2) == 0.33
+        and analysis.f1 == 0.9
+        and analysis.pos_predict_val == 0.9
+    )
+
+
+def test_compare_nostem_ct():
+    """
+    Test compare connectivity tables where one table has
+    no stems (no true positives)
+
+    """
+    from src.analysis.analyses.compare_ct import CompareCT
+
+    testargs = [
+        "compare_ct",
+        "-i",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table_nostems.ct",
+        "-r",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = CompareCT(config)
+
+    assert (
+        analysis.sensitivity == 0
+        and analysis.specificity == 1
+        and analysis.f1 == 0
+        and analysis.pos_predict_val == None
+    )
+
+
+def test_compare_allstem_ct():
+    """
+    Test compare connectivity tables where both structures are the same
+    and all pairs are in stems (no true or false negatives)
+
+    """
+    from src.analysis.analyses.compare_ct import CompareCT
+
+    testargs = [
+        "compare_ct",
+        "-i",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table_allstems.ct",
+        "-r",
+        "tests/test_files/test_analysis/test_compare_ct/test_connect_table_allstems.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = CompareCT(config)
+
+    assert (
+        analysis.sensitivity == 1
+        and analysis.specificity == None
         and analysis.f1 == 1
         and analysis.pos_predict_val == 1
     )
