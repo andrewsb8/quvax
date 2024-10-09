@@ -1,4 +1,5 @@
 from src.analysis.analysis import Analysis
+from src.structure_io.structure_io import StructureIO
 
 
 class SecondaryStructureTypes(Analysis):
@@ -17,6 +18,13 @@ class SecondaryStructureTypes(Analysis):
 
     def __init__(self, config):
         super().__init__(config)
+        self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
+        self.num_bases = self.connect_table["Index"].iloc[-1]
+        # initialize counters
+        self.wc_base_pairs = 0
+        self.nonwc_base_pairs = 0
+        self.pseudoknots = 0
+        self.no_pair = 0
 
     def _analyze(self):
         pass
