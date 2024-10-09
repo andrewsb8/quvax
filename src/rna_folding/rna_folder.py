@@ -66,12 +66,9 @@ class RNAFolder(ABC, StructureIO, StructureConvert):
         Generates a list of tuples with three entries:
         - first two elements are sequence indices of a base pair identifying the stem
         - third element is the length of the stem
-
-        Can generate all base pair indices in a stem by calling _stem_to_pair_list
-        Ex:
-        - self.stems[0] -> (1, 13, 3)
-        - _stem_to_pair_list(self.stems[0]) -> [(1, 13), (2, 12), (3, 11)]
-        - Above shows the list of indices of three base pairs comprising the stem
+        - Ex: self.stems = [(1, 13, 3), ()]
+            self.stems[0] = (1, 13, 3) corresponds to stem with base pairs between
+            nucleotides with index 1 and 13, 2 and 12, 3 and 11.
 
         """
 
@@ -101,13 +98,6 @@ class RNAFolder(ABC, StructureIO, StructureConvert):
                     else:
                         break
         self.stems = self._pairs
-
-    @staticmethod
-    def _stem_to_pair_list(stem):
-        pair_list = []
-        for ci in range(stem[2]):
-            pair_list.append((stem[0] + ci, stem[1] - ci))
-        return pair_list
 
     def _detect_stem_overlap(self, stem1, stem2):
         pairs1 = self._stem_to_pair_list(stem1)

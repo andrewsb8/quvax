@@ -49,3 +49,22 @@ class StructureConvert(object):
                 connect_list[stem_pair_list[i][0] - 1] = stem_pair_list[i][1]
                 connect_list[stem_pair_list[i][1] - 1] = stem_pair_list[i][0]
         return connect_list
+
+    @staticmethod
+    def _stem_to_pair_list(stem):
+        """
+        From stem definiton (see rna_folder.py), can generate list of tuples with
+        indices of base pairs
+        Ex:
+        - self.stems[0] -> (1, 13, 3)
+        - _stem_to_pair_list(self.stems[0]) -> [(1, 13), (2, 12), (3, 11)]
+        - Above shows the list of indices of three base pairs comprising the stem
+
+        """
+        pair_list = []
+        for ci in range(stem[2]):
+            pair_list.append((stem[0] + ci, stem[1] - ci))
+        return pair_list
+
+    #def _connect_table_to_stems(self, connect_table_df):
+    #    stems = []
