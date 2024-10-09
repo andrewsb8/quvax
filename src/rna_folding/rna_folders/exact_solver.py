@@ -37,9 +37,9 @@ class ExactSolver(RNAFolder):
             raise ValueError(
                 f"Too many possible stem combinations ({self.len_stem_list}). Use simulated annealing (-s SA) or monte carlo (-s MC) folding."
             )
-        self._stems_to_dot_bracket(self.n, self.stems_used)
+        self.dot_bracket = self._stems_to_dot_bracket(self.n, self.stems_used)
         if post_process:  # equates to "if call was from fold.py"
-            self._stems_to_connect_list(self.n, self.stems_used)
+            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._post_process()
 
     def _solve(self):

@@ -1,5 +1,5 @@
 from src.analysis.analysis import Analysis
-from src.structure_io.structure_io import StructureIO
+from src.rna_structure.structure_io import StructureIO
 from src.rna_folding.rna_folder import RNAFolder
 
 

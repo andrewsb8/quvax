@@ -10,7 +10,7 @@ class StructureIO(object):
 
     def _ct_to_dataframe(self, ct_file):
         """
-        Converts connectivity table to dataframe
+        Converts connectivity table from file to dataframe
 
         """
         df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
