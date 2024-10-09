@@ -168,7 +168,7 @@ class AnalysisConfig(Config):
             type=str,
             help="Reference secondary structure file (ex: connectivity table).",
         )
-        parser_compare_ct = subparsers.add_parser(
+        parser_sst = subparsers.add_parser(
             "sec_struct_types",
             parents=[ss_parser],
             help="For given input structure file, calculates percent of bases in different types of secondary structures.",
