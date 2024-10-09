@@ -66,5 +66,22 @@ class StructureConvert(object):
             pair_list.append((stem[0] + ci, stem[1] - ci))
         return pair_list
 
-    #def _connect_table_to_stems(self, connect_table_df):
-    #    stems = []
+    def _connect_table_to_stems(self, sequence_len, connect_table_df):
+        stems = []
+        i = 0
+        while i < sequence_len:
+            # only need to parse half of the dataframe so if detect a base pair index lower
+            # than current index, can break the loop
+            if connect_table_df["Paired With"].iloc[i] < connect_table_df["Index"].iloc[i]:
+                break
+            # if base pair is found, need to define the length of stem
+            elif connect_table_df["Paired With"].iloc[i] != 0:
+                # loop through connect table until nonsequential base pair is
+                # found and then append to stems
+                for j in range(i+1, sequence_len-1):
+                    # if nonsequential base pair ordering or a unpaired base is found, use information to generate stem
+                    if connect_table_df["Paired With"].iloc[j] != connect_table_df["Paired With"].iloc[j-1] - 1 or connect_table_df["Paired With"].iloc[j] == 0:
+                        stems.append((connect_table_df["Index"].iloc[i], connect_table_df["Paired With"].iloc[i], j-i))
+                        i += j
+                        break
+        return stems

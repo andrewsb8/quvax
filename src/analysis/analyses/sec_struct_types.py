@@ -1,5 +1,6 @@
 from src.analysis.analysis import Analysis
 from src.rna_structure.structure_io import StructureIO
+from src.rna_structure.structure_convert import StructureConvert
 from src.rna_folding.rna_folder import RNAFolder
 
 
@@ -21,6 +22,10 @@ class SecondaryStructureTypes(Analysis):
         super().__init__(config)
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
         self.num_bases = self.connect_table["Index"].iloc[-1]
+        stems = StructureConvert()._connect_table_to_stems(self.num_bases, self.connect_table)
+        # TODO : _is_pseudo is not callable from this path because I'm not calling it through rna_folder.py
+        self.dot_bracket = StructureConvert()._stems_to_dot_bracket(self.num_bases, stems)
+        print(self.dot_bracket)
         self.wc_interactions = RNAFolder(config).interactions
         # initialize counters
         self.wc_base_pairs = 0
