@@ -25,7 +25,10 @@ class CompareCT(Analysis):
         reference_pairings = self._get_pairings(self.config.args.reference)
         self._truth_values(input_pairings, reference_pairings)
         self.metrics._calculate_metrics(
-            self.metrics.truepos, self.metrics.trueneg, self.metrics.falsepos, self.metrics.falseneg
+            self.metrics.truepos,
+            self.metrics.trueneg,
+            self.metrics.falsepos,
+            self.metrics.falseneg,
         )
         self._print_metrics()
 

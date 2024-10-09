@@ -3,6 +3,7 @@ class Metrics(object):
     Class for storing and calculating various metrics relevant for analyses
 
     """
+
     def __init__(self):
         self.truepos = 0
         self.trueneg = 0
