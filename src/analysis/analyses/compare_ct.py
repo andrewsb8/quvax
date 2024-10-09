@@ -1,6 +1,6 @@
 from src.analysis.analysis import Analysis
 from src.analysis.metrics.metrics import Metrics
-import pandas as pd
+from src.structure_io.structure_io import StructureIO
 
 
 class CompareCT(Analysis):
@@ -29,28 +29,12 @@ class CompareCT(Analysis):
         )
         self._print_metrics()
 
-    def _ct_to_dataframe(self, ct_file):
-        """
-        Converts connectivity table to dataframe
-
-        """
-        df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
-        df.columns = [
-            "Index",
-            "Nucleotide",
-            "Previous",
-            "Next",
-            "Paired With",
-            "Counter",
-        ]
-        return df
-
     def _get_pairings(self, ct_file):
         """
         Return base pair information from dataframe
 
         """
-        ct = self._ct_to_dataframe(ct_file)
+        ct = StructureIO()._ct_to_dataframe(ct_file)
         pairings = ct["Paired With"]
         return pairings
 
