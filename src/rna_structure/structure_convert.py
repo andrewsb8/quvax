@@ -1,3 +1,6 @@
+from src.rna_structure.structure import RNAStructure
+
+
 class StructureConvert(object):
     """
     Class containing logic for converting between different
@@ -11,6 +14,7 @@ class StructureConvert(object):
         notation.
 
         """
+        rna_struct_obj = RNAStructure()
 
         dot_bracket = ["." for i in range(sequence_len)]
         for stem in stems:
@@ -22,7 +26,7 @@ class StructureConvert(object):
         # check for pseudoknots. pseudoknot cannot be detected if there is only one stem
         for i in range(len(stems)):
             for j in range(i + 1, len(stems)):
-                if self._is_pseudo(stems[i], stems[j]):
+                if rna_struct_obj._is_pseudo(stems[i], stems[j]):
                     stem_pair_list = self._stem_to_pair_list(stems[j])
                     for k in range(len(stem_pair_list)):
                         dot_bracket[stem_pair_list[k][0] - 1] = "["
@@ -72,16 +76,29 @@ class StructureConvert(object):
         while i < sequence_len:
             # only need to parse half of the dataframe so if detect a base pair index lower
             # than current index, can break the loop
-            if connect_table_df["Paired With"].iloc[i] < connect_table_df["Index"].iloc[i]:
+            if (
+                connect_table_df["Paired With"].iloc[i]
+                < connect_table_df["Index"].iloc[i]
+            ):
                 break
             # if base pair is found, need to define the length of stem
             elif connect_table_df["Paired With"].iloc[i] != 0:
                 # loop through connect table until nonsequential base pair is
                 # found and then append to stems
-                for j in range(i+1, sequence_len-1):
+                for j in range(i + 1, sequence_len - 1):
                     # if nonsequential base pair ordering or a unpaired base is found, use information to generate stem
-                    if connect_table_df["Paired With"].iloc[j] != connect_table_df["Paired With"].iloc[j-1] - 1 or connect_table_df["Paired With"].iloc[j] == 0:
-                        stems.append((connect_table_df["Index"].iloc[i], connect_table_df["Paired With"].iloc[i], j-i))
+                    if (
+                        connect_table_df["Paired With"].iloc[j]
+                        != connect_table_df["Paired With"].iloc[j - 1] - 1
+                        or connect_table_df["Paired With"].iloc[j] == 0
+                    ):
+                        stems.append(
+                            (
+                                connect_table_df["Index"].iloc[i],
+                                connect_table_df["Paired With"].iloc[i],
+                                j - i,
+                            )
+                        )
                         i += j
                         break
         return stems

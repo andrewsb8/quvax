@@ -14,9 +14,6 @@ class Metrics(object):
         self.f1 = 0
         self.pos_predict_val = 0
 
-    def _increment(self, num):
-        num += 1
-
     def _sensitivity(self, truepos, falseneg):
         try:
             return truepos / (truepos + falseneg)

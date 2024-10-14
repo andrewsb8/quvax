@@ -1,11 +1,11 @@
-import numpy as np
 from abc import ABC, abstractmethod
 from src.config.config import Config
+from src.rna_structure.structure import RNAStructure
 from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
 
 
-class RNAFolder(ABC, StructureIO, StructureConvert):
+class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
     """
     Parent class for all RNA folding classes.
 
@@ -38,14 +38,7 @@ class RNAFolder(ABC, StructureIO, StructureConvert):
 
     def __init__(self, config: Config):
         self.config = config
-        self.interactions = [
-            ("A", "U"),
-            ("U", "A"),
-            ("G", "C"),
-            ("C", "G"),
-            ("G", "U"),
-            ("U", "G"),
-        ]
+        self.interactions = self._get_wc_interactions()
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
@@ -98,39 +91,6 @@ class RNAFolder(ABC, StructureIO, StructureConvert):
                     else:
                         break
         self.stems = self._pairs
-
-    def _detect_stem_overlap(self, stem1, stem2):
-        pairs1 = self._stem_to_pair_list(stem1)
-        pairs2 = self._stem_to_pair_list(stem2)
-
-        keep1 = [
-            pair1
-            for pair1 in pairs1
-            if not any(_ in pair1 for _ in np.array(pairs2).flatten())
-        ]
-        keep2 = [
-            pair2
-            for pair2 in pairs2
-            if not any(_ in pair2 for _ in np.array(pairs1).flatten())
-        ]
-
-        if len(keep1) == len(pairs1) and len(keep2) == len(pairs2):
-            # No overlap
-            return False
-        else:
-            # Overlap
-            return True
-
-    def _is_pseudo(self, stem1, stem2):
-        first = np.argmin([stem1[0], stem2[0]])
-        second = np.argmax([stem1[0], stem2[0]])
-        stem_pair = [stem1, stem2]
-        if (
-            stem_pair[first][0] <= stem_pair[second][0] <= stem_pair[first][1]
-            and stem_pair[second][0] <= stem_pair[first][1] <= stem_pair[second][1]
-        ):
-            return True
-        return False
 
     def _compute_h_and_J(self):
         # Pull out stem lengths for simplicity
