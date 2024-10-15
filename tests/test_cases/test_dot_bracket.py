@@ -42,7 +42,7 @@ def test_pseudoknot_dot_bracket():
 
     """
     sequence = "UCGUUGACAAGUACGAAAUCUUGUUA"
-    ref_sec_struct = ".(((.[[[[[[.)))....]]]]]]."
+    ref_sec_struct = ".[[[.((((((.]]]....))))))."
 
     # manually assign stems
     stems = [(2, 15, 3), (6, 25, 6)]

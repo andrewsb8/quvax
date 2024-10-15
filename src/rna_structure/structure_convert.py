@@ -27,7 +27,14 @@ class StructureConvert(object):
         for i in range(len(stems)):
             for j in range(i + 1, len(stems)):
                 if rna_struct_obj._is_pseudo(stems[i], stems[j]):
-                    stem_pair_list = self._stem_to_pair_list(stems[j])
+                    # label the shorter stem with square brackets shorter stem
+                    # will be less stable and associated with strain in the
+                    # structure
+                    if stems[i][2] < stems[j][2]:
+                        pseudo_stem = stems[i]
+                    else:
+                        pseudo_stem = stems[j]
+                    stem_pair_list = self._stem_to_pair_list(pseudo_stem)
                     for k in range(len(stem_pair_list)):
                         dot_bracket[stem_pair_list[k][0] - 1] = "["
                         dot_bracket[stem_pair_list[k][1] - 1] = "]"
