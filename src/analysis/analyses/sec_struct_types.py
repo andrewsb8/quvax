@@ -62,15 +62,16 @@ class SecondaryStructureTypes(Analysis):
 
         # print output to log and stdout
         self.config.log.info(
-            "% no pairs, Watson-Crick pairs, Non-WC pairs, Pairs in Pseudoknots"
+            "# unpaired bases, bases in Watson-Crick pairs, bases in non-WC pairs, bases in pseudoknots, number of bases (sequence length)"
         )
         output = ", ".join(
             str(item)
             for item in [
-                self.no_pair / self.num_bases,
-                self.wc_base_pairs / self.num_bases,
-                self.nonwc_base_pairs / self.num_bases,
-                self.pseudoknots / self.num_bases,
+                self.no_pair,
+                self.wc_base_pairs,
+                self.nonwc_base_pairs,
+                self.pseudoknots,
+                self.num_bases,
             ]
         )
         self.config.log.info(output)

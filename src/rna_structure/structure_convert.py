@@ -30,6 +30,7 @@ class StructureConvert(object):
                     # label the shorter stem with square brackets shorter stem
                     # will be less stable and associated with strain in the
                     # structure
+                    print(stems[i], stems[j], flush=True)
                     if stems[i][2] < stems[j][2]:
                         pseudo_stem = stems[i]
                     else:
