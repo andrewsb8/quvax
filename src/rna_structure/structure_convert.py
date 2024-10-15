@@ -82,13 +82,13 @@ class StructureConvert(object):
         stems = []
         i = 0
         while i < sequence_len:
-            # only need to parse half of the dataframe so if detect a base pair index lower
-            # than current index, can break the loop
+            # move on from unpaired bases and don't double count base pairs
             if (
                 connect_table_df["Paired With"].iloc[i]
                 < connect_table_df["Index"].iloc[i]
+                or connect_table_df["Paired With"].iloc[i] == 0
             ):
-                break
+                i += 1
             # if base pair is found, need to define the length of stem
             elif connect_table_df["Paired With"].iloc[i] != 0:
                 # loop through connect table until nonsequential base pair is
