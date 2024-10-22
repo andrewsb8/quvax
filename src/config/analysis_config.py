@@ -127,13 +127,6 @@ class AnalysisConfig(Config):
             help="Input secondary structure file (ex: connectivity table).",
         )
         ss_parser.add_argument(
-            "-r",
-            "--reference",
-            required=True,
-            type=str,
-            help="Reference secondary structure file (ex: connectivity table).",
-        )
-        ss_parser.add_argument(
             "-l",
             "--log_file_name",
             default="quvax.log",
@@ -167,6 +160,18 @@ class AnalysisConfig(Config):
             "compare_ct",
             parents=[ss_parser],
             help="Compares two connectivity tables by calculating metrics such as f1 score.",
+        )
+        parser_compare_ct.add_argument(
+            "-r",
+            "--reference",
+            required=True,
+            type=str,
+            help="Reference secondary structure file (ex: connectivity table).",
+        )
+        parser_sst = subparsers.add_parser(
+            "sec_struct_types",
+            parents=[ss_parser],
+            help="For given input structure file, calculates percent of bases in different types of secondary structures.",
         )
 
         if args is None:

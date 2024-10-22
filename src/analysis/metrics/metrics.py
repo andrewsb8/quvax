@@ -3,6 +3,7 @@ class Metrics(object):
     Class for storing and calculating various metrics relevant for analyses
 
     """
+
     def __init__(self):
         self.truepos = 0
         self.trueneg = 0
@@ -12,9 +13,6 @@ class Metrics(object):
         self.specificity = 0
         self.f1 = 0
         self.pos_predict_val = 0
-
-    def _increment(self, num):
-        num += 1
 
     def _sensitivity(self, truepos, falseneg):
         try:
