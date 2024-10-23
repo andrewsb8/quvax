@@ -11,12 +11,12 @@ class Log(object):
     def _create_log(self, __prog__, __version__, log_file_name):
         log = logging.getLogger(__name__)
         log.setLevel(logging.DEBUG)
-        handler = logging.FileHandler(log_file_name, mode="w+")
-        log.addHandler(handler)
         if os.path.isfile(log_file_name):
             logging.warning(
                 "Log file " + log_file_name + " exists and will be overwritten."
             )
+        handler = logging.FileHandler(log_file_name, mode="w+")
+        log.addHandler(handler)
         log.info("Program Version : " + __version__)
         log.info("Execution Time : " + str(datetime.datetime.now()))
         log.info(
