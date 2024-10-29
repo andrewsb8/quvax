@@ -93,14 +93,14 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.stems = self._pairs
 
     def _compute_h_and_J(self):
-        # Pull out stem lengths for simplicity
-        stems = [_[2] for _ in self.stems]
-        if len(stems) == 0:
+        if self.len_stem_list == 0:
             # return "infinite" energy, no simulated annealing because no matrix
             # to build for the Hamiltonian
             self.best_score = self.no_stem_penalty
             return
         else:
+            # Pull out stem lengths for simplicity
+            stems = [_[2] for _ in self.stems]
             mu = max(stems)
 
         # Compute all local fields and couplings
@@ -131,9 +131,6 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
                 if is_pseudo:
                     J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
-
-        if self.len_stem_list == 0:
-            J = {(0, 1): 0}
 
         self.h = h
         self.J = J
