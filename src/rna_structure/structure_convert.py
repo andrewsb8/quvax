@@ -106,6 +106,7 @@ class StructureConvert(object):
                                 j - i,
                             )
                         )
-                        i += j
+                        # increment by stem length
+                        i += j - i
                         break
         return stems
