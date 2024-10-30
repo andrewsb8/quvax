@@ -42,7 +42,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
-        self.coeff_overlap = 10
+        self.coeff_overlap = 100
 
     def _fold_prep(self, sequence):
         self.nseq = sequence
