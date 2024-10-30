@@ -42,6 +42,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
+        self.coeff_overlap = 10
 
     def _fold_prep(self, sequence):
         self.nseq = sequence
@@ -118,11 +119,14 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
         # Replace couplings with 'infinite' energies for clashes. Adjust couplings
         # in cases of pseudoknots.
+        count_overlaps = [0 for i in range(self.len_stem_list)]
         for i in range(self.len_stem_list):
             for j in range(i + 1, self.len_stem_list):
                 # If there's overlap, add large penalty and continue
                 overlap = self._detect_stem_overlap(self.stems[i], self.stems[j])
                 if overlap:
+                    count_overlaps[i] += 1
+                    count_overlaps[j] += 1
                     J[(i, j)] = self.twobody_penalty
                     continue
 
@@ -131,6 +135,9 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
                 if is_pseudo:
                     J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
+
+        for i in range(self.len_stem_list):
+            h[i] += self.coeff_overlap * (1/count_overlaps[i])
 
         self.h = h
         self.J = J
