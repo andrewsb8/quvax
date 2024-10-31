@@ -137,7 +137,10 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                     J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
 
         for i in range(self.len_stem_list):
-            h[i] += self.coeff_overlap * (1/count_overlaps[i])
+            if count_overlaps[i] != 0:
+                h[i] += self.coeff_overlap * (1/count_overlaps[i])
+            else:
+                h[i] += self.coeff_overlap
 
         self.h = h
         self.J = J
