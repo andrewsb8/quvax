@@ -213,6 +213,13 @@ class AnalysisConfig(Config):
             type=int,
             help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
         )
+        parser_kns.add_argument(
+            "-k",
+            "--neighbors",
+            default=1,
+            type=int,
+            help="Number of neighbors to change in each iteration.",
+        )
 
         if args is None:
             return parser.parse_args()

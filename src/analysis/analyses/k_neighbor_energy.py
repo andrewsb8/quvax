@@ -19,12 +19,12 @@ class kNeighborEnergySearch(Analysis):
 
     def __init__(self, config):
         super().__init__(config)
-        # read sequence and stems from structure file
+        # read sequence from structure file
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
         seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.connect_table["Index"].iloc[-1])])
 
         # generate stems for sequence - need min stem length and min loop length!
-        self.rna_folder_obj = RNAFolder(config) # no config needed here
+        self.rna_folder_obj = RNAFolder(config)
         self.rna_folder_obj._fold_prep(seq)
 
         # convert from connectivity table to stem tuples
@@ -34,7 +34,7 @@ class kNeighborEnergySearch(Analysis):
             self.rna_folder_obj.n, self.connect_table
         )
 
-        # find indices of stems from connect table and keep sorted list of them
+        # find indices of stems from connect table and place in sorted list
         self.active_stem_indices = []
         for stem in stems:
             for j in range(len(self.rna_folder_obj.stems)):
@@ -48,7 +48,6 @@ class kNeighborEnergySearch(Analysis):
         self._analyze()
 
     def _analyze(self):
-        # for now, write loop to change k (keep it <=2) stems (add or delete)
-        # this should have checks to maybe prevent duplicate checks.... not sure what kind yet
-        # calculate energy of changed structure and record it
+        # how to loop over every combination by brute force?
+        # start with an initial condition, need to enumerate each possible combination
         pass
