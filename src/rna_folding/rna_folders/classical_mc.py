@@ -107,20 +107,6 @@ class MC(RNAFolder):
         self.score = self._calc_score(self.stem_idx)
         self.best_score = self.score
 
-    def _calc_score(self, idx):
-        """
-        Calculate the score for the current list of stems
-
-        TODO: This can be made cheaper with array broadcasting and smarter slicing
-
-        """
-
-        idx.sort()
-        score = sum([self.h[x] for x in idx])
-        score = score + sum([self.J[x] for x in itertools.combinations(idx, 2)])
-
-        return score
-
     def _update_stems(self, stems):
         ## Score the new set of interactions
         newscore = self._calc_score(stems)
