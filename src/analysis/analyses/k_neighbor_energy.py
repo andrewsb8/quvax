@@ -23,11 +23,11 @@ class kNeighborEnergySearch(Analysis):
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
         seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.connect_table["Index"].iloc[-1])])
 
-        # generate stems for sequence - need min stem lenght and min loop length!
+        # generate stems for sequence - need min stem length and min loop length!
         self.rna_folder_obj = RNAFolder(config) # no config needed here
         self.rna_folder_obj._fold_prep(seq)
 
-        # convert from connectivity table to dot bracket for easy identification of pseudoknots
+        # convert from connectivity table to stem tuples
         self.rna_struct_obj = RNAStructure()
         self.struct_conv_obj = StructureConvert()
         stems = self.struct_conv_obj._connect_table_to_stems(
