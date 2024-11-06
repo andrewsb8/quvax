@@ -21,22 +21,18 @@ class kNeighborEnergySearch(Analysis):
         super().__init__(config)
         # read sequence and stems from structure file
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
-        self.num_bases = self.connect_table["Index"].iloc[-1]
-        self.seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.num_bases)])
+        seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.connect_table["Index"].iloc[-1])])
+
+        # generate stems for sequence - need min stem lenght and min loop length!
+        self.rna_folder_obj = RNAFolder(config) # no config needed here
+        self.rna_folder_obj._fold_prep(seq)
 
         # convert from connectivity table to dot bracket for easy identification of pseudoknots
         self.rna_struct_obj = RNAStructure()
         self.struct_conv_obj = StructureConvert()
         stems = self.struct_conv_obj._connect_table_to_stems(
-            self.num_bases, self.connect_table
+            self.rna_folder_obj.n, self.connect_table
         )
-
-        # generate stems for sequence - need min stem lenght and min loop length!
-        self.rna_folder_obj = RNAFolder(None) # no config needed here
-        self.stems = self.rna_folder_obj._gen_stems()
-        self.len_stem_list = len(self.stems)
-        self.rna_folder_obj._compute_h_and_J() # access h/J via self.rna_folder_obj.h
-        print(self.rna_folder_obj.h)
 
         # find stem indices and keep sorted list of them
         # keep list of calculated energies, starting with the initial structure

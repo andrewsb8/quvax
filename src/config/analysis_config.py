@@ -178,6 +178,41 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), calculate distribution of energies by changing k neighbors (stems)",
         )
+        parser_kns.add_argument(
+            "-ms",
+            "--min_stem_len",
+            type=int,
+            default=3,
+            help="Minimum stem length value",
+        )
+        parser_kns.add_argument(
+            "-ml",
+            "--min_loop_len",
+            type=int,
+            default=3,
+            help="Minimum loop length value",
+        )
+        parser_kns.add_argument(
+            "-cB",
+            "--coeff_max_bond",
+            default=1,
+            type=int,
+            help="Coefficient for term maximizing number of bonds",
+        )
+        parser_kns.add_argument(
+            "-cL",
+            "--coeff_stem_len",
+            default=10,
+            type=int,
+            help="Coefficient for term penalizing short stems",
+        )
+        parser_kns.add_argument(
+            "-sn",
+            "--span",
+            default=0,
+            type=int,
+            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
+        )
 
         if args is None:
             return parser.parse_args()
