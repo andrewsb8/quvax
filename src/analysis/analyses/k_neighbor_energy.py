@@ -4,11 +4,15 @@ import itertools
 from src.analysis.analysis import Analysis
 from src.rna_folding.rna_folder import RNAFolder
 from src.rna_structure.structure import RNAStructure
+<<<<<<< HEAD
 from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
 =======
 from src.analysis.analysis import Analysis
 >>>>>>> bfe396c (added analysis)
+=======
+from src.rna_structure.structure_convert import StructureConvert
+>>>>>>> fa353ed (move score function to parent class and describe tasks for new analysis)
 
 
 class kNeighborEnergySearch(Analysis):
