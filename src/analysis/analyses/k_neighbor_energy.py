@@ -1,6 +1,7 @@
 from src.analysis.analysis import Analysis
 from src.rna_folding.rna_folder import RNAFolder
 from src.rna_structure.structure import RNAStructure
+from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
 
 
@@ -19,9 +20,25 @@ class kNeighborEnergySearch(Analysis):
     def __init__(self, config):
         super().__init__(config)
         # read sequence and stems from structure file
-        # generate stems for sequence
+        self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
+        self.num_bases = self.connect_table["Index"].iloc[-1]
+        self.seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.num_bases)])
+
+        # convert from connectivity table to dot bracket for easy identification of pseudoknots
+        self.rna_struct_obj = RNAStructure()
+        self.struct_conv_obj = StructureConvert()
+        stems = self.struct_conv_obj._connect_table_to_stems(
+            self.num_bases, self.connect_table
+        )
+
+        # generate stems for sequence - need min stem lenght and min loop length!
+        self.rna_folder_obj = RNAFolder(None) # no config needed here
+        self.stems = self.rna_folder_obj._gen_stems()
+        self.len_stem_list = len(self.stems)
+        self.rna_folder_obj._compute_h_and_J() # access h/J via self.rna_folder_obj.h
+        print(self.rna_folder_obj.h)
+
         # find stem indices and keep sorted list of them
-        # calculate the hamiltonian matrices
         # keep list of calculated energies, starting with the initial structure
         self._analyze()
 
