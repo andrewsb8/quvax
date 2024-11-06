@@ -34,8 +34,17 @@ class kNeighborEnergySearch(Analysis):
             self.rna_folder_obj.n, self.connect_table
         )
 
-        # find stem indices and keep sorted list of them
+        # find indices of stems from connect table and keep sorted list of them
+        self.active_stem_indices = []
+        for stem in stems:
+            for j in range(len(self.rna_folder_obj.stems)):
+                if stem == self.rna_folder_obj.stems[j]:
+                    self.active_stem_indices.append(j)
+        self.active_stem_indices.sort()
+
         # keep list of calculated energies, starting with the initial structure
+        self.energies = [self.rna_folder_obj._calc_score(self.active_stem_indices)]
+
         self._analyze()
 
     def _analyze(self):

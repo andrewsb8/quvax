@@ -1,7 +1,6 @@
 from src.rna_folding.rna_folder import RNAFolder
 import numpy as np
 import random
-import itertools
 import copy
 import math
 

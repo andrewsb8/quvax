@@ -1,3 +1,4 @@
+import itertools
 from abc import ABC, abstractmethod
 from src.config.config import Config
 from src.rna_structure.structure import RNAStructure
