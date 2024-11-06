@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import copy
 import itertools
 from src.analysis.analysis import Analysis
@@ -5,6 +6,9 @@ from src.rna_folding.rna_folder import RNAFolder
 from src.rna_structure.structure import RNAStructure
 from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
+=======
+from src.analysis.analysis import Analysis
+>>>>>>> bfe396c (added analysis)
 
 
 class kNeighborEnergySearch(Analysis):
