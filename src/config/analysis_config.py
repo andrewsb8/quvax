@@ -173,6 +173,11 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="For given input structure file, calculates percent of bases in different types of secondary structures.",
         )
+        parser_kns = subparsers.add_parser(
+            "k_neighbor_energy",
+            parents=[ss_parser],
+            help="For a given input sequence and structure (connectivity table or TODO dot-bracket), calculate distribution of energies by changing k neighbors (stems)",
+        )
 
         if args is None:
             return parser.parse_args()

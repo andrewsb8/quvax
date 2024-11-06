@@ -28,6 +28,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
 
         SecondaryStructureTypes(config)
+    elif config.args.command == "k_neighbor_energy":
+        from src.analysis.analyses.k_neighbor_energy import kNeighborEnergySearch
+
+        kNeighborEnergySearch(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
