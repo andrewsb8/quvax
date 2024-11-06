@@ -1,9 +1,28 @@
+import pandas as pd
+
+
 class StructureIO(object):
     """
     Class containing logic for reading and writing specific output file
     types
 
     """
+
+    def _ct_to_dataframe(self, ct_file):
+        """
+        Converts connectivity table from file to dataframe
+
+        """
+        df = pd.read_csv(ct_file, delim_whitespace=True, skiprows=1, header=None)
+        df.columns = [
+            "Index",
+            "Nucleotide",
+            "Previous",
+            "Next",
+            "Paired With",
+            "Counter",
+        ]
+        return df
 
     def _write_dot_bracket(self, output_file, energy, sequence, structure):
         """

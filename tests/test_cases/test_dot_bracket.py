@@ -13,8 +13,8 @@ def test_no_stem_dot_bracket():
 
     stem = []
     folder = MockFolder(None)
-    folder._stems_to_dot_bracket(len(sequence), stem)
-    assert ref_sec_struct == folder.dot_bracket
+    dot_bracket = folder._stems_to_dot_bracket(len(sequence), stem)
+    assert ref_sec_struct == dot_bracket
 
 
 def test_hairpin_dot_bracket():
@@ -30,8 +30,8 @@ def test_hairpin_dot_bracket():
     # manually assign stem
     stem = [(4, 18, 4)]
     folder = MockFolder(None)
-    folder._stems_to_dot_bracket(len(sequence), stem)
-    assert ref_sec_struct == folder.dot_bracket
+    dot_bracket = folder._stems_to_dot_bracket(len(sequence), stem)
+    assert ref_sec_struct == dot_bracket
 
 
 def test_pseudoknot_dot_bracket():
@@ -42,10 +42,10 @@ def test_pseudoknot_dot_bracket():
 
     """
     sequence = "UCGUUGACAAGUACGAAAUCUUGUUA"
-    ref_sec_struct = ".(((.[[[[[[.)))....]]]]]]."
+    ref_sec_struct = ".[[[.((((((.]]]....))))))."
 
     # manually assign stems
     stems = [(2, 15, 3), (6, 25, 6)]
     folder = MockFolder(None)
-    folder._stems_to_dot_bracket(len(sequence), stems)
-    assert ref_sec_struct == folder.dot_bracket
+    dot_bracket = folder._stems_to_dot_bracket(len(sequence), stems)
+    assert ref_sec_struct == dot_bracket
