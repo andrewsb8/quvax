@@ -76,8 +76,6 @@ class kNeighborEnergySearch(Analysis):
 
         # keep list of calculated energies, starting with the initial structure
         self.energies = [self.rna_folder_obj._calc_score(self.active_stem_indices)]
-        dummy_stems = [0,1,2,3]
-        print(self.rna_folder_obj._calc_score(dummy_stems))
 
         self._analyze()
 
