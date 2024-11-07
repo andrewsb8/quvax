@@ -138,14 +138,14 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
     def _calc_score(self, idx):
         """
-        Calculate the score for the current list of stems
+        Calculate the score for the current list of stems.
 
         TODO: This can be made cheaper with array broadcasting and smarter slicing
 
         Parameters
         ----------
         idx : list
-            list of stem indices
+            list of stem indices. returns 0 if idx is empty
 
         """
 
