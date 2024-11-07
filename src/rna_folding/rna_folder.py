@@ -142,6 +142,11 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
         TODO: This can be made cheaper with array broadcasting and smarter slicing
 
+        Parameters
+        ----------
+        idx : list
+            list of stem indices
+
         """
 
         idx.sort()
