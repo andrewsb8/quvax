@@ -52,10 +52,19 @@ class kNeighborEnergySearch(Analysis):
     def _analyze(self):
         # brute force solution for k = 1
         new_stems = []
+        valid_neighbor_count = 0
+        lower_energy_neighbor_count = 0
         for i in range(self.rna_folder_obj.len_stem_list):
             if i in self.active_stem_indices:
                 new_stems = [j for j in self.active_stem_indices if j != i]
             elif i not in self.active_stem_indices:
                 new_stems = self.active_stem_indices + [i]
-            self.energies.append(self.rna_folder_obj._calc_score(new_stems))
-        print(self.energies)
+
+            new_energy = self.rna_folder_obj._calc_score(new_stems)
+            if new_energy < 0:
+                valid_neighbor_count += 1
+            if new_energy < self.energies[0]:
+                lower_energy_neighbor_count += 1
+            self.energies.append(new_energy)
+        #print(self.energies)
+        print(self.energies[0], valid_neighbor_count, lower_energy_neighbor_count, min(self.energies))
