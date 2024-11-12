@@ -28,6 +28,11 @@ if __name__ == "__main__":
         from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
 
         SecondaryStructureTypes(config)
+    elif config.args.command == "pairing_ranges":  
+        from src.analysis.analyses.pairing_ranges import PairingRange
+        
+        PairingRange(config)
+
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
