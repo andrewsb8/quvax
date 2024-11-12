@@ -168,6 +168,11 @@ class AnalysisConfig(Config):
             type=str,
             help="Reference secondary structure file (ex: connectivity table).",
         )
+        parser_pairing_ranges = subparsers.add_parser(
+            "pairing_ranges",
+            parents=[ss_parser],
+            help="Calculates the average span of base pairings in a sequence as a fraction of sequence length.",
+        )
         parser_sst = subparsers.add_parser(
             "sec_struct_types",
             parents=[ss_parser],
