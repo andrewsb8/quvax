@@ -32,10 +32,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.k_neighbor_energy import kNeighborEnergySearch
 
         kNeighborEnergySearch(config)
-    elif config.args.command == "pairing_ranges":
-        from src.analysis.analyses.pairing_ranges import PairingRange
+    elif config.args.command == "base_pair_ranges":
+        from src.analysis.analyses.base_pair_ranges import BasePairRanges
 
-        PairingRange(config)
+        BasePairRanges(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
