@@ -27,7 +27,7 @@ class kNeighborEnergySearch(Analysis):
 
         # generate stems for sequence - need min stem length and min loop length!
         self.rna_folder_obj = RNAFolder(config)
-        self.rna_folder_obj._fold_prep(seq)
+        self.rna_folder_obj._declare_stem_vars(seq)
 
         # convert from connectivity table to stem tuples
         self.rna_struct_obj = RNAStructure()
@@ -36,13 +36,32 @@ class kNeighborEnergySearch(Analysis):
             self.rna_folder_obj.n, self.connect_table
         )
 
+        self.rna_folder_obj._gen_stems()
+
         # find indices of stems from connect table and place in sorted list
         self.active_stem_indices = []
         for stem in stems:
+            found = False
             for j in range(len(self.rna_folder_obj.stems)):
                 if stem == self.rna_folder_obj.stems[j]:
+                    found = True
                     self.active_stem_indices.append(j)
+            # if stem in connect table is not found in possible stem list
+            # (self.rna_folder_obj.stems), likely because value for -ms is
+            # higher than some stem lengths in input structure or a loop
+            # smaller than specified by -ml is observed. Then add
+            # observed stem to stem list and active stem list. This way,
+            # the observed stems will be considered in the bit flipping
+            # process
+            if not found:
+                self.rna_folder_obj.stems.append(stem)
+                self.active_stem_indices.append(len(self.rna_folder_obj.stems)-1)
         self.active_stem_indices.sort()
+        print(self.rna_folder_obj.stems)
+        print(self.active_stem_indices)
+
+        self.rna_folder_obj.len_stem_list = len(self.rna_folder_obj.stems)
+        self.rna_folder_obj._compute_h_and_J()
 
         # keep list of calculated energies, starting with the initial structure
         self.energies = [self.rna_folder_obj._calc_score(self.active_stem_indices)]

@@ -44,13 +44,16 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
 
-    def _fold_prep(self, sequence):
+    def _declare_stem_vars(self, sequence):
         self.nseq = sequence
         self.n = len(self.nseq)
         self.stems = []
         self.h = dict()
         self.J = dict()
         self._pairs = []
+
+    def _fold_prep(self, sequence):
+        self._declare_stem_vars(sequence)
         self._gen_stems()
         self.len_stem_list = len(self.stems)
         self._compute_h_and_J()
