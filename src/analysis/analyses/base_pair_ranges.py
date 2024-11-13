@@ -5,8 +5,8 @@ import numpy as np
 
 class BasePairRanges(Analysis):
 	"""
-	Determines the average, minimum, and maximum base pair lengths for a connectivity file.
-	Outputs base pair range as a fraction of the sequence length. 
+	Determines the average, minimum, and maximum base pair lengths,
+	as well as sequence length for a connectivity file.
 
 	Parameters
 	__________
@@ -27,19 +27,17 @@ class BasePairRanges(Analysis):
 		interactions = np.abs(input_df.loc[paired_indices, "Paired With"].values - input_df.loc[paired_indices, "Index"].values)
 
 		avg_range = np.mean(interactions)
-		scaled_avg = avg_range/(input_df["Index"].iloc[-1]+1)
 		min_range = np.min(interactions)
-		scaled_min = min_range/(input_df["Index"].iloc[-1]+1)
 		max_range = np.max(interactions)
-		scaled_max = max_range/(input_df["Index"].iloc[-1]+1)
+		seq_len = input_df["Index"].iloc[-1]
 		
-		self.config.log.info('Average pair range, Min pair range, Max pair range')
+		self.config.log.info('Average pair range, Min pair range, Max pair range, Sequence Length')
 
-		outputs = (scaled_avg, min_range, max_range)		
+		outputs = (avg_range, min_range, max_range, seq_len)		
 		vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
 		self.config.log.info(vals)
 
-		print(scaled_avg, min_range, max_range)
+		print(scaled_avg, min_range, max_range, seq_len)
 
 
 
