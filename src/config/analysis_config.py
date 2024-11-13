@@ -171,7 +171,7 @@ class AnalysisConfig(Config):
         parser_base_pair_ranges = subparsers.add_parser(
             "base_pair_ranges",
             parents=[ss_parser],
-            help="Calculates the average, minimum, and maximum span of base pairs in a sequence as a fraction of sequence length.",
+            help="Calculates the average, minimum, and maximum span of base pairs, and sequence length from a connectivity file.",
         )
         parser_sst = subparsers.add_parser(
             "sec_struct_types",
