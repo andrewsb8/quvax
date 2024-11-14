@@ -24,6 +24,19 @@ class StructureIO(object):
         ]
         return df
 
+    def _get_sequence_from_connect_table(self, ct_dataframe):
+        """
+        Returns sequence from a dataframe collected from a connectivity
+        table. Can only be run after _ct_to_dataframe!
+
+        """
+        return "".join(
+            [
+                ct_dataframe["Nucleotide"].iloc[i]
+                for i in range(ct_dataframe["Index"].iloc[-1])
+            ]
+        )
+
     def _write_dot_bracket(self, output_file, energy, sequence, structure):
         """
         Write a simple dot bracket file containing the energy, sequence,
