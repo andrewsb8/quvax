@@ -168,6 +168,11 @@ class AnalysisConfig(Config):
             type=str,
             help="Reference secondary structure file (ex: connectivity table).",
         )
+        parser_base_pair_ranges = subparsers.add_parser(
+            "base_pair_ranges",
+            parents=[ss_parser],
+            help="Calculates the average, minimum, and maximum length, in number of bases, between base pairs for an input connectivity table.",
+        )
         parser_sst = subparsers.add_parser(
             "sec_struct_types",
             parents=[ss_parser],
