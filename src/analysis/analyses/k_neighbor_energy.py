@@ -34,7 +34,7 @@ class kNeighborEnergySearch(Analysis):
         super().__init__(config)
         # read sequence from structure file
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
-        seq = "".join([self.connect_table["Nucleotide"].iloc[i] for i in range(self.connect_table["Index"].iloc[-1])])
+        seq = StructureIO()._get_sequence_from_connect_table(self.connect_table)
 
         # generate stems for sequence - need min stem length and min loop length!
         self.rna_folder_obj = RNAFolder(config)
