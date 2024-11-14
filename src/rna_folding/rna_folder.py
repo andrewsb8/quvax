@@ -1,3 +1,4 @@
+import itertools
 from abc import ABC, abstractmethod
 from src.config.config import Config
 from src.rna_structure.structure import RNAStructure
@@ -134,6 +135,25 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
         self.h = h
         self.J = J
+
+    def _calc_score(self, idx):
+        """
+        Calculate the score for the current list of stems.
+
+        TODO: This can be made cheaper with array broadcasting and smarter slicing
+
+        Parameters
+        ----------
+        idx : list
+            list of stem indices. returns 0 if idx is empty
+
+        """
+
+        idx.sort()
+        score = sum([self.h[x] for x in idx])
+        score = score + sum([self.J[x] for x in itertools.combinations(idx, 2)])
+
+        return score
 
     def _post_process(self):
         """
