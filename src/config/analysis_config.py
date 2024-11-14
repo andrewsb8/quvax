@@ -181,7 +181,6 @@ class AnalysisConfig(Config):
         parser_kns = subparsers.add_parser(
             "k_neighbor_energy",
             parents=[ss_parser],
-<<<<<<< HEAD
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
         )
         parser_kns.add_argument(
@@ -224,10 +223,7 @@ class AnalysisConfig(Config):
             "--neighbors",
             default=1,
             type=int,
-            help="Number of neighbors to change in each iteration.",
-=======
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), calculate distribution of energies by changing k neighbors (stems)",
->>>>>>> bfe396c (added analysis)
         )
 
         if args is None:
