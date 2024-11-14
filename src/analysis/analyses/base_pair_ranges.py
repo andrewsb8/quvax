@@ -28,16 +28,15 @@ class BasePairRanges(Analysis):
             - input_df.loc[paired_indices, "Index"].values
         )
 
-        avg_range = np.mean(interactions)
-        min_range = np.min(interactions)
-        max_range = np.max(interactions)
-        seq_len = input_df["Index"].iloc[-1]
+        self.avg_range = np.mean(interactions)
+        self.min_range = np.min(interactions)
+        self.max_range = np.max(interactions)
+        self.seq_len = input_df["Index"].iloc[-1]
 
         self.config.log.info(
             "Outputs: Average pair range [# of bases], Min pair range, Max pair range, Sequence Length"
         )
-        outputs = (avg_range, min_range, max_range, seq_len)
+        outputs = (self.avg_range, self.min_range, self.max_range, self.seq_len)
         vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
         self.config.log.info(vals)
-
-        print(avg_range, min_range, max_range, seq_len)
+        print(vals)
