@@ -241,3 +241,27 @@ def test_compare_allstem_ct():
         and analysis.metrics.f1 == 1
         and analysis.metrics.pos_predict_val == 1
     )
+
+
+def test_base_pair_ranges():
+    """
+    Test output for analysis computing average, max, min base pair
+    ranges, counted in number of bases
+
+    """
+    from src.analysis.analyses.base_pair_ranges import BasePairRanges
+
+    testargs = [
+        "base_pair_ranges",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = BasePairRanges(config)
+
+    assert (
+        analysis.avg_range == 4.5
+        and analysis.min_range == 3
+        and analysis.max_range == 6
+        and analysis.seq_len == 11
+    )
