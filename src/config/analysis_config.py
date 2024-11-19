@@ -173,6 +173,11 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="Calculates the average, minimum, and maximum length, in number of bases, between base pairs for an input connectivity table.",
         )
+        parser_stem_lengths = subparsers.add_parser(
+            "stem_lengths",
+            parents=[ss_parser],
+            help="Calculates the average, minimum, and maximum stem length, sequence length, and number of stems for an input connectivity table.",
+        )
         parser_sst = subparsers.add_parser(
             "sec_struct_types",
             parents=[ss_parser],
