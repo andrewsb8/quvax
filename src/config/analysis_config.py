@@ -176,7 +176,7 @@ class AnalysisConfig(Config):
         parser_classify_stems = subparsers.add_parser(
             "classify_stems",
             parents=[ss_parser],
-            help="Calculates the average, minimum, and maximum stem length, sequence length, number of stems, stems in pseudoknots, and number of overlapping stems for an input connectivity table.",
+            help="Calculates the average, minimum, and maximum stem length, sequence length, number of stems, and number ofstems in pseudoknots for an input connectivity table.",
         )
         parser_sst = subparsers.add_parser(
             "sec_struct_types",
