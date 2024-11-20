@@ -47,9 +47,8 @@ class ClassifyStems(Analysis):
 
 	def _get_pseudos(self,stems):
 		pseudos = 0
-		for stem1 in stems:
-			for stem2 in stems:
-				if stems.index(stem1) > stems.index(stem2):
-					if RNAStructure()._is_pseudo(stem1,stem2):
+		for i in range(len(stems)):
+			for j in range(i,len(stems)):
+					if RNAStructure()._is_pseudo(stems[i],stems[j]):
 						pseudos += 1			
 		return pseudos			
