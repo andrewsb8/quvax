@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class RNAStructure(object):
     """
     Class containing methods regarding RNA secondary structure
@@ -18,8 +17,9 @@ class RNAStructure(object):
         ]
 
     def _detect_stem_overlap(self, stem1, stem2):
-        pairs1 = self._stem_to_pair_list(stem1)
-        pairs2 = self._stem_to_pair_list(stem2)
+        from src.rna_structure.structure_convert import StructureConvert
+        pairs1 = StructureConvert()._stem_to_pair_list(stem1)
+        pairs2 = StructureConvert()._stem_to_pair_list(stem2)
 
         keep1 = [
             pair1
