@@ -3,13 +3,12 @@ from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
 from src.rna_structure.structure import RNAStructure
 import numpy as np
-import warnings
 
 class ClassifyStems(Analysis):
 	"""
 	Determines average stem length, minimum stem length, maximum stem length, 
-	sequence length, total number of stems, number of stems in pseudoknots, and 
-	number of overlapping stems for an input connectivity table.
+	sequence length, total number of stems, and number of stems in pseudoknots 
+	for an input connectivity table.
 
 	Parameters
 	__________
@@ -35,27 +34,22 @@ class ClassifyStems(Analysis):
 		self.max_stem = max(stem_lengths)
 		self.seq_len = sequence_len
 		self.avg_stem = sum(stem_lengths)/(self.num_stems)
-		self.pseudos, self.overlaps = self._get_pseudos_and_overlap(stems)
+		self.pseudos = self._get_pseudos(stems)
 
-		if self.overlaps > 0:
-			warnings.warn("One or more stems overlap",category=UserWarning)
 		self.config.log.info(
-			"Outputs: Avg stem length, Min stem length, Max stem length, Sequence length, Number of stems, Number of pseudoknot stems, Number of overlapping Stems"
+			"Outputs: Avg stem length, Min stem length, Max stem length, Sequence length, Number of stems, Number of pseudoknot stems"
 		)
-		outputs = (self.avg_stem, self.min_stem, self.max_stem, self.seq_len, self.num_stems, self.pseudos, self.overlaps)
+		outputs = (self.avg_stem, self.min_stem, self.max_stem, self.seq_len, self.num_stems, self.pseudos)
 		vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
 		self.config.log.info(vals)
 		print(vals)
 
 
-	def _get_pseudos_and_overlap(self,stems):
+	def _get_pseudos(self,stems):
 		pseudos = 0
-		overlaps = 0
-		for i in stems:
-			for j in stems:
-				if i != j:
-					if RNAStructure()._is_pseudo(i,j)==True:
+		for stem1 in stems:
+			for stem2 in stems:
+				if stems.index(stem1) > stems.index(stem2):
+					if RNAStructure()._is_pseudo(stem1,stem2):
 						pseudos += 1			
-					if RNAStructure()._detect_stem_overlap(i,j)==True:
-						overlaps += 1
-		return pseudos, overlaps			
+		return pseudos			
