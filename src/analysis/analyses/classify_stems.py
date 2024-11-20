@@ -42,6 +42,8 @@ class ClassifyStems(Analysis):
 		outputs = (self.avg_stem, self.min_stem, self.max_stem, self.seq_len, self.num_stems, self.pseudos, self.overlaps)
 		vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
 		self.config.log.info(vals)
+		if self.overlaps > 1:
+			self.config.log.warning("Overlap detected in one or more stems")
 		print(vals)
 
 
