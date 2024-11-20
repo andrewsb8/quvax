@@ -134,6 +134,23 @@ class AnalysisConfig(Config):
             help="Log file for recording certain output, warnings, and errors",
         )
 
+        # shared parser options for each analysis which involves computing energy
+        energy_parser = argparse.ArgumentParser(add_help=False)
+        energy_parser.add_argument(
+            "-cB",
+            "--coeff_max_bond",
+            default=1,
+            type=int,
+            help="Coefficient for term maximizing number of bonds",
+        )
+        energy_parser.add_argument(
+            "-cL",
+            "--coeff_stem_len",
+            default=10,
+            type=int,
+            help="Coefficient for term penalizing short stems",
+        )
+
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
         parser_fe_landscape = subparsers.add_parser(
@@ -178,9 +195,14 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="For given input structure file, calculates percent of bases in different types of secondary structures.",
         )
+        parser_comp_energy = subparsers.add_parser(
+            "compute_energy",
+            parents=[ss_parser, energy_parser],
+            help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
+        )
         parser_kns = subparsers.add_parser(
             "k_neighbor_energy",
-            parents=[ss_parser],
+            parents=[ss_parser, energy_parser],
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
         )
         parser_kns.add_argument(
@@ -196,20 +218,6 @@ class AnalysisConfig(Config):
             type=int,
             default=3,
             help="Minimum loop length value",
-        )
-        parser_kns.add_argument(
-            "-cB",
-            "--coeff_max_bond",
-            default=1,
-            type=int,
-            help="Coefficient for term maximizing number of bonds",
-        )
-        parser_kns.add_argument(
-            "-cL",
-            "--coeff_stem_len",
-            default=10,
-            type=int,
-            help="Coefficient for term penalizing short stems",
         )
         parser_kns.add_argument(
             "-sn",

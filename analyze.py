@@ -28,6 +28,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
 
         SecondaryStructureTypes(config)
+    elif config.args.command == "compute_energy":
+        from src.analysis.analyses.compute_energy import ComputeEnergy
+
+        ComputeEnergy(config)
     elif config.args.command == "k_neighbor_energy":
         from src.analysis.analyses.k_neighbor_energy import kNeighborEnergySearch
 

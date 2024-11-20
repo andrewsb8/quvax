@@ -265,3 +265,21 @@ def test_base_pair_ranges():
         and analysis.max_range == 6
         and analysis.seq_len == 11
     )
+
+
+def test_base_pair_ranges():
+    """
+    Test output for analysis to compute energy of input structure
+
+    """
+    from src.analysis.analyses.compute_energy import ComputeEnergy
+
+    testargs = [
+        "compute_energy",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = ComputeEnergy(config)
+
+    assert analysis.score == -12
