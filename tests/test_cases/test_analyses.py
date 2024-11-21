@@ -265,3 +265,29 @@ def test_base_pair_ranges():
         and analysis.max_range == 6
         and analysis.seq_len == 11
     )
+
+
+def test_classify_stems():
+    """
+    Test output for analysis for classifying stems.
+
+    """
+    from src.analysis.analyses.classify_stems import ClassifyStems
+
+    testargs = [
+        "classify_stems",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = ClassifyStems(config)
+
+    assert (
+        analysis.avg_stem == 2.0
+        and analysis.min_stem == 2
+        and analysis.max_stem == 2
+        and analysis.seq_len == 11
+        and analysis.num_stems == 2
+        and analysis.pseudos == 1
+        and analysis.overlaps == 0
+    )
