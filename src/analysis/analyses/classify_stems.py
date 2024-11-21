@@ -8,7 +8,7 @@ import numpy as np
 class ClassifyStems(Analysis):
     """
     Determines average stem length, minimum stem length, maximum stem length,
-    sequence length, total number of stems, number of stems in pseudoknots,
+    sequence length, total number of stems, number of pseudoknots stems,
     and number of overlapping stems for an input connectivity table.
 
     Parameters
