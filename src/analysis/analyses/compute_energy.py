@@ -49,4 +49,4 @@ class ComputeEnergy(Analysis):
     def _analyze(self):
         self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
         self.config.log.info("Energy of input structure: " + str(self.score))
-        print(self.score)
+        print(self.n, self.score)
