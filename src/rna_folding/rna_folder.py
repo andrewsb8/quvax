@@ -41,7 +41,6 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.config = config
         self.interactions = self._get_wc_interactions()
         self.twobody_penalty = 500000
-        self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
 
     def _declare_stem_vars(self, sequence):
@@ -134,7 +133,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 is_pseudo = self._is_pseudo(self.stems[i], self.stems[j])
 
                 if is_pseudo:
-                    J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
+                    J[(i, j)] += self.config.args.pseudo_factor * abs(J[(i, j)])
 
         self.h = h
         self.J = J

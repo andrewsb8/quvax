@@ -203,6 +203,20 @@ class DesignConfig(Config):
             help="Coefficient for term penalizing short stems",
         )
         self.parser.add_argument(
+            "-pf",
+            "--pseudo_factor",
+            default=0.5,
+            type=float,
+            help="Coefficient for term penalizing pseudknots",
+        )
+        self.parser.add_argument(
+            "-mu",
+            "--target_stem_lenth",
+            default=-1,
+            type=float,
+            help="Coefficient for term penalizing pseudknots",
+        )
+        self.parser.add_argument(
             "-l",
             "--log_file_name",
             default="quvax.log",

@@ -150,6 +150,13 @@ class AnalysisConfig(Config):
             type=int,
             help="Coefficient for term penalizing short stems",
         )
+        energy_parser.add_argument(
+            "-pf",
+            "--pseudo_factor",
+            default=0.5,
+            type=float,
+            help="Coefficient for term penalizing pseudknots",
+        )
 
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
@@ -218,6 +225,13 @@ class AnalysisConfig(Config):
             type=int,
             default=3,
             help="Minimum loop length value",
+        )
+        parser_kns.add_argument(
+            "-mu",
+            "--target_stem_lenth",
+            default=-1,
+            type=float,
+            help="Coefficient for term penalizing pseudknots",
         )
         parser_kns.add_argument(
             "-sn",
