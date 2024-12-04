@@ -192,14 +192,14 @@ class DesignConfig(Config):
             "-cB",
             "--coeff_max_bond",
             default=1,
-            type=int,
+            type=float,
             help="Coefficient for term maximizing number of bonds",
         )
         self.parser.add_argument(
             "-cL",
             "--coeff_stem_len",
             default=10,
-            type=int,
+            type=float,
             help="Coefficient for term penalizing short stems",
         )
         self.parser.add_argument(
@@ -213,7 +213,7 @@ class DesignConfig(Config):
             "-mu",
             "--target_stem_length",
             default=-1,
-            type=float,
+            type=int,
             help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         self.parser.add_argument(
