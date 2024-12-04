@@ -207,14 +207,14 @@ class DesignConfig(Config):
             "--pseudo_factor",
             default=0.5,
             type=float,
-            help="Coefficient for term penalizing pseudknots",
+            help="Coefficient for term penalizing pseudknots. Default: 0.5",
         )
         self.parser.add_argument(
             "-mu",
-            "--target_stem_lenth",
+            "--target_stem_length",
             default=-1,
             type=float,
-            help="Coefficient for term penalizing pseudknots",
+            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         self.parser.add_argument(
             "-l",
