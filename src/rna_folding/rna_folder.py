@@ -104,10 +104,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         else:
             # Pull out stem lengths for simplicity
             stems = [_[2] for _ in self.stems]
-            if (
-                hasattr(self.config.args, "target_stem_length")
-                and self.config.args.target_stem_length != -1
-            ):
+            if self.config.args.target_stem_length != -1:
                 mu = self.config.args.target_stem_length
             else:
                 mu = max(stems)

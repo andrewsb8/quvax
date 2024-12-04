@@ -157,6 +157,13 @@ class AnalysisConfig(Config):
             type=float,
             help="Coefficient for term penalizing pseudknots. Default: 0.5",
         )
+        energy_parser.add_argument(
+            "-mu",
+            "--target_stem_length",
+            default=-1,
+            type=float,
+            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
+        )
 
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
@@ -225,13 +232,6 @@ class AnalysisConfig(Config):
             type=int,
             default=3,
             help="Minimum loop length value",
-        )
-        parser_kns.add_argument(
-            "-mu",
-            "--target_stem_length",
-            default=-1,
-            type=float,
-            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         parser_kns.add_argument(
             "-sn",
