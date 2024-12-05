@@ -295,7 +295,7 @@ def test_base_pair_types():
     from src.analysis.analyses.base_pair_types import BasePairTypes
 
     testargs = [
-        "sec_struct_types",
+        "base_pair_types",
         "-i",
         "tests/test_files/test_structures/trial.ct",
     ]

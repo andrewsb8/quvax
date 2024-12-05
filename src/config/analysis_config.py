@@ -204,8 +204,8 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="Calculates the average, minimum, and maximum length, in number of bases, between base pairs for an input connectivity table.",
         )
-        parser_sst = subparsers.add_parser(
-            "sec_struct_types",
+        parser_bpt = subparsers.add_parser(
+            "base_pair_types",
             parents=[ss_parser],
             help="For given input structure file, calculates percent of bases in different types of secondary structures.",
         )
