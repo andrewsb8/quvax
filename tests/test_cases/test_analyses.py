@@ -267,13 +267,13 @@ def test_base_pair_ranges():
     )
 
 
-def test_sec_struct_types():
+def test_base_pair_types():
     """
     Test output for analysis computing average, max, min base pair
     ranges, counted in number of bases
 
     """
-    from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
+    from src.analysis.analyses.base_pair_types import BasePairTypes
 
     testargs = [
         "sec_struct_types",
@@ -281,7 +281,7 @@ def test_sec_struct_types():
         "tests/test_files/test_structures/trial.ct",
     ]
     config = AnalysisConfig(testargs)
-    analysis = SecondaryStructureTypes(config)
+    analysis = BasePairTypes(config)
 
     assert (
         analysis.no_pair == 3

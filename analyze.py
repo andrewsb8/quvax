@@ -25,9 +25,9 @@ if __name__ == "__main__":
 
         CompareCT(config)
     elif config.args.command == "sec_struct_types":
-        from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
+        from src.analysis.analyses.base_pair_types import BasePairTypes
 
-        SecondaryStructureTypes(config)
+        BasePairTypes(config)
     elif config.args.command == "base_pair_ranges":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 
