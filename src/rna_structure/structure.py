@@ -7,12 +7,20 @@ class RNAStructure(object):
 
     """
 
+    def _get_all_interactions(self):
+        print(self._get_wc_interactions() + self._get_wobble_interactions())
+        return self._get_wc_interactions() + self._get_wobble_interactions()
+
     def _get_wc_interactions(self):
         return [
             ("A", "U"),
             ("U", "A"),
             ("G", "C"),
             ("C", "G"),
+        ]
+
+    def _get_wobble_interactions(self):
+        return [
             ("G", "U"),
             ("U", "G"),
         ]
