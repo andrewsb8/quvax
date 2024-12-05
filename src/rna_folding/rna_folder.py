@@ -39,7 +39,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
     def __init__(self, config: Config):
         self.config = config
-        self.interactions = self._get_wc_interactions()
+        self.interactions = self._get_all_interactions()
         self.twobody_penalty = 500000
         self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000

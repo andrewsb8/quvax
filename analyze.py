@@ -25,8 +25,9 @@ if __name__ == "__main__":
 
         CompareCT(config)
     elif config.args.command == "sec_struct_types":
-        from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
+        from src.analysis.analyses.base_pair_types import BasePairTypes
 
+<<<<<<< HEAD
         SecondaryStructureTypes(config)
     elif config.args.command == "compute_energy":
         from src.analysis.analyses.compute_energy import ComputeEnergy
@@ -36,6 +37,9 @@ if __name__ == "__main__":
         from src.analysis.analyses.k_neighbor_energy import kNeighborEnergySearch
 
         kNeighborEnergySearch(config)
+=======
+        BasePairTypes(config)
+>>>>>>> main
     elif config.args.command == "base_pair_ranges":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 

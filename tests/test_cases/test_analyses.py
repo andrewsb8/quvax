@@ -283,3 +283,29 @@ def test_base_pair_ranges():
     analysis = ComputeEnergy(config)
 
     assert analysis.score == -12
+
+
+def test_base_pair_types():
+    """
+    Test output for analysis computing average, max, min base pair
+    ranges, counted in number of bases
+
+    """
+    from src.analysis.analyses.base_pair_types import BasePairTypes
+
+    testargs = [
+        "sec_struct_types",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = BasePairTypes(config)
+
+    assert (
+        analysis.no_pair == 3
+        and analysis.wc_base_pairs == 6
+        and analysis.wobble_base_pairs == 2
+        and analysis.nonwc_base_pairs == 0
+        and analysis.pseudoknots == 4
+        and analysis.num_bases == 11
+    )
