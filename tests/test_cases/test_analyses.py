@@ -267,7 +267,7 @@ def test_base_pair_ranges():
     )
 
 
-def test_base_pair_ranges():
+def test_compute_energy():
     """
     Test output for analysis to compute energy of input structure
 
