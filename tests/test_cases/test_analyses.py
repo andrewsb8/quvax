@@ -265,3 +265,29 @@ def test_base_pair_ranges():
         and analysis.max_range == 6
         and analysis.seq_len == 11
     )
+
+
+def test_sec_struct_types():
+    """
+    Test output for analysis computing average, max, min base pair
+    ranges, counted in number of bases
+
+    """
+    from src.analysis.analyses.sec_struct_types import SecondaryStructureTypes
+
+    testargs = [
+        "sec_struct_types",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = SecondaryStructureTypes(config)
+
+    assert (
+        analysis.no_pair == 3
+        and analysis.wc_base_pairs == 6
+        and analysis.wobble_base_pairs == 2
+        and analysis.nonwc_base_pairs == 0
+        and analysis.pseudoknots == 4
+        and analysis.num_bases == 11
+    )
