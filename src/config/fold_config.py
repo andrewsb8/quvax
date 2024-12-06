@@ -19,7 +19,7 @@ class FoldConfig(Config):
     input : str
         Input codon sequence
     solver : str
-        Designation of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo), ES (Exact Solver)
+        Designation of solver for RNA folding. Options: SA (Simulated Annealing), MC (Monte Carlo), ES (Exact Solver), CTSA (Co-transcriptional Simulated Annealing)
     min_stem_len : int
         Minimum number of stems required in RNA folding
     min_loop_len : int
