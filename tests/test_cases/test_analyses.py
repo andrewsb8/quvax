@@ -281,7 +281,6 @@ def test_compute_energy():
     ]
     config = AnalysisConfig(testargs)
     analysis = ComputeEnergy(config)
-
     assert analysis.score == -12
 
 
@@ -309,6 +308,7 @@ def test_base_pair_types():
         and analysis.pseudoknots == 4
         and analysis.num_bases == 11
     )
+
 
 def test_classify_stems():
     """

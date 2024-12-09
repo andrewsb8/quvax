@@ -140,15 +140,29 @@ class AnalysisConfig(Config):
             "-cB",
             "--coeff_max_bond",
             default=1,
-            type=int,
+            type=float,
             help="Coefficient for term maximizing number of bonds",
         )
         energy_parser.add_argument(
             "-cL",
             "--coeff_stem_len",
             default=10,
-            type=int,
+            type=float,
             help="Coefficient for term penalizing short stems",
+        )
+        energy_parser.add_argument(
+            "-pf",
+            "--pseudo_factor",
+            default=0.5,
+            type=float,
+            help="Coefficient for term penalizing pseudknots. Default: 0.5",
+        )
+        energy_parser.add_argument(
+            "-mu",
+            "--target_stem_length",
+            default=-1,
+            type=int,
+            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
 
         # subparsers for each analysis which relies on a database
