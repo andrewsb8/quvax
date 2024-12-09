@@ -33,9 +33,9 @@ if __name__ == "__main__":
 
         ComputeEnergy(config)
     elif config.args.command == "k_neighbor_energy":
-        from src.analysis.analyses.k_neighbor_energy import kNeighborEnergySearch
+        from src.analysis.analyses.k_neighbor_energy import KNeighborEnergySearch
 
-        kNeighborEnergySearch(config)
+        KNeighborEnergySearch(config)
     elif config.args.command == "base_pair_ranges":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 

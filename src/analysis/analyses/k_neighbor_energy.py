@@ -1,7 +1,7 @@
 from src.analysis.analyses.compute_energy import ComputeEnergy
 
 
-class kNeighborEnergySearch(ComputeEnergy):
+class KNeighborEnergySearch(ComputeEnergy):
     """
     For a given input sequence and structure (connectivity table or TODO dot-bracket),
     calculate distribution of energies by changing k neighbors (stems)
