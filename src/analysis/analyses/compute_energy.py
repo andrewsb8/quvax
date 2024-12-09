@@ -1,3 +1,4 @@
+from abc import ABC
 from src.analysis.analysis import Analysis
 from src.rna_folding.rna_folder import RNAFolder
 from src.rna_structure.structure import RNAStructure
@@ -52,3 +53,23 @@ class ComputeEnergy(Analysis):
         self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
         self.config.log.info("Energy of input structure: " + str(self.score))
         print(self.rna_folder_obj.n, self.score)
+
+    def _find_observed_stem_indices(self):
+        active_stem_ind = []
+        for stem in self.observed_stems:
+            found = False
+            for j in range(len(self.rna_folder_obj.stems)):
+                if stem == self.rna_folder_obj.stems[j]:
+                    found = True
+                    active_stem_ind.append(j)
+            # if stem in connect table is not found in possible stem list
+            # (self.rna_folder_obj.stems), likely because value for -ms is
+            # higher than some stem lengths in input structure or a loop
+            # smaller than specified by -ml is observed. Then add
+            # observed stem to stem list and active stem list. This way,
+            # the observed stems will be considered in the energy calculation
+            # (or bit flipping process in k_neighbor_energy)
+            if not found:
+                self.rna_folder_obj.stems.append(stem)
+                active_stem_ind.append(len(self.rna_folder_obj.stems) - 1)
+            return active_stem_ind
