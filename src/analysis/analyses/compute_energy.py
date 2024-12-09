@@ -22,11 +22,11 @@ class ComputeEnergy(Analysis):
         super().__init__(config)
         # read sequence from structure file
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
-        seq = StructureIO()._get_sequence_from_connect_table(self.connect_table)
+        self.seq = StructureIO()._get_sequence_from_connect_table(self.connect_table)
 
         # generate stems for sequence - need min stem length and min loop length!
         self.rna_folder_obj = RNAFolder(config)
-        self.rna_folder_obj._declare_stem_vars(seq)
+        self.rna_folder_obj._declare_stem_vars(self.seq)
 
         # convert from connectivity table to stem tuples
         self.rna_struct_obj = RNAStructure()
@@ -48,5 +48,7 @@ class ComputeEnergy(Analysis):
 
     def _analyze(self):
         self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
+        self.config.log.info("Sequence: " + self.seq)
+        self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
         self.config.log.info("Energy of input structure: " + str(self.score))
         print(self.rna_folder_obj.n, self.score)
