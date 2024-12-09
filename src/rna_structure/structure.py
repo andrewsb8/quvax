@@ -7,19 +7,29 @@ class RNAStructure(object):
 
     """
 
+    def _get_all_interactions(self):
+        print(self._get_wc_interactions() + self._get_wobble_interactions())
+        return self._get_wc_interactions() + self._get_wobble_interactions()
+
     def _get_wc_interactions(self):
         return [
             ("A", "U"),
             ("U", "A"),
             ("G", "C"),
             ("C", "G"),
+        ]
+
+    def _get_wobble_interactions(self):
+        return [
             ("G", "U"),
             ("U", "G"),
         ]
 
     def _detect_stem_overlap(self, stem1, stem2):
-        pairs1 = self._stem_to_pair_list(stem1)
-        pairs2 = self._stem_to_pair_list(stem2)
+        from src.rna_structure.structure_convert import StructureConvert
+        struct_convert = StructureConvert()
+        pairs1 = struct_convert._stem_to_pair_list(stem1)
+        pairs2 = struct_convert._stem_to_pair_list(stem2)
 
         keep1 = [
             pair1

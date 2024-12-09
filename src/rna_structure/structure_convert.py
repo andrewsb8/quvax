@@ -1,6 +1,3 @@
-from src.rna_structure.structure import RNAStructure
-
-
 class StructureConvert(object):
     """
     Class containing logic for converting between different
@@ -14,6 +11,7 @@ class StructureConvert(object):
         notation.
 
         """
+        from src.rna_structure.structure import RNAStructure
         rna_struct_obj = RNAStructure()
 
         dot_bracket = ["." for i in range(sequence_len)]
