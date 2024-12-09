@@ -32,6 +32,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 
         BasePairRanges(config)
+    elif config.args.command == "classify_stems":
+        from src.analysis.analyses.classify_stems import ClassifyStems
+
+        ClassifyStems(config)
 
     else:
         config.log.error(

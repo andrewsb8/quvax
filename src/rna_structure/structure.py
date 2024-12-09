@@ -27,6 +27,7 @@ class RNAStructure(object):
 
     def _detect_stem_overlap(self, stem1, stem2):
         from src.rna_structure.structure_convert import StructureConvert
+
         struct_convert = StructureConvert()
         pairs1 = struct_convert._stem_to_pair_list(stem1)
         pairs2 = struct_convert._stem_to_pair_list(stem2)
