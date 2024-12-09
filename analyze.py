@@ -40,6 +40,14 @@ if __name__ == "__main__":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 
         BasePairRanges(config)
+<<<<<<< HEAD
+=======
+    elif config.args.command == "stem_lengths":
+        from src.analysis.analyses.stem_lengths import StemLengths
+
+        StemLengths(config)
+
+>>>>>>> 7b17b52 (Adding stem length analysis)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
