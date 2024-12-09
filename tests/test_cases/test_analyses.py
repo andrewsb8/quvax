@@ -267,7 +267,6 @@ def test_base_pair_ranges():
     )
 
 
-<<<<<<< HEAD
 def test_compute_energy():
     """
     Test output for analysis to compute energy of input structure
@@ -283,7 +282,6 @@ def test_compute_energy():
     config = AnalysisConfig(testargs)
     analysis = ComputeEnergy(config)
     assert analysis.score == -12
-
 
 
 def test_base_pair_types():
