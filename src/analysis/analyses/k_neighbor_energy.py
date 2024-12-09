@@ -18,24 +18,7 @@ class KNeighborEnergySearch(ComputeEnergy):
         self.rna_folder_obj._gen_stems()
 
         # find indices of stems from connect table and place in sorted list
-        self.active_stem_indices = []
-        for stem in self.observed_stems:
-            found = False
-            for j in range(len(self.rna_folder_obj.stems)):
-                if stem == self.rna_folder_obj.stems[j]:
-                    found = True
-                    self.active_stem_indices.append(j)
-            # if stem in connect table is not found in possible stem list
-            # (self.rna_folder_obj.stems), likely because value for -ms is
-            # higher than some stem lengths in input structure or a loop
-            # smaller than specified by -ml is observed. Then add
-            # observed stem to stem list and active stem list. This way,
-            # the observed stems will be considered in the energy calculation
-            # (or bit flipping process in k_neighbor_energy)
-            if not found:
-                self.rna_folder_obj.stems.append(stem)
-                self.active_stem_indices.append(len(self.rna_folder_obj.stems) - 1)
-        self.active_stem_indices.sort()
+        self.active_stem_indices = self._find_observed_stem_indices()
 
         self.rna_folder_obj.len_stem_list = len(self.rna_folder_obj.stems)
         self.rna_folder_obj._compute_h_and_J()
