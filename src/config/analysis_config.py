@@ -239,13 +239,6 @@ class AnalysisConfig(Config):
             help="Minimum loop length value",
         )
         parser_kns.add_argument(
-            "-mu",
-            "--target_stem_lenth",
-            default=-1,
-            type=float,
-            help="Coefficient for term penalizing pseudknots",
-        )
-        parser_kns.add_argument(
             "-sn",
             "--span",
             default=0,
