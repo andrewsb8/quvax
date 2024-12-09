@@ -4,11 +4,12 @@ from src.rna_structure.structure_io import StructureIO
 from src.rna_structure.structure_convert import StructureConvert
 
 
-class SecondaryStructureTypes(Analysis):
+class BasePairTypes(Analysis):
     """
     Reads an input structure file (connectivity table [TODO: and dot-bracket])
-    and returns the percent of bases in the following categories of secondary
-    structure: watson-crick stem, non-WC stem, pseudoknot, or no stem.
+    and returns the number of bases in the following categories of secondary
+    structure: watson-crick pairs, wobble pairs, non-WC pairs, pairs in
+    pseudoknot, and unpaired bases.
 
     Parameters
     ----------
