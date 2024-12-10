@@ -39,10 +39,10 @@ class ClassifyStems(Analysis):
         self.max_stem = max(stem_lengths)
         self.seq_len = sequence_len
         self.avg_stem = sum(stem_lengths) / (self.num_stems)
-        self.pseudos, self.overlaps = self._get_pseudos_and_overlaps()
+        self.pseudos, self.overlaps, self.stems_of_loops = self._get_pseudos_and_overlaps()
 
         self.config.log.info(
-            "Outputs: Avg stem length, Min stem length, Max stem length, Sequence length, Number of stems, Number of pseudoknot stems, Number of overlapping stems"
+            "Outputs: Avg stem length, Min stem length, Max stem length, Sequence length, Number of stems, Number of pseudoknot stems, Number of overlapping stems, Number of stems formed by two hairpin loops"
         )
         outputs = (
             self.avg_stem,
@@ -52,6 +52,7 @@ class ClassifyStems(Analysis):
             self.num_stems,
             self.pseudos,
             self.overlaps,
+            self.stems_of_loops,
         )
         vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
         self.config.log.info(vals)
@@ -64,7 +65,8 @@ class ClassifyStems(Analysis):
         overlaps = 0
         stems_of_loops = 0
         for i in range(self.num_stems):
-            print(self.rna_struct_obj._detect_stem_of_loops(self.stems[i], self.stems))
+            if self.rna_struct_obj._detect_stem_of_loops(self.stems[i], self.stems):
+                stems_of_loops += 1
             for j in range(i + 1, self.num_stems):
                 self.rna_struct_obj = RNAStructure()
                 if self.rna_struct_obj._is_pseudo(self.stems[i], self.stems[j]):
@@ -73,4 +75,4 @@ class ClassifyStems(Analysis):
                     self.stems[i], self.stems[j]
                 ):
                     overlaps += 1
-        return pseudos, overlaps
+        return pseudos, overlaps, stems_of_loops

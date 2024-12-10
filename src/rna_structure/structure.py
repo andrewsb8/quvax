@@ -70,14 +70,18 @@ class RNAStructure(object):
 
         stem_in_loop_count = 0
         for stem in stems:
-            if stem_in_loop_count > 1:
-                return True
+            if stem == ref_stem:
+                continue
             # check if number of bases between base pairs is
             # below arbitrary threshold which indicates a tight,
             # inflexible loop which should not be able to form
             # sufficient stem lengths with other loops
-            if (stem[1] - stem[2]) - (stem[0] + stem[2]) <=10:
+            if (stem[1] - stem[2]) - (stem[0] + stem[2]) <= 15:
                 # then check to see if ref stem falls between it
-                if (ref_stem[0] + ref_stem[2]) > (stem[0] + stem[2]) and (ref_stem[1] - ref_stem[2]) < (stem[1] - stem[2]):
+                if (ref_stem[0] > stem[0] + (stem[2]-1) and ref_stem[0] + (ref_stem[2]-1) < stem[1] - (stem[2]-1)): # or (ref_stem[1] - (ref_stem[2] -1 ) > stem[0] + (stem[2]-1) and ref_stem[1] < stem[1] - (stem[2]-1)):
                     stem_in_loop_count += 1
+                elif (ref_stem[1] - (ref_stem[2] - 1) > stem[0] + (stem[2]-1) and ref_stem[1] < stem[1] - (stem[2] -1)):
+                    stem_in_loop_count += 1
+            if stem_in_loop_count > 1:
+                    return True
         return False
