@@ -60,3 +60,24 @@ class RNAStructure(object):
         ):
             return True
         return False
+
+    def _detect_stem_of_loops(self, ref_stem, stems):
+        """
+        Function to determin if stem (pseudoknot) if formed
+        by bases which are both in hairpin loops
+
+        """
+
+        stem_in_loop_count = 0
+        for stem in stems:
+            if stem_in_loop_count > 1:
+                return True
+            # check if number of bases between base pairs is
+            # below arbitrary threshold which indicates a tight,
+            # inflexible loop which should not be able to form
+            # sufficient stem lengths with other loops
+            if (stem[1] - stem[2]) - (stem[0] + stem[2]) <=10:
+                # then check to see if ref stem falls between it
+                if (ref_stem[0] + ref_stem[2]) > (stem[0] + stem[2]) and (ref_stem[1] - ref_stem[2]) < (stem[1] - stem[2]):
+                    stem_in_loop_count += 1
+        return False

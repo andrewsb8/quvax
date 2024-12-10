@@ -31,6 +31,8 @@ class ClassifyStems(Analysis):
             sequence_len, connect_table_df
         )
 
+        self.rna_struct_obj = RNAStructure()
+
         self.num_stems = len(self.stems)
         stem_lengths = list(inner_list[2] for inner_list in self.stems)
         self.min_stem = min(stem_lengths)
@@ -60,7 +62,9 @@ class ClassifyStems(Analysis):
     def _get_pseudos_and_overlaps(self):
         pseudos = 0
         overlaps = 0
+        stems_of_loops = 0
         for i in range(self.num_stems):
+            print(self.rna_struct_obj._detect_stem_of_loops(self.stems[i], self.stems))
             for j in range(i + 1, self.num_stems):
                 self.rna_struct_obj = RNAStructure()
                 if self.rna_struct_obj._is_pseudo(self.stems[i], self.stems[j]):
