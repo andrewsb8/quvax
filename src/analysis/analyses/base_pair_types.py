@@ -21,7 +21,7 @@ class BasePairTypes(Analysis):
     def __init__(self, config):
         super().__init__(config)
         self.connect_table = StructureIO()._ct_to_dataframe(self.config.args.input)
-        self.num_bases = self.connect_table["Index"].iloc[-1]
+        self.num_bases = len(self.connect_table.index)
 
         # convert from connectivity table to dot bracket for easy identification of pseudoknots
         self.rna_struct_obj = RNAStructure()
