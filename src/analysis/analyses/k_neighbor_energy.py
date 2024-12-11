@@ -18,7 +18,7 @@ class KNeighborEnergySearch(ComputeEnergy):
         self.rna_folder_obj._gen_stems()
 
         # find indices of stems from connect table and place in sorted list
-        self.active_stem_indices = self._find_observed_stem_indices()
+        self.active_stem_indices = self._find_observed_stem_indices(self.observed_stems, self.rna_folder_obj.stems)
 
         self.rna_folder_obj.len_stem_list = len(self.rna_folder_obj.stems)
         self.rna_folder_obj._compute_h_and_J()

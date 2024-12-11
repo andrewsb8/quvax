@@ -278,10 +278,37 @@ def test_compute_energy():
         "compute_energy",
         "-i",
         "tests/test_files/test_structures/trial.ct",
+        "-ms",
+        "2",
+        "-ml",
+        "2",
     ]
     config = AnalysisConfig(testargs)
     analysis = ComputeEnergy(config)
     assert analysis.score == -12
+
+
+def test_k_neighbor_energy():
+    """
+    Test output for analysis where energies of structure
+    "neighbors" (perturbing system by adding/removing one
+    stem)
+
+    """
+    from src.analysis.analyses.k_neighbor_energy import KNeighborEnergySearch
+
+    testargs = [
+        "k_neighbor_energy",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+        "-ms",
+        "2",
+        "-ml",
+        "2",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = KNeighborEnergySearch(config)
+    assert analysis.energies == [-12.0, -4, 999984.0, 999984.0, -4]
 
 
 def test_base_pair_types():

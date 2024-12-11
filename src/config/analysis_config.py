@@ -164,6 +164,27 @@ class AnalysisConfig(Config):
             type=int,
             help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
+        energy_parser.add_argument(
+            "-ms",
+            "--min_stem_len",
+            type=int,
+            default=3,
+            help="Minimum stem length value",
+        )
+        energy_parser.add_argument(
+            "-ml",
+            "--min_loop_len",
+            type=int,
+            default=3,
+            help="Minimum loop length value",
+        )
+        energy_parser.add_argument(
+            "-sn",
+            "--span",
+            default=0,
+            type=int,
+            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
+        )
 
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
@@ -223,27 +244,6 @@ class AnalysisConfig(Config):
             "k_neighbor_energy",
             parents=[ss_parser, energy_parser],
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
-        )
-        parser_kns.add_argument(
-            "-ms",
-            "--min_stem_len",
-            type=int,
-            default=3,
-            help="Minimum stem length value",
-        )
-        parser_kns.add_argument(
-            "-ml",
-            "--min_loop_len",
-            type=int,
-            default=3,
-            help="Minimum loop length value",
-        )
-        parser_kns.add_argument(
-            "-sn",
-            "--span",
-            default=0,
-            type=int,
-            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
         )
         parser_kns.add_argument(
             "-k",
