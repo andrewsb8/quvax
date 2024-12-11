@@ -13,6 +13,9 @@ class ContactOrder(Analysis):
                 Sum over base pairs j>i[ Distance between base pairs ]
             ]
 
+    If no base pairs are in the input structure, then a value of inf is
+    assigned.
+
     Parameters
     __________
 
@@ -35,8 +38,12 @@ class ContactOrder(Analysis):
             & (self.connect_table["Paired With"] > self.connect_table["Index"])
         ]
         count_base_pairs = len(base_pairs.index)
-        self.contact_order = sum(
-            base_pairs.loc[:, "Paired With"].to_numpy()
-            - base_pairs.loc[:, "Index"].to_numpy()
-        ) / (self.seq_length * count_base_pairs)
-        print(self.seq_length, self.contact_order)
+        if count_base_pairs == 0:
+            self.config.log.warning("No base pairs in input structure!")
+            print(self.seq_length, "inf")
+        else:
+            self.contact_order = sum(
+                base_pairs.loc[:, "Paired With"].to_numpy()
+                - base_pairs.loc[:, "Index"].to_numpy()
+            ) / (self.seq_length * count_base_pairs)
+            print(self.seq_length, self.contact_order)
