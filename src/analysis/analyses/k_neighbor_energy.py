@@ -18,7 +18,9 @@ class KNeighborEnergySearch(ComputeEnergy):
         self.rna_folder_obj._gen_stems()
 
         # find indices of stems from connect table and place in sorted list
-        self.active_stem_indices = self._find_observed_stem_indices(self.observed_stems, self.rna_folder_obj.stems)
+        self.active_stem_indices = self._find_observed_stem_indices(
+            self.observed_stems, self.rna_folder_obj.stems
+        )
 
         self.rna_folder_obj.len_stem_list = len(self.rna_folder_obj.stems)
         self.rna_folder_obj._compute_h_and_J()
@@ -45,8 +47,18 @@ class KNeighborEnergySearch(ComputeEnergy):
             self.energies.append(new_energy)
         self.config.log.info("Sequence: " + self.rna_folder_obj.nseq)
         self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
-        self.config.log.info("Outputs: energy of input structure, count of neighbors with energy < 0, count of neighbors with lower energy than input structure, minimum energy of neighbors")
-        self.config.log.info(str(self.energies[0]) + " " + str(valid_neighbor_count) + " " + str(lower_energy_neighbor_count) + " " + str(min(self.energies)))
+        self.config.log.info(
+            "Outputs: energy of input structure, count of neighbors with energy < 0, count of neighbors with lower energy than input structure, minimum energy of neighbors"
+        )
+        self.config.log.info(
+            str(self.energies[0])
+            + " "
+            + str(valid_neighbor_count)
+            + " "
+            + str(lower_energy_neighbor_count)
+            + " "
+            + str(min(self.energies))
+        )
         output_energies = ", ".join(str(_) for _ in self.energies)
         self.config.log.info("List of input structure and neighbor output energies")
         self.config.log.info(output_energies)

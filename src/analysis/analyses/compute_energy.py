@@ -45,7 +45,9 @@ class ComputeEnergy(Analysis):
             # connectivity table
             if self.config.args.target_stem_length == -1:
                 self.rna_folder_obj._gen_stems()
-                self.active_stem_indices = self._find_observed_stem_indices(self.observed_stems, self.rna_folder_obj.stems)
+                self.active_stem_indices = self._find_observed_stem_indices(
+                    self.observed_stems, self.rna_folder_obj.stems
+                )
                 self.rna_folder_obj.len_stem_list = len(self.rna_folder_obj.stems)
             else:
                 self.rna_folder_obj.stems = self.observed_stems
