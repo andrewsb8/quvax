@@ -24,10 +24,14 @@ class FoldConfig(Config):
         Minimum number of stems required in RNA folding
     min_loop_len : int
         Minimum number of loops required in RNA folding
-    coeff_max_bond : int
+    coeff_max_bond : float
         Coefficient for maximizing the number of bonds in RNA folding
-    coeff_stem_len : int
+    coeff_stem_len : float
         Coefficient for energetically penalizing short stems in RNA folding
+    pseudo_penalty : float
+        Pseudoknot penalty coefficient
+    target_stem_len : int
+        value for mu in rna_folder.py
     span : int
         Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.
     log_file_name : str
@@ -107,15 +111,29 @@ class FoldConfig(Config):
             "-cB",
             "--coeff_max_bond",
             default=1,
-            type=int,
+            type=float,
             help="Coefficient for term maximizing number of bonds",
         )
         self.parser.add_argument(
             "-cL",
             "--coeff_stem_len",
             default=10,
-            type=int,
+            type=float,
             help="Coefficient for term penalizing short stems",
+        )
+        self.parser.add_argument(
+            "-pf",
+            "--pseudo_factor",
+            default=0.5,
+            type=float,
+            help="Coefficient for term penalizing pseudknots. Default: 0.5",
+        )
+        self.parser.add_argument(
+            "-mu",
+            "--target_stem_length",
+            default=-1,
+            type=int,
+            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         self.parser.add_argument(
             "-sn",

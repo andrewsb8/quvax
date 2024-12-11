@@ -134,6 +134,58 @@ class AnalysisConfig(Config):
             help="Log file for recording certain output, warnings, and errors",
         )
 
+        # shared parser options for each analysis which involves computing energy
+        energy_parser = argparse.ArgumentParser(add_help=False)
+        energy_parser.add_argument(
+            "-cB",
+            "--coeff_max_bond",
+            default=1,
+            type=float,
+            help="Coefficient for term maximizing number of bonds",
+        )
+        energy_parser.add_argument(
+            "-cL",
+            "--coeff_stem_len",
+            default=10,
+            type=float,
+            help="Coefficient for term penalizing short stems",
+        )
+        energy_parser.add_argument(
+            "-pf",
+            "--pseudo_factor",
+            default=0.5,
+            type=float,
+            help="Coefficient for term penalizing pseudknots. Default: 0.5",
+        )
+        energy_parser.add_argument(
+            "-mu",
+            "--target_stem_length",
+            default=-1,
+            type=int,
+            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
+        )
+        energy_parser.add_argument(
+            "-ms",
+            "--min_stem_len",
+            type=int,
+            default=3,
+            help="Minimum stem length value",
+        )
+        energy_parser.add_argument(
+            "-ml",
+            "--min_loop_len",
+            type=int,
+            default=3,
+            help="Minimum loop length value",
+        )
+        energy_parser.add_argument(
+            "-sn",
+            "--span",
+            default=0,
+            type=int,
+            help="Option to specify maximum distance, in terms of relative sequence location, between base pairs that will be considered for stem formation. If < 1, no span will be used. Default: 0.",
+        )
+
         # subparsers for each analysis which relies on a database
         subparsers = parser.add_subparsers(dest="command")
         parser_fe_landscape = subparsers.add_parser(
@@ -182,6 +234,23 @@ class AnalysisConfig(Config):
             "base_pair_types",
             parents=[ss_parser],
             help="For given input structure file, calculates percent of bases in different types of secondary structures.",
+        )
+        parser_comp_energy = subparsers.add_parser(
+            "compute_energy",
+            parents=[ss_parser, energy_parser],
+            help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
+        )
+        parser_kns = subparsers.add_parser(
+            "k_neighbor_energy",
+            parents=[ss_parser, energy_parser],
+            help="For a given input sequence and structure (connectivity table or TODO dot-bracket), characterize energy landscape by changing k neighbors (stems).",
+        )
+        parser_kns.add_argument(
+            "-k",
+            "--neighbors",
+            default=1,
+            type=int,
+            help="For a given input sequence and structure (connectivity table or TODO dot-bracket), calculate distribution of energies by changing k neighbors (stems)",
         )
 
         if args is None:

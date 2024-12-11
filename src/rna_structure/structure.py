@@ -8,7 +8,6 @@ class RNAStructure(object):
     """
 
     def _get_all_interactions(self):
-        print(self._get_wc_interactions() + self._get_wobble_interactions())
         return self._get_wc_interactions() + self._get_wobble_interactions()
 
     def _get_wc_interactions(self):

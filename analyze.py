@@ -28,6 +28,14 @@ if __name__ == "__main__":
         from src.analysis.analyses.base_pair_types import BasePairTypes
 
         BasePairTypes(config)
+    elif config.args.command == "compute_energy":
+        from src.analysis.analyses.compute_energy import ComputeEnergy
+
+        ComputeEnergy(config)
+    elif config.args.command == "k_neighbor_energy":
+        from src.analysis.analyses.k_neighbor_energy import KNeighborEnergySearch
+
+        KNeighborEnergySearch(config)
     elif config.args.command == "base_pair_ranges":
         from src.analysis.analyses.base_pair_ranges import BasePairRanges
 
@@ -36,7 +44,6 @@ if __name__ == "__main__":
         from src.analysis.analyses.classify_stems import ClassifyStems
 
         ClassifyStems(config)
-
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."

@@ -41,16 +41,18 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.config = config
         self.interactions = self._get_all_interactions()
         self.twobody_penalty = 500000
-        self.pseudo_factor = 0.5
         self.no_stem_penalty = 500000
 
-    def _fold_prep(self, sequence):
+    def _declare_stem_vars(self, sequence):
         self.nseq = sequence
         self.n = len(self.nseq)
         self.stems = []
         self.h = dict()
         self.J = dict()
         self._pairs = []
+
+    def _fold_prep(self, sequence):
+        self._declare_stem_vars(sequence)
         self._gen_stems()
         self.len_stem_list = len(self.stems)
         self._compute_h_and_J()
@@ -102,7 +104,10 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         else:
             # Pull out stem lengths for simplicity
             stems = [_[2] for _ in self.stems]
-            mu = max(stems)
+            if self.config.args.target_stem_length != -1:
+                mu = self.config.args.target_stem_length
+            else:
+                mu = max(stems)
 
         # Compute all local fields and couplings
         h = {
@@ -131,7 +136,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 is_pseudo = self._is_pseudo(self.stems[i], self.stems[j])
 
                 if is_pseudo:
-                    J[(i, j)] += self.pseudo_factor * abs(J[(i, j)])
+                    J[(i, j)] += self.config.args.pseudo_factor * abs(J[(i, j)])
 
         self.h = h
         self.J = J
