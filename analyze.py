@@ -44,6 +44,10 @@ if __name__ == "__main__":
         from src.analysis.analyses.classify_stems import ClassifyStems
 
         ClassifyStems(config)
+    elif config.args.command == "contact_order":
+        from src.analysis.analyses.contact_order import ContactOrder
+
+        ContactOrder(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."
