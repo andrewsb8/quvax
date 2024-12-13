@@ -84,7 +84,7 @@ def test_target_start_codon_withM_noerror(caplog):
     DesignConfig(testargs)
     log_entry = (
         "src.logging.logging",
-        20,  # 30 indicates WARNING, 20 indicates INFO
+        10,  # 30 indicates WARNING, 20 indicates INFO, 10 DEBUG
         "\n\nList of Parameters:",
     )
     assert log_entry in caplog.record_tuples
