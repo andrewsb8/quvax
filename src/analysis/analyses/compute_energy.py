@@ -28,6 +28,9 @@ class ComputeEnergy(Analysis):
         self.rna_folder_obj = RNAFolder(config)
         self.rna_folder_obj._declare_stem_vars(seq)
 
+        self.config.log.debug("Sequence: " + self.rna_folder_obj.nseq)
+        self.config.log.debug("Sequence Length: " + str(self.rna_folder_obj.n))
+
         # convert from connectivity table to stem tuples
         self.rna_struct_obj = RNAStructure()
         self.struct_conv_obj = StructureConvert()
@@ -60,10 +63,10 @@ class ComputeEnergy(Analysis):
 
     def _analyze(self):
         self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
-        self.config.log.info("Sequence: " + self.rna_folder_obj.nseq)
-        self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
-        self.config.log.info("Energy of input structure: " + str(self.score))
-        print(self.rna_folder_obj.n, self.score)
+        self.config.log.info("Outputs: Sequence Length, Energy ")
+        output_string = str(self.rna_folder_obj.n) + " " + str(self.score)
+        self.config.log.debug(output_string)
+        print(output_string)
 
     def _find_observed_stem_indices(self, observed_stems, stems):
         """

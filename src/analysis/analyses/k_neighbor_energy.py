@@ -45,12 +45,10 @@ class KNeighborEnergySearch(ComputeEnergy):
             if new_energy < self.energies[0]:
                 lower_energy_neighbor_count += 1
             self.energies.append(new_energy)
-        self.config.log.info("Sequence: " + self.rna_folder_obj.nseq)
-        self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
-        self.config.log.info(
+        self.config.log.debug(
             "Outputs: energy of input structure, count of neighbors with energy < 0, count of neighbors with lower energy than input structure, minimum energy of neighbors"
         )
-        self.config.log.info(
+        self.config.log.debug(
             str(self.energies[0])
             + " "
             + str(valid_neighbor_count)
@@ -61,5 +59,5 @@ class KNeighborEnergySearch(ComputeEnergy):
         )
         output_energies = ", ".join(str(_) for _ in self.energies)
         self.config.log.info("List of input structure and neighbor output energies")
-        self.config.log.info(output_energies)
+        self.config.log.debug(output_energies)
         print(output_energies)

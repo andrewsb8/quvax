@@ -49,9 +49,9 @@ class CompareCT(Analysis):
                     """Value for """ + k + """ is undefined. """
                     """Multiple truth values are zero which led to division by zero."""
                 )
-        self.config.log.info(", ".join([k for k in list]))
+        self.config.log.info("Outputs: " + ", ".join([k for k in list]))
         vals = ", ".join([str(list[k]) for k in list])
-        self.config.log.info(vals)
+        self.config.log.debug(vals)
         # printing output values to stdout so it can be piped to file in bulk analysis
         print(vals)
 
