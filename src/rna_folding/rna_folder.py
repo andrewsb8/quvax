@@ -53,12 +53,12 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
     def _fold_prep(self, sequence):
         self._declare_stem_vars(sequence)
-        self.config.log.info("Sequence Length: " + str(self.n))
+        self.config.log.debug("Sequence Length: " + str(self.n))
         self._gen_stems()
         self.len_stem_list = len(self.stems)
-        self.config.log.info("Finished generating stems. Number of possible stems: " + str(self.len_stem_list))
+        self.config.log.debug("Finished generating stems. Number of possible stems: " + str(self.len_stem_list))
         self._compute_h_and_J()
-        self.config.log.info("Finished generating Hamiltonian matrices.")
+        self.config.log.debug("Finished generating Hamiltonian matrices.")
 
     def _gen_stems(self):
         """

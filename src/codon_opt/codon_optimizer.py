@@ -29,7 +29,7 @@ class CodonOptimizer(ABC):
     def __init__(self, config: Config):
         self.config = config
         random.seed(self.config.args.random_seed)
-        self.config.log.info("Input protein sequence length: " + str(len(self.config.protein_sequence)))
+        self.config.log.debug("Input protein sequence length: " + str(len(self.config.protein_sequence)))
         self.codon_optimize_step = 0
         self.convergence_count = 0
         (
@@ -64,7 +64,7 @@ class CodonOptimizer(ABC):
             self.sec_structs = self.config.sec_structs
             if self.config.args.target is not None:
                 self.target_min_free_energy = self.config.target_min_free_energy
-        self.config.log.info("Beginning codon optimization")
+        self.config.log.debug("Beginning codon optimization")
 
     @abstractmethod
     def _optimize(self):
@@ -278,9 +278,9 @@ class CodonOptimizer(ABC):
         self.list_seqs = [self._convert_ints_to_codons(s) for s in self.members]
         if fold_sequences:
             for s in range(len(self.list_seqs)):
-                self.config.log.info("Generation number: " + str(self.codon_optimize_step) + ". Population number " + str(s) + " of " + str(self.config.args.population_size))
+                self.config.log.debug("Generation number: " + str(self.codon_optimize_step) + ". Population number " + str(s) + " of " + str(self.config.args.population_size))
                 self._fold_rna(self.list_seqs[s])
-                self.config.log.info("Completed structure prediction.\n")
+                self.config.log.debug("Completed structure prediction.\n")
                 self.energies[s] = self.folder.best_score
                 self.sec_structs[s] = self.folder.dot_bracket
         self._update_mfe(self.energies)

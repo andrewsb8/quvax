@@ -20,23 +20,23 @@ class Log(object):
             )
             log.removeHandler(temp_handler)
         stderr_handler = logging.StreamHandler(sys.stderr)
-        stderr_handler.setLevel(logging.WARNING)
+        stderr_handler.setLevel(logging.INFO)
         file_handler = logging.FileHandler(log_file_name, mode="w+")
         file_handler.setLevel(logging.DEBUG)
         log.addHandler(file_handler)
         log.addHandler(stderr_handler)
         log.info("Program Version : " + __version__)
         log.info("Execution Time : " + str(datetime.datetime.now()))
-        log.info(
+        log.debug(
             "Command line: python " + __prog__ + " " + " ".join(sys.argv[1:]) + "\n\n"
         )
-        log.info("Warnings and Errors:\n")
+        log.debug("Warnings and Errors:\n")
         return log
 
     def _log_args(self, log, arg_list, protein_sequence=None):
-        log.info("\n\nList of Parameters:")
+        log.debug("\n\nList of Parameters:")
         if protein_sequence is not None:
-            log.info("Protein Sequence : " + protein_sequence)
+            log.debug("Protein Sequence : " + protein_sequence)
         for k in arg_list:
-            log.info(k + " : " + str(arg_list[k]))
-        log.info("\n\n")
+            log.debug(k + " : " + str(arg_list[k]))
+        log.debug("\n\n")
