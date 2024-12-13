@@ -32,7 +32,6 @@ class MC(RNAFolder):
             self._do_mc()
         self.dot_bracket = self._stems_to_dot_bracket(self.n, self.stems_used)
         if post_process:
-            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._post_process()
 
     def _add_pair(self):

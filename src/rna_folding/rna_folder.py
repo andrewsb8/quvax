@@ -175,6 +175,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 self.config.args.output, self.best_score, self.nseq, self.dot_bracket
             )
         elif self.config.args.output_type == "connect_table":
+            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._write_connect_table(
                 self.config.args.output,
                 self.nseq,
@@ -188,6 +189,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 self.nseq,
                 self.dot_bracket,
             )
+            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._write_connect_table(
                 str(self.config.args.output + ".ct"),
                 self.nseq,
