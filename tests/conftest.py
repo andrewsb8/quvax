@@ -1,5 +1,6 @@
 import os
 import pytest
+import logging
 from src.codon_opt.codon_optimizer import CodonOptimizer
 from src.config.design_config import DesignConfig
 from src.config.fold_config import FoldConfig
@@ -52,7 +53,7 @@ class MockFolder(RNAFolder):
 
 
 @pytest.fixture(autouse=True)
-def test_cleanup():
+def test_cleanup(caplog):
     """
     Deletes files produced by tests. Exception for Trajectory which handles the
     deletion in test test_trajectory in test_analyses.py
