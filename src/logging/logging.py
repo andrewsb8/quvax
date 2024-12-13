@@ -17,7 +17,7 @@ class Log(object):
                 "Log file " + log_file_name + " exists and will be overwritten."
             )
         file_handler = logging.FileHandler(log_file_name, mode="w+")
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logging.DEBUG)
         log.addHandler(file_handler)
         stderr_handler = logging.StreamHandler(sys.stderr)
         stderr_handler.setLevel(logging.WARNING)
