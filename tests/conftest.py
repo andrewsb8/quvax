@@ -53,7 +53,7 @@ class MockFolder(RNAFolder):
 
 
 @pytest.fixture(autouse=True)
-def test_cleanup(caplog):
+def test_cleanup():
     """
     Deletes files produced by tests. Exception for Trajectory which handles the
     deletion in test test_trajectory in test_analyses.py
