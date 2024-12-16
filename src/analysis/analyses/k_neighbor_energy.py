@@ -28,7 +28,7 @@ class KNeighborEnergySearch(ComputeEnergy):
         if self.active_stem_indices != []:
             self.energies = [self.rna_folder_obj._calc_score(self.active_stem_indices)]
         else:
-            self.energies = [self.rna_folder_obj.twobody_penalty]
+            self.energies = [self.rna_folder_obj.no_stem_penalty]
         self._analyze()
 
     def _analyze(self):
@@ -45,7 +45,7 @@ class KNeighborEnergySearch(ComputeEnergy):
             if new_stems != []:
                 new_energy = self.rna_folder_obj._calc_score(new_stems)
             else:
-                new_energy = self.rna_folder_obj.twobody_penalty
+                new_energy = self.rna_folder_obj.no_stem_penalty
 
             if new_energy < 0:
                 valid_neighbor_count += 1

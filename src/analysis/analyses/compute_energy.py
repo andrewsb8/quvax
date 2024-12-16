@@ -62,7 +62,7 @@ class ComputeEnergy(Analysis):
         if self.active_stem_indices != []:
             self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
         else:
-            self.score = self.rna_folder_obj.twobody_penalty
+            self.score = self.rna_folder_obj.no_stem_penalty
         self.config.log.info("Sequence: " + self.rna_folder_obj.nseq)
         self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
         self.config.log.info("Energy of input structure: " + str(self.score))
