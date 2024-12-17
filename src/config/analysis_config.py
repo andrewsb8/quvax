@@ -252,6 +252,11 @@ class AnalysisConfig(Config):
             type=int,
             help="For a given input sequence and structure (connectivity table or TODO dot-bracket), calculate distribution of energies by changing k neighbors (stems)",
         )
+        parser_contact_order = subparsers.add_parser(
+            "contact_order",
+            parents=[ss_parser],
+            help="Calculate contact order of a given input structure",
+        )
 
         if args is None:
             return parser.parse_args()

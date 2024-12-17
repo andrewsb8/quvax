@@ -361,3 +361,19 @@ def test_classify_stems():
         and analysis.pseudos == 1
         and analysis.overlaps == 0
     )
+
+def test_contact_order():
+    """
+    Test computation of contact order for a given input structure
+
+    """
+    from src.analysis.analyses.contact_order import ContactOrder
+
+    testargs = [
+        "contact_order",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = ContactOrder(config)
+    assert round(analysis.contact_order, 2) == 0.41
