@@ -56,7 +56,10 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.config.log.debug("Sequence Length: " + str(self.n))
         self._gen_stems()
         self.len_stem_list = len(self.stems)
-        self.config.log.debug("Finished generating stems. Number of possible stems: " + str(self.len_stem_list))
+        self.config.log.debug(
+            "Finished generating stems. Number of possible stems: "
+            + str(self.len_stem_list)
+        )
         self._compute_h_and_J()
         self.config.log.debug("Finished generating Hamiltonian matrices.")
 

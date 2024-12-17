@@ -25,29 +25,23 @@ class RNAStructure(object):
         ]
 
     def _detect_stem_overlap(self, stem1, stem2):
+        """
+        Function to detect if a base is involved in two stems which is
+        a stem overlap. Returns True if the stems overlap and False
+        otherwise.
+
+        """
         from src.rna_structure.structure_convert import StructureConvert
 
         struct_convert = StructureConvert()
         pairs1 = struct_convert._stem_to_pair_list(stem1)
         pairs2 = struct_convert._stem_to_pair_list(stem2)
 
-        keep1 = [
-            pair1
-            for pair1 in pairs1
-            if not any(_ in pair1 for _ in np.array(pairs2).flatten())
-        ]
-        keep2 = [
-            pair2
-            for pair2 in pairs2
-            if not any(_ in pair2 for _ in np.array(pairs1).flatten())
-        ]
-
-        if len(keep1) == len(pairs1) and len(keep2) == len(pairs2):
-            # No overlap
-            return False
-        else:
-            # Overlap
-            return True
+        for pair1 in pairs1:
+            for pair2 in pairs2:
+                if pair1[0] in pair2 or pair1[1] in pair2:
+                    return True
+        return False
 
     def _is_pseudo(self, stem1, stem2):
         first = np.argmin([stem1[0], stem2[0]])

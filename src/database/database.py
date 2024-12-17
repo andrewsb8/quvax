@@ -83,7 +83,9 @@ class Database(object):
                 f"""CREATE TABLE MFE_SEQUENCES (index_key {primary_key_type} PRIMARY KEY,
                 sim_key INT, sequences VARCHAR, secondary_structure VARCHAR)"""
             )
-            config.log.debug("Created database tables in " + config.args.output + "\n\n")
+            config.log.debug(
+                "Created database tables in " + config.args.output + "\n\n"
+            )
         except:
             config.db.rollback()
             config.log.debug("Adding data to existing tables within database.\n\n")

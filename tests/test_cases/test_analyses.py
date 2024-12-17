@@ -362,6 +362,7 @@ def test_classify_stems():
         and analysis.overlaps == 0
     )
 
+
 def test_contact_order():
     """
     Test computation of contact order for a given input structure
