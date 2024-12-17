@@ -29,7 +29,9 @@ class CodonOptimizer(ABC):
     def __init__(self, config: Config):
         self.config = config
         random.seed(self.config.args.random_seed)
-        self.config.log.debug("Input protein sequence length: " + str(len(self.config.protein_sequence)))
+        self.config.log.debug(
+            "Input protein sequence length: " + str(len(self.config.protein_sequence))
+        )
         self.codon_optimize_step = 0
         self.convergence_count = 0
         (
@@ -278,7 +280,14 @@ class CodonOptimizer(ABC):
         self.list_seqs = [self._convert_ints_to_codons(s) for s in self.members]
         if fold_sequences:
             for s in range(len(self.list_seqs)):
-                self.config.log.debug("Generation number: " + str(self.codon_optimize_step) + ". Population number " + str(s) + " of " + str(self.config.args.population_size))
+                self.config.log.debug(
+                    "Generation number: "
+                    + str(self.codon_optimize_step)
+                    + ". Population number "
+                    + str(s)
+                    + " of "
+                    + str(self.config.args.population_size)
+                )
                 self._fold_rna(self.list_seqs[s])
                 self.config.log.debug("Completed structure prediction.\n")
                 self.energies[s] = self.folder.best_score
