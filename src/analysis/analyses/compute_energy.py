@@ -62,11 +62,14 @@ class ComputeEnergy(Analysis):
             self._analyze()
 
     def _analyze(self):
-        self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
-        self.config.log.info("Outputs: Sequence Length, Energy ")
-        output_string = str(self.rna_folder_obj.n) + " " + str(self.score)
-        self.config.log.debug(output_string)
-        print(output_string)
+        if self.active_stem_indices != []:
+            self.score = self.rna_folder_obj._calc_score(self.active_stem_indices)
+        else:
+            self.score = self.rna_folder_obj.no_stem_penalty
+        self.config.log.info("Sequence: " + self.rna_folder_obj.nseq)
+        self.config.log.info("Sequence Length: " + str(self.rna_folder_obj.n))
+        self.config.log.info("Energy of input structure: " + str(self.score))
+        print(self.rna_folder_obj.n, self.score)
 
     def _find_observed_stem_indices(self, observed_stems, stems):
         """
