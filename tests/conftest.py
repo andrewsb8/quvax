@@ -1,5 +1,6 @@
 import os
 import pytest
+import logging
 from src.codon_opt.codon_optimizer import CodonOptimizer
 from src.config.design_config import DesignConfig
 from src.config.fold_config import FoldConfig

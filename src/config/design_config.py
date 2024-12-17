@@ -213,7 +213,7 @@ class DesignConfig(Config):
             "-mu",
             "--target_stem_length",
             default=-1,
-            type=int,
+            type=float,
             help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         self.parser.add_argument(

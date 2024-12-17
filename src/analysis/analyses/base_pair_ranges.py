@@ -38,5 +38,5 @@ class BasePairRanges(Analysis):
         )
         outputs = (self.avg_range, self.min_range, self.max_range, self.seq_len)
         vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
-        self.config.log.info(vals)
+        self.config.log.debug(vals)
         print(vals)
