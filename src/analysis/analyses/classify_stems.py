@@ -52,7 +52,7 @@ class ClassifyStems(Analysis):
             self.overlaps,
         )
         vals = ", ".join([str(outputs[k]) for k in range(len(outputs))])
-        self.config.log.info(vals)
+        self.config.log.debug(vals)
         if self.overlaps > 0:
             self.config.log.warning("Overlap detected in one or more stems")
         print(vals)

@@ -28,6 +28,9 @@ class ComputeEnergy(Analysis):
         self.rna_folder_obj = RNAFolder(config)
         self.rna_folder_obj._declare_stem_vars(seq)
 
+        self.config.log.debug("Sequence: " + self.rna_folder_obj.nseq)
+        self.config.log.debug("Sequence Length: " + str(self.rna_folder_obj.n))
+
         # convert from connectivity table to stem tuples
         self.rna_struct_obj = RNAStructure()
         self.struct_conv_obj = StructureConvert()

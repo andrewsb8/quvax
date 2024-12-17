@@ -53,9 +53,12 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
     def _fold_prep(self, sequence):
         self._declare_stem_vars(sequence)
+        self.config.log.debug("Sequence Length: " + str(self.n))
         self._gen_stems()
         self.len_stem_list = len(self.stems)
+        self.config.log.debug("Finished generating stems. Number of possible stems: " + str(self.len_stem_list))
         self._compute_h_and_J()
+        self.config.log.debug("Finished generating Hamiltonian matrices.")
 
     def _gen_stems(self):
         """
@@ -175,6 +178,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 self.config.args.output, self.best_score, self.nseq, self.dot_bracket
             )
         elif self.config.args.output_type == "connect_table":
+            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._write_connect_table(
                 self.config.args.output,
                 self.nseq,
@@ -188,6 +192,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 self.nseq,
                 self.dot_bracket,
             )
+            self.connect_list = self._stems_to_connect_list(self.n, self.stems_used)
             self._write_connect_table(
                 str(self.config.args.output + ".ct"),
                 self.nseq,

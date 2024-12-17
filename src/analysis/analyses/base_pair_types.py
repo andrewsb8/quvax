@@ -87,7 +87,7 @@ class BasePairTypes(Analysis):
                 self.num_bases,
             ]
         )
-        self.config.log.info(output)
+        self.config.log.debug(output)
         print(output)
 
     def _check_interactions(self, interaction_list, base1, base2):
