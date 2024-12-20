@@ -1,9 +1,11 @@
 # QuVax
 ### mRNA design guided by folding potential
 
-For a given mRNA sequence, determining the minimum energy folded structure can be considered as a combinatorics problem where folding space is explored. While this is a difficult problem on its own, the appropriate mRNA sequence required to produce a desired protein in the body may be unknown. The mRNA sequence determines exactly which protein will be produced but a protein sequence can be produced by many mRNA sequences. Therefore, if only the protein sequence is known, an additional combinatorics problem of searching sequence space also needs to be solved.
+QuVax is a python command line application designed to sample various mRNA sequences and predict their structures in a bilevel optimization formalism for use in hybrid classical and quantum computing workflows. The tool is inspired by the rise of mRNA vaccines and aspires to be a high-throughput tool to aid in their design. 
 
-QuVax is a python command line application that treats this problem as a bilevel or nested optimization problem. A population of mRNA sequences are generated randomly from an input protein sequence in FASTA file format using the genetic code. In each iteration of the optimization process, changes are made to the members of the population and each iteration of changes is referred to as a generation. The folding energies and secondary structures, for the minimum energy structure, are then determined according to a Hamiltonian [1]. Each "level" of the optimization is repeated for a user-defined number of iterations. Here is a basic example of the process in pseudocode:
+## How It Works
+
+A population of mRNA sequences are generated randomly from an input protein sequence in FASTA file format using the genetic code. In each iteration of the optimization process, changes are made to the sequences of the population and each iteration of changes is referred to as a generation. The folding energies and secondary structures are then determined according to a Hamiltonian [1] for each sequence in the population. This process is repeated for a user-defined number of iterations. Here is a basic example of the process in pseudocode:
 
 ```
 for codon in codon_iterations:
