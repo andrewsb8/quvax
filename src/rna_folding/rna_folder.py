@@ -115,14 +115,17 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
             else:
                 mu = max(stems)
 
+        a = 10 # constant
+        f = 0.1 # fraction of bits to select
+
         # Compute all local fields and couplings
         h = {
             ind: self.config.args.coeff_stem_len * (ki**2 - 2 * mu * ki + mu**2)
-            - self.config.args.coeff_max_bond * ki**2
+            - self.config.args.coeff_max_bond * ki**2 - 2*a*f*self.n
             for ind, ki in enumerate(stems)
         }
         J = {
-            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2
+            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2 + a
             for ind1, ki1 in enumerate(stems)
             for ind2, ki2 in enumerate(stems)
             if ind2 > ind1
