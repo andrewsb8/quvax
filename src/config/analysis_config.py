@@ -257,6 +257,11 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="Calculate contact order of a given input structure",
         )
+        parser_unfold = subparsers.add_parser(
+            "unfold",
+            parents=[ss_parser, energy_parser],
+            help="Calculate incremental energies as stems are removed from structure",
+        )
 
         if args is None:
             return parser.parse_args()
