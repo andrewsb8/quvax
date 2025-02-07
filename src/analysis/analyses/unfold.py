@@ -40,7 +40,7 @@ class Unfold(ComputeEnergy):
         random.shuffle(stems)
         energy = self.rna_folder_obj._calc_score(self.active_stem_indices)
         for i in range(len(self.observed_stems) - 1):
-            print(len(stems), stems, energy)
+            print(len(stems), energy)
             stems.pop()
             energy = self.rna_folder_obj._calc_score(stems)
-        print(len(stems), stems, energy)
+        print(len(stems), energy)
