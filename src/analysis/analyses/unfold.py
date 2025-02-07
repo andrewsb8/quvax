@@ -1,3 +1,5 @@
+import random
+from copy import copy
 from src.analysis.analyses.compute_energy import ComputeEnergy
 
 
@@ -15,6 +17,7 @@ class Unfold(ComputeEnergy):
 
     def __init__(self, config):
         super().__init__(config)
+        random.seed(self.config.args.random_seed)
 
         if self.config.args.target_stem_length == -1:
             self.rna_folder_obj._gen_stems()
@@ -33,10 +36,11 @@ class Unfold(ComputeEnergy):
 
     def _analyze(self):
         # brute force solution for k = 1
-        stems = self.active_stem_indices
+        stems = copy(self.active_stem_indices)
+        random.shuffle(stems)
         energy = self.rna_folder_obj._calc_score(self.active_stem_indices)
         for i in range(len(self.observed_stems) - 1):
-            print(len(stems), energy)
+            print(len(stems), stems, energy)
             stems.pop()
             energy = self.rna_folder_obj._calc_score(stems)
-        print(len(stems), energy)
+        print(len(stems), stems, energy)
