@@ -285,7 +285,7 @@ def test_compute_energy():
     ]
     config = AnalysisConfig(testargs)
     analysis = ComputeEnergy(config)
-    assert analysis.score == -12
+    assert analysis.score == -9
 
 
 def test_k_neighbor_energy():

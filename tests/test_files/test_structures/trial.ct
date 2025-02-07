@@ -1,12 +1,12 @@
-   11 Energy: -12.0 output from QuVax
+   11 Energy: -9.0 output from QuVax
     1 A     0     2     6     1
     2 U     1     3     5     2
-    3 G     2     4     9     3
-    4 C     3     5     8     4
+    3 G     2     4     4     3
+    4 C     3     5     3     4
     5 G     4     6     2     5
     6 U     5     7     1     6
     7 A     6     8     0     7
-    8 G     7     9     4     8
-    9 C     8    10     3     9
+    8 G     7     9     0     8
+    9 C     8    10     0     9
    10 U     9    11     0    10
    11 A    10    12     0    11
