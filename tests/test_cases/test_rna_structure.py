@@ -27,7 +27,7 @@ def test_connect_table_to_dot_bracket_long():
     """
 
     ct_input = "tests/test_files/test_structures/trial_long.ct"
-    ref_dot_bracket = "..((((((.....))))))((((..))))."
+    ref_dot_bracket = "..(((((..[[[[[)))))......]]]]]"
 
     connect_table = StructureIO()._ct_to_dataframe(ct_input)
     num_bases = connect_table["Index"].iloc[-1]

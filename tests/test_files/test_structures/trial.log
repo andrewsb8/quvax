@@ -1,5 +1,5 @@
 Program Version : QuVax v0.0.1
-Execution Time : 2025-02-07 16:07:26.899691
+Execution Time : 2025-02-11 10:04:45.815538
 Command line: python fold.py -i AUGCGUAGCUA -ms 2 -ml 2 -ot connect_table -o trial.ct -l trial.log
 
 
@@ -27,7 +27,7 @@ output_type : connect_table
 
 
 Sequence Length: 11
-Finished generating stems. Number of possible stems: 6
+Finished generating stems. Number of possible stems: 4
 Finished generating Hamiltonian matrices.
-Folding energy of input codon sequence: -9.0
-Folded secondary structure: ((())).....
+Folding energy of input codon sequence: -12.0
+Folded secondary structure: (([[)).]]..
