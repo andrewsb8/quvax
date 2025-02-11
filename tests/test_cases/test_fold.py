@@ -26,7 +26,7 @@ def test_fold_SA(caplog):
     log_entry = (
         "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Folded secondary structure: ((((...((((..))))))))",
+        "Folded secondary structure: (((...((((....)))))))",
     )
     print(caplog.record_tuples)
     assert log_entry in caplog.record_tuples
@@ -56,7 +56,7 @@ def test_fold_MC(caplog):
     log_entry = (
         "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Folded secondary structure: ((((...((((..))))))))",
+        "Folded secondary structure: ((((.(((....)))..))))",
     )
     print(caplog.record_tuples)
     assert log_entry in caplog.record_tuples
@@ -86,7 +86,7 @@ def test_fold_ES(caplog):
     log_entry = (
         "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Folded secondary structure: ((((...((((..))))))))",
+        "Folded secondary structure: ((((...(((....)))))))",
     )
     print(caplog.record_tuples)
     assert log_entry in caplog.record_tuples
