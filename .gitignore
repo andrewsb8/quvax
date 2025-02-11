@@ -13,3 +13,4 @@ rna_folding/__pycache__
 /*.fasta
 /*.dot
 /*.ini
+/*.seq

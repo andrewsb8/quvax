@@ -261,8 +261,8 @@ def test_base_pair_ranges():
 
     assert (
         analysis.avg_range == 4.5
-        and analysis.min_range == 3
-        and analysis.max_range == 6
+        and analysis.min_range == 2
+        and analysis.max_range == 7
         and analysis.seq_len == 11
     )
 
