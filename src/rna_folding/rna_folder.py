@@ -49,7 +49,6 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.stems = []
         self.h = dict()
         self.J = dict()
-        self._pairs = []
 
     def _fold_prep(self, sequence):
         self._declare_stem_vars(sequence)
@@ -74,6 +73,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
         """
 
+        pairs = []
         for i in range(
             self.n - 2 * self.config.args.min_stem_len - self.config.args.min_loop_len
         ):
@@ -100,10 +100,10 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                             # and RNA structure files index at 1
                             # don't increment stem length because leads to
                             # overriding min loop length requirement in special cases
-                            self._pairs.append((i + 1, j + 1, k))
+                            pairs.append((i + 1, j + 1, k))
                     else:
                         break
-        self.stems = self._pairs
+        self.stems = pairs
 
     def _compute_h_and_J(self):
         if self.len_stem_list == 0:
