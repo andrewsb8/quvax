@@ -24,6 +24,25 @@ class RNAStructure(object):
             ("U", "G"),
         ]
 
+    def _calc_stem_separation(self, first_base, last_base, stem_length):
+        """
+        Calculates the number of bases between the closest bases in a stem.
+        The below uses stem_length - 1 because of the following:
+
+        Say we have a stem tuple (1, 8, 3) representing the base pairs
+        (1,8), (2,7), (3,6). The stem is of length 3, but 3-1 is 2.
+
+        So, in (i, j, k) notation, to compare the distance between base
+        3 and six I need to do (8 - (3-1)) - (1 + (3-1)) = 6-3 = 3. Then,
+        need to subtract again by 1 because only bases 4 and 5 are between
+        all of the bases in the stem, so the distance is then 3-1 = 2 bases.
+
+        The value can be used for check loop sizes in hairpins and also for
+        enforcing span requirements.
+
+        """
+        return (last_base - (stem_length - 1)) - (first_base + (stem_length - 1)) - 1
+
     def _detect_stem_overlap(self, stem1, stem2):
         """
         Function to detect if a base is involved in two stems which is
