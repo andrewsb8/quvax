@@ -1,6 +1,7 @@
 from src.analysis.analysis import Analysis
 from src.analysis.metrics.metrics import Metrics
 from src.rna_structure.structure_io import StructureIO
+from src.rna_structure.structure import RNAStructure
 
 
 class CompareCT(Analysis):
@@ -21,8 +22,10 @@ class CompareCT(Analysis):
         self._analyze()
 
     def _analyze(self):
-        input_pairings = self._get_pairings(self.config.args.input)
-        reference_pairings = self._get_pairings(self.config.args.reference)
+        input_ct = StructureIO()._ct_to_dataframe(self.config.args.input)
+        input_pairings = RNAStructure()._get_base_pairs(input_ct)
+        ref_ct = StructureIO()._ct_to_dataframe(self.config.args.reference)
+        reference_pairings = RNAStructure()._get_base_pairs(ref_ct)
         self._truth_values(input_pairings, reference_pairings)
         self.metrics._calculate_metrics(
             self.metrics.truepos,
@@ -31,15 +34,6 @@ class CompareCT(Analysis):
             self.metrics.falseneg,
         )
         self._print_metrics()
-
-    def _get_pairings(self, ct_file):
-        """
-        Return base pair information from dataframe
-
-        """
-        ct = StructureIO()._ct_to_dataframe(ct_file)
-        pairings = ct["Paired With"]
-        return pairings
 
     def _print_metrics(self):
         list = vars(self.metrics)

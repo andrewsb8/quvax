@@ -43,6 +43,15 @@ class RNAStructure(object):
         """
         return (last_base - (stem_length - 1)) - (first_base + (stem_length - 1)) - 1
 
+    def _get_base_pairs(self, structure):
+        """
+        Return list of sequence location of base pair from
+        pandas dataframe ```structure```. Index of list is position
+        in sequence - 1.
+
+        """
+        return structure["Paired With"]
+
     def _detect_stem_overlap(self, stem1, stem2):
         """
         Function to detect if a base is involved in two stems which is
