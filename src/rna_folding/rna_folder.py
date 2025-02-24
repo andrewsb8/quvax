@@ -85,17 +85,24 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 - 1,
                 self.n,
             ):
-                for k in range(1, self.n): # start at 1 because can't have stem of length 0
+                for k in range(
+                    1, self.n
+                ):  # start at 1 because can't have stem of length 0
                     if i + k >= self.n:
                         break
-                    if self._calc_stem_separation(i,j,k) < self.config.args.min_loop_len or (
+                    if self._calc_stem_separation(
+                        i, j, k
+                    ) < self.config.args.min_loop_len or (
                         self.config.args.span > 0
-                        and self._calc_stem_separation(i,j,k) > self.config.args.span
+                        and self._calc_stem_separation(i, j, k) > self.config.args.span
                     ):
                         break
                     # (k-1) in following conditional because stem (1,5,2) has pairs (1,5),
                     # (2,4). i+k = 1+2 = 3 and base 3 is not in the stem
-                    if (self.nseq[i + (k-1)], self.nseq[j - (k-1)]) in self.interactions:
+                    if (
+                        self.nseq[i + (k - 1)],
+                        self.nseq[j - (k - 1)],
+                    ) in self.interactions:
                         if k >= self.config.args.min_stem_len:
                             # increment i and j because they start index at zero
                             # and RNA structure files index at 1

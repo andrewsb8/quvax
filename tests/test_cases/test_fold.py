@@ -142,4 +142,7 @@ def test_gen_stems(caplog):
         # then go through and validate all stems are formed from valid base pairs
         for i in range(stem[2]):
             # minus 1 below to switch from sequence location (start index 1) to location in sequence string (start index 0)
-            assert (folder.nseq[stem[0] + i - 1], folder.nseq[stem[1] - i - 1]) in folder.interactions
+            assert (
+                folder.nseq[stem[0] + i - 1],
+                folder.nseq[stem[1] - i - 1],
+            ) in folder.interactions
