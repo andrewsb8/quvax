@@ -378,3 +378,20 @@ def test_contact_order():
     config = AnalysisConfig(testargs)
     analysis = ContactOrder(config)
     assert round(analysis.contact_order, 2) == 0.41
+
+
+def test_unfold():
+    """
+    Test computation of contact order for a given input structure
+
+    """
+    from src.analysis.analyses.unfold import Unfold
+
+    testargs = [
+        "unfold",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = Unfold(config)
+    assert len(analysis.stems) == 0 and analysis.energy == 0
