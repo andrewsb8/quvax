@@ -29,12 +29,13 @@ class StemSaturation(Analysis):
         list_seq = list(self.seq) # need to do this because strings are immutable
         for i in range(len(self.seq)):
             if self.base_pairs[i] != 0:
-                list_seq[i] = 'X'
+                list_seq[i] = 'X' # this character will be ignored in stem generation
         self.seq = "".join(list_seq)
         self.rna_folder._declare_stem_vars(self.seq)
         self.rna_folder._gen_stems()
         self.n_stems = len(self.rna_folder.stems)
         self.config.log.info("Modified sequence: " + self.seq)
         self.config.log.debug("Possible stems: " + str(self.rna_folder.stems))
-        self.config.log.debug("Number of possible stems: " + str(self.n_stems))
+        self.config.log.info("Number of possible stems:")
+        self.config.log.debug(str(self.n_stems))
         print(self.n_stems, flush=True)
