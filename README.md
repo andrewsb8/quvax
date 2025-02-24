@@ -1,7 +1,7 @@
 # QuVax
 ### mRNA design guided by folding potential
 
-QuVax is a python command line application designed to sample various mRNA sequences and predict their structures in a bilevel optimization formalism for use in hybrid classical and quantum computing workflows. The tool is inspired by the rise of mRNA vaccines and aspires to be a high-throughput tool to aid in their design. 
+QuVax is a python command line application designed to sample various mRNA sequences and predict their structures in a bilevel optimization formalism for use in hybrid classical and quantum computing workflows. The tool is inspired by the rise of mRNA vaccines and aspires to be a high-throughput tool to aid in their design.
 
 ## How It Works
 
@@ -107,6 +107,14 @@ GGGAAACUGGAAGGCGGGGCGAGCUGCAGCCCCAGUGAAUCAAAUGCAGC
 ```
 
 Where the final line is the folded secondary structure in dot-bracket notation. For more folding options: ```$ python fold.py -h```
+
+### Analyzing RNA structures
+
+After a structure is generated, you can analyze that structure in a variety of ways (see ```python analyze.py -h``` for list). Here's an example that will compare two structures based on their connectivity tables:
+
+```python analyze.py compare_ct -i structure.ct -r ref_structure.ct```
+
+where you would replace the filenames for ```-i``` and ```-r``` with valid filenames. Note: Most analyses only currently work with connectivity tables.
 
 ## Testing
 
