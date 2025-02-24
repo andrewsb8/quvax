@@ -20,7 +20,7 @@ class StemSaturation(Analysis):
         super().__init__(config)
         self.rna_folder = RNAFolder(config)
         structure = self.rna_folder._ct_to_dataframe(self.config.args.input)
-        self.base_pairs = self.rna_folder._get_base_pairs(structure)
+        self.base_pairs = self.rna_folder._get_base_pair_indices(structure)
         self.seq = self.rna_folder._get_sequence_from_connect_table(structure)
         self._analyze()
 

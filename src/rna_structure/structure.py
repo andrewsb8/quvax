@@ -43,7 +43,7 @@ class RNAStructure(object):
         """
         return (last_base - (stem_length - 1)) - (first_base + (stem_length - 1)) - 1
 
-    def _get_base_pairs(self, structure):
+    def _get_base_pair_indices(self, structure):
         """
         Return list of sequence location of base pair from
         pandas dataframe ```structure```. Index of list is position

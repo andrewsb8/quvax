@@ -397,7 +397,7 @@ def test_unfold():
     assert len(analysis.stems) == 0 and analysis.energy == 0
 
 
-def test_stem_saturation():
+def test_stem_saturation_nostem():
     """
     Test computation of number of stems which could be added
     to an input structure

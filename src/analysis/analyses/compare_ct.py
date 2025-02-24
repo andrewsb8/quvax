@@ -23,9 +23,9 @@ class CompareCT(Analysis):
 
     def _analyze(self):
         input_ct = StructureIO()._ct_to_dataframe(self.config.args.input)
-        input_pairings = RNAStructure()._get_base_pairs(input_ct)
+        input_pairings = RNAStructure()._get_base_pair_indices(input_ct)
         ref_ct = StructureIO()._ct_to_dataframe(self.config.args.reference)
-        reference_pairings = RNAStructure()._get_base_pairs(ref_ct)
+        reference_pairings = RNAStructure()._get_base_pair_indices(ref_ct)
         self._truth_values(input_pairings, reference_pairings)
         self.metrics._calculate_metrics(
             self.metrics.truepos,
