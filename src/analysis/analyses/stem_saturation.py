@@ -6,8 +6,10 @@ class StemSaturation(Analysis):
     """
     Reads an RNA structure (i.e. connectivity table) and enumerates
     the number of stems which can generated from the set of unpaired
-    bases. Structures which cannot have any more stems added are
-    considered "saturated".
+    bases. Paired bases are replaced in the sequence string by an 'X'
+    and then all possible stems are enumerated given the modified sequence,
+    where 'X's will not be considered. Structures which cannot have any
+    more stems added are considered "saturated".
 
     Parameters
     ----------
