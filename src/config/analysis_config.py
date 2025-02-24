@@ -269,6 +269,12 @@ class AnalysisConfig(Config):
             type=int,
             help="Random seed which will change the order which stems are removed from the system.",
         )
+        parser_stem_saturation = subparsers.add_parser(
+            "stem_saturation",
+            parents=[ss_parser, energy_parser],
+            help="""For a given structure, determine how many stems can be added to structure. Note: not
+            cB, cL, pf, and mu do not change the output of this tool.""",
+        )
 
         if args is None:
             return parser.parse_args()
