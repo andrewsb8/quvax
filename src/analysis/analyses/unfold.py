@@ -36,11 +36,11 @@ class Unfold(ComputeEnergy):
 
     def _analyze(self):
         # brute force solution for k = 1
-        stems = copy(self.active_stem_indices)
-        random.shuffle(stems)
-        energy = self.rna_folder_obj._calc_score(self.active_stem_indices)
-        for i in range(len(self.observed_stems) - 1):
-            print(len(stems), energy)
-            stems.pop()
-            energy = self.rna_folder_obj._calc_score(stems)
-        print(len(stems), energy)
+        self.stems = copy(self.active_stem_indices)
+        random.shuffle(self.stems)
+        self.energy = self.rna_folder_obj._calc_score(self.active_stem_indices)
+        for i in range(len(self.observed_stems)):
+            print(len(self.stems), self.energy)
+            self.stems.pop()
+            self.energy = self.rna_folder_obj._calc_score(self.stems)
+        print(len(self.stems), self.energy)
