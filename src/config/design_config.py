@@ -217,6 +217,20 @@ class DesignConfig(Config):
             help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
         )
         self.parser.add_argument(
+            "-A",
+            "--equality_constraint_constant",
+            default=0,
+            type=float,
+            help="Value defining constant for equality constraint. Default: 0",
+        )
+        self.parser.add_argument(
+            "-f",
+            "--equality_constraint_fraction",
+            default=0,
+            type=float,
+            help="Value defining fraction for equality constraint. Default: 0",
+        )
+        self.parser.add_argument(
             "-l",
             "--log_file_name",
             default="quvax.log",

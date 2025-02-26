@@ -72,7 +72,8 @@ class Database(object):
                  sequence_rejections INT, num_sequence_changes INT, beta FLOAT,
                  beta_max FLOAT, exchange_frequency INT, mutation_chance FLOAT,
                  crossover_probability FLOAT, convergence_count INT, span INT,
-                 pseudo_factor FLOAT, target_stem_length INT);"""
+                 pseudo_factor FLOAT, target_stem_length FLOAT, equality_constraint_fraction
+                 FLOAT, equality_constraint_constant FLOAT);"""
             )
             config.db_cursor.execute(
                 f"""CREATE TABLE OUTPUTS (index_key {primary_key_type}
@@ -104,7 +105,8 @@ class Database(object):
             convergence, checkpoint_interval, hash_value, sequence_rejections,
             num_sequence_changes, beta, beta_max, exchange_frequency,
             mutation_chance, crossover_probability, convergence_count, span,
-            pseudo_factor, target_stem_length) VALUES
+            pseudo_factor, target_stem_length, equality_constraint_fraction,
+            equality_constraint_constant) VALUES
             ('{config.args.input}', '{config.protein_sequence}', '{config.args.target}',
             '{config.args.population_size}', '{config.args.codon_iterations}',
             '{config.args.codon_optimizer}', '{config.args.random_seed}',
@@ -118,7 +120,8 @@ class Database(object):
             '{config.args.beta_max}', '{config.args.exchange_frequency}',
             '{config.args.mutation_chance}', '{config.args.crossover_probability}', 0,
             '{config.args.span}', '{config.args.pseudo_factor}',
-            '{config.args.target_stem_length}');"""
+            '{config.args.target_stem_length}', '{config.args.equality_constraint_fraction}',
+            '{config.args.equality_constraint_constant}');"""
         )
         config.db.commit()
         # retrieve the integer value of the key associated with the input protein sequence with associated hash value

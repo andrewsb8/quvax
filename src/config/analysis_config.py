@@ -162,7 +162,21 @@ class AnalysisConfig(Config):
             "--target_stem_length",
             default=-1,
             type=float,
-            help="Value defining one-body energy penalty. Default: -1 (maximum possible stem)",
+            help="Value defining target stem length for one-body penalty. Default: -1 (maximum possible stem)",
+        )
+        energy_parser.add_argument(
+            "-A",
+            "--equality_constraint_constant",
+            default=0,
+            type=float,
+            help="Value defining constant for equality constraint. Default: 0",
+        )
+        energy_parser.add_argument(
+            "-f",
+            "--equality_constraint_fraction",
+            default=0,
+            type=float,
+            help="Value defining fraction for equality constraint. Default: 0",
         )
         energy_parser.add_argument(
             "-ms",

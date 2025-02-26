@@ -133,11 +133,11 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         # Compute all local fields and couplings
         h = {
             ind: self.config.args.coeff_stem_len * (ki**2 - 2 * mu * ki + mu**2)
-            - self.config.args.coeff_max_bond * ki**2 - 2*a*f*self.n
+            - self.config.args.coeff_max_bond * ki**2 - 2*self.config.args.equality_constraint_fraction*self.config.args.equality_constraint_constant*self.n
             for ind, ki in enumerate(stems)
         }
         J = {
-            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2 + a
+            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2 + self.config.args.equality_constraint.constant
             for ind1, ki1 in enumerate(stems)
             for ind2, ki2 in enumerate(stems)
             if ind2 > ind1
@@ -157,7 +157,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 is_pseudo = self._is_pseudo(self.stems[i], self.stems[j])
 
                 if is_pseudo:
-                    J[(i, j)] += self.config.args.pseudo_factor * abs(J[(i, j)])
+                    J[(i, j)] += self.config.args.pseudo_factor * 2 * self.config.args.coeff_max_bond * self.stems[i][2] * self.stems[j][2]
 
         self.h = h
         self.J = J
