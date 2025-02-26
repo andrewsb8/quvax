@@ -10,7 +10,7 @@ def test_target_detected(mock_optimizer, caplog):
     output from design.py
 
     """
-    mock_optimizer.config.args.target = "AUGUUCGUGUUCCUAGUAUUGUUACCACUU"
+    mock_optimizer.config.args.target = "AUGUUUGUGUUCCUAGUUUUAUUGCCCCUA"
     mock_optimizer.config.db = sqlite3.connect("tests/test_files/test_design/quvax.db")
     mock_optimizer.config.db_cursor = mock_optimizer.config.db.cursor()
 
