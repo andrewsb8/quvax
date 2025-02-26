@@ -5,6 +5,12 @@ class StructureConvert(object):
 
     """
 
+    def _dot_bracket_to_stems(self, sequence, dot_bracket):
+        """
+        Converts a dot bracket string to a list of stem tuples
+
+        """
+
     def _stems_to_dot_bracket(self, sequence_len, stems):
         """
         Function to convert a list of stems in a sequence to a dot-bracket

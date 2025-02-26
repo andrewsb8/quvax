@@ -8,6 +8,23 @@ class StructureIO(object):
 
     """
 
+    def _read_dot_bracket(self, dot_bracket_file):
+        """
+        Reads a dot bracket file which has lines
+        - comment
+        - sequence
+        - structure in dot bracket notation
+
+        Returns the second and third lines
+
+        """
+        dot_bracket = open(dot_bracket_file, 'r')
+        data = dot_bracket.readlines()
+        dot_bracket.close()
+        seq = data[-2]
+        struct = data[-1]
+        return seq, struct
+
     def _ct_to_dataframe(self, ct_file):
         """
         Converts connectivity table from file to dataframe
