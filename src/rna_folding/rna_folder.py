@@ -137,7 +137,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
             for ind, ki in enumerate(stems)
         }
         J = {
-            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2 + self.config.args.equality_constraint.constant
+            (ind1, ind2): -2 * self.config.args.coeff_max_bond * ki1 * ki2 + self.config.args.equality_constraint_constant
             for ind1, ki1 in enumerate(stems)
             for ind2, ki2 in enumerate(stems)
             if ind2 > ind1
