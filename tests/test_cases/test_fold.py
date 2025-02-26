@@ -56,7 +56,7 @@ def test_fold_MC(caplog):
     log_entry = (
         "src.logging.logging",
         20,  # 40 indicates error, 30 indicates WARNING, 20 indicates INFO
-        "Folded secondary structure: ((((.(((....)))..))))",
+        "Folded secondary structure: [[[..((((]]]....)))).",
     )
     print(caplog.record_tuples)
     assert log_entry in caplog.record_tuples
@@ -142,4 +142,7 @@ def test_gen_stems(caplog):
         # then go through and validate all stems are formed from valid base pairs
         for i in range(stem[2]):
             # minus 1 below to switch from sequence location (start index 1) to location in sequence string (start index 0)
-            assert (folder.nseq[stem[0] + i - 1], folder.nseq[stem[1] - i - 1]) in folder.interactions
+            assert (
+                folder.nseq[stem[0] + i - 1],
+                folder.nseq[stem[1] - i - 1],
+            ) in folder.interactions

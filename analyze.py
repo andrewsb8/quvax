@@ -48,6 +48,14 @@ if __name__ == "__main__":
         from src.analysis.analyses.contact_order import ContactOrder
 
         ContactOrder(config)
+    elif config.args.command == "unfold":
+        from src.analysis.analyses.unfold import Unfold
+
+        Unfold(config)
+    elif config.args.command == "stem_saturation":
+        from src.analysis.analyses.stem_saturation import StemSaturation
+
+        StemSaturation(config)
     else:
         config.log.error(
             "Please select a valid analysis. See python analyze.py -h for details."

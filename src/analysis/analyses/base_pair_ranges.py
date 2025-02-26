@@ -25,8 +25,9 @@ class BasePairRanges(Analysis):
         paired_indices = input_df["Paired With"] != 0
         interactions = np.abs(
             input_df.loc[paired_indices, "Paired With"].values
-            - input_df.loc[paired_indices, "Index"].values - 1
-        ) # -1 here to count bases between the base pairs, not including either base involved in pair
+            - input_df.loc[paired_indices, "Index"].values
+            - 1
+        )  # -1 here to count bases between the base pairs, not including either base involved in pair
 
         self.avg_range = np.mean(interactions)
         self.min_range = np.min(interactions)

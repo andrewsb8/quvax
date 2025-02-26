@@ -1,4 +1,5 @@
 import itertools
+from copy import copy
 from abc import ABC, abstractmethod
 from src.config.config import Config
 from src.rna_structure.structure import RNAStructure
@@ -84,17 +85,24 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
                 - 1,
                 self.n,
             ):
-                for k in range(1, self.n): # start at 1 because can't have stem of length 0
+                for k in range(
+                    1, self.n
+                ):  # start at 1 because can't have stem of length 0
                     if i + k >= self.n:
                         break
-                    if self._calc_stem_separation(i,j,k) < self.config.args.min_loop_len or (
+                    if self._calc_stem_separation(
+                        i, j, k
+                    ) < self.config.args.min_loop_len or (
                         self.config.args.span > 0
-                        and self._calc_stem_separation(i,j,k) > self.config.args.span
+                        and self._calc_stem_separation(i, j, k) > self.config.args.span
                     ):
                         break
                     # (k-1) in following conditional because stem (1,5,2) has pairs (1,5),
                     # (2,4). i+k = 1+2 = 3 and base 3 is not in the stem
-                    if (self.nseq[i + (k-1)], self.nseq[j - (k-1)]) in self.interactions:
+                    if (
+                        self.nseq[i + (k - 1)],
+                        self.nseq[j - (k - 1)],
+                    ) in self.interactions:
                         if k >= self.config.args.min_stem_len:
                             # increment i and j because they start index at zero
                             # and RNA structure files index at 1
@@ -154,7 +162,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
         self.h = h
         self.J = J
 
-    def _calc_score(self, idx):
+    def _calc_score(self, idxs):
         """
         Calculate the score for the current list of stems.
 
@@ -167,6 +175,7 @@ class RNAFolder(ABC, RNAStructure, StructureIO, StructureConvert):
 
         """
 
+        idx = copy(idxs)
         idx.sort()
         score = sum([self.h[x] for x in idx])
         score = score + sum([self.J[x] for x in itertools.combinations(idx, 2)])

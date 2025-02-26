@@ -378,3 +378,64 @@ def test_contact_order():
     config = AnalysisConfig(testargs)
     analysis = ContactOrder(config)
     assert round(analysis.contact_order, 2) == 0.41
+
+
+def test_unfold():
+    """
+    Test computation of energy of unfolding pathway
+
+    """
+    from src.analysis.analyses.unfold import Unfold
+
+    testargs = [
+        "unfold",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = Unfold(config)
+    assert len(analysis.stems) == 0 and analysis.energy == 0
+
+
+def test_stem_saturation_nostem():
+    """
+    Test computation of number of stems which could be added
+    to an input structure
+
+    """
+    from src.analysis.analyses.stem_saturation import StemSaturation
+
+    testargs = [
+        "stem_saturation",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+        "-ms",
+        "3",
+        "-ml",
+        "3",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = StemSaturation(config)
+    assert analysis.n_stems == 0
+
+
+def test_stem_saturation():
+    """
+    Test computation of number of stems which could be added
+    to an input structure. Extra stem is expected in this test
+
+    """
+    from src.analysis.analyses.stem_saturation import StemSaturation
+
+    testargs = [
+        "stem_saturation",
+        "-i",
+        "tests/test_files/test_structures/trial.ct",
+        "-ms",
+        "1",
+        "-ml",
+        "2",
+    ]
+    config = AnalysisConfig(testargs)
+    analysis = StemSaturation(config)
+    assert analysis.n_stems == 1
