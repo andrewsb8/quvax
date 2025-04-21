@@ -33,6 +33,9 @@ class ClassifyStems(Analysis):
 
         self.num_stems = len(self.stems)
         stem_lengths = list(inner_list[2] for inner_list in self.stems)
+        if self.config.args.print_stems:
+            with open(self.config.args.output_file, "w+") as f:
+                f.write(" ".join(str(st) for st in stem_lengths))
         self.min_stem = min(stem_lengths)
         self.max_stem = max(stem_lengths)
         self.seq_len = sequence_len

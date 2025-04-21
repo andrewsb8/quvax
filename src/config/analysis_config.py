@@ -244,6 +244,20 @@ class AnalysisConfig(Config):
             parents=[ss_parser],
             help="Calculates the average, minimum, and maximum stem length, sequence length, number of stems, number of stems in pseudoknots, and number of overlapping stems for an input connectivity table.",
         )
+        parser_classify_stems.add_argument(
+            "-p",
+            "--print-stems",
+            type=bool,
+            default=False,
+            help="Print all stem lengths to a file.",
+        )
+        parser_classify_stems.add_argument(
+            "-o",
+            "--output_file",
+            type=str,
+            default="stems.txt",
+            help="File name to print stem lengths.",
+        )
         parser_bpt = subparsers.add_parser(
             "base_pair_types",
             parents=[ss_parser],
