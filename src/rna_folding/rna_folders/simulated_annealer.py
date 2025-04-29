@@ -34,16 +34,20 @@ class SimulatedAnnealer(RNAFolder):
         if post_process:  # equates to "if call was from fold.py"
             self._post_process()
 
-    def _compute_dwave_sa(self):
+    def _compute_dwave_sa(self, nr=10, istates=None, isg="random"):
         h2 = {(k, k): v for k, v in self.h.items()}
         Q = self.J
         Q.update(h2)
         sampleset = self.sampler.sample_qubo(
             Q,
-            num_reads=10,
+            num_reads=nr,
             num_sweeps=self.config.args.rna_iterations,
+            initial_states=istates,
+            initial_states_generator=isg,
             seed=self.config.args.random_seed,
         )
+        # dict containing 0s and 1s for unused and used stems, respectively, used for cotranscript folding
+        self.stem_dict = sampleset.first.sample
         self.stems_used = [
             _
             for it, _ in enumerate(self.stems)

@@ -447,6 +447,7 @@ def test_fold_MC():
     """
     Test to verify the same minimum energy and secondary structure are reached
     on repeated runs of fold.py
+
     """
     from src.config.fold_config import FoldConfig
     from src.rna_folding.rna_folders.classical_mc import MC
@@ -456,6 +457,27 @@ def test_fold_MC():
     folder = MC(parser)
     folder._fold(folder.config.args.input)
     folder2 = MC(parser)
+    folder2._fold(folder2.config.args.input)
+    assert (
+        folder.best_score == folder2.best_score
+        and folder.dot_bracket == folder2.dot_bracket
+    )
+
+
+def test_fold_CTSA():
+    """
+    Test to verify the same minimum energy and secondary structure are reached
+    on repeated runs of fold.py
+
+    """
+    from src.params.fold_parser import FoldParser
+    from src.rna_folding.rna_folders.cotranscript_sa import CoTranscriptSA
+
+    testargs = ["-i", "AUGACUAGGUAUCUAUCUUAU", "-r", "20000"]
+    parser = FoldParser(testargs)
+    folder = CoTranscriptSA(parser)
+    folder._fold(folder.config.args.input)
+    folder2 = CoTranscriptSA(parser)
     folder2._fold(folder2.config.args.input)
     assert (
         folder.best_score == folder2.best_score
